@@ -28,6 +28,7 @@ import { type LogtoConfigLibrary } from '#src/libraries/logto-config.js';
 import koaAppSecretTranspilation from '#src/middleware/koa-app-secret-transpilation.js';
 import koaAuditLog, { type WithLogContext } from '#src/middleware/koa-audit-log.js';
 import koaBodyEtag from '#src/middleware/koa-body-etag.js';
+import koaCimdOfflineAccessConsentPrompt from '#src/middleware/koa-cimd-offline-access-consent-prompt.js';
 import koaJwksCacheControl from '#src/middleware/koa-jwks-cache-control.js';
 import koaOidcCookies from '#src/middleware/koa-oidc-cookies.js';
 import koaOidcPostToGet from '#src/middleware/koa-oidc-post-to-get.js';
@@ -41,6 +42,7 @@ import {
   buildLoginPromptUrl,
   isOriginAllowed,
   readOptionalQueryString,
+  readOptionalTheme,
   validateCustomClientMetadata,
 } from '#src/oidc/utils.js';
 import type Libraries from '#src/tenants/Libraries.js';
@@ -58,7 +60,7 @@ import {
   markAppLevelAccessControlCheckedForOidcContext,
 } from './application-access-control.js';
 import { getExtraTokenClaimsForAuthenticationContext } from './authentication-context-claims.js';
-import { buildClientIdMetadataDocumentFeature, isCimdClient } from './cimd/index.js';
+import { buildClientIdMetadataDocumentFeature, shouldTreatAsCimdClient } from './cimd/index.js';
 import { filterResourceScopesForTheCimdClient } from './cimd/resource-scopes.js';
 import { getOidcScopesNoLongerAllowed } from './client-scope.js';
 import defaults from './defaults.js';
@@ -130,7 +132,7 @@ export default function initOidc(
       userId,
     });
 
-    if (isCimdClient(envSet, clientId)) {
+    if (shouldTreatAsCimdClient(envSet, clientId)) {
       /**
        * CIMD clients are unregistered: the tenant-wide ceiling replaces the per-application
        * consent configuration the third-party filter below reads.
@@ -280,6 +282,7 @@ export default function initOidc(
           appId: resolvedAppId,
           organizationId: params.organization_id,
           uiLocales: params.ui_locales,
+          theme: readOptionalTheme(params.theme),
         };
 
         /**
@@ -288,7 +291,7 @@ export default function initOidc(
          * consumers (experience SSR, verification-code template context) fall back to the
          * tenant default sign-in experience without any application lookup.
          */
-        const cookieParams = isCimdClient(envSet, resolvedAppId)
+        const cookieParams = shouldTreatAsCimdClient(envSet, resolvedAppId)
           ? { ...sharedParams, appId: undefined }
           : sharedParams;
 
@@ -329,7 +332,7 @@ export default function initOidc(
     },
     loadExistingGrant: async (ctx) => {
       const { account, client, provider, result, session } = ctx.oidc;
-      const cimd = isCimdClient(envSet, client?.clientId);
+      const treatAsCimdClient = shouldTreatAsCimdClient(envSet, client?.clientId);
       /**
        * CIMD organization access is grant-scoped, so a Grant must never serve more than one
        * authorization — skip the session grant reuse. The `result.consent.grantId` branch
@@ -337,7 +340,8 @@ export default function initOidc(
        */
       const grantId =
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- Keep oidc-provider's default loadExistingGrant fallback semantics.
-        result?.consent?.grantId || (client && !cimd && session?.grantIdFor(client.clientId));
+        result?.consent?.grantId ||
+        (client && !treatAsCimdClient && session?.grantIdFor(client.clientId));
       const shouldCheckApplicationAccess =
         account &&
         client &&
@@ -346,7 +350,7 @@ export default function initOidc(
          * access-control library's fallback lookup would query the applications table with the
          * CIMD identifier URL and deny on not-found.
          */
-        !cimd &&
+        !treatAsCimdClient &&
         !hasAppLevelAccessControlChecked(result, client.clientId, account.accountId);
 
       if (grantId && shouldCheckApplicationAccess) {
@@ -646,6 +650,8 @@ export default function initOidc(
    */
   oidc.use(koaBodyEtag());
   oidc.use(koaOidcPostToGet());
+  // Register after `koaOidcPostToGet()` so form POST authorization requests are covered too.
+  oidc.use(koaCimdOfflineAccessConsentPrompt(envSet, queries));
   /**
    * Check if the request URL contains comma separated `resource` query parameter. If yes, split the values and
    * reconstruct the URL with multiple `resource` query parameters.

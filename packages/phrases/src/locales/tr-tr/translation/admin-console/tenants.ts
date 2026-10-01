@@ -34,6 +34,20 @@ const tenants = {
     environment_non_production: 'Üretim dışı',
     expires_at_field: 'Bitiş tarihi',
     installed_at_field: 'Kurulum tarihi',
+    last_refreshed_at_field: 'Son yenileme tarihi',
+    grace_ends_at_field: 'Ek süre bitiş tarihi',
+    refresh_expired_description:
+      'Lisans anahtarının süresi {{expiresAt}} tarihinde doldu. Logto anahtarı yenilemeyi denerken lisanslı özellikler {{graceEndsAt}} tarihine kadar kullanılabilir.',
+    refresh_refused_description:
+      'Lisans {{reason}} olduğu için lisans yenileme reddedildi. Lisanslı özellikler {{graceEndsAt}} tarihine kadar kullanılabilir.',
+    refusal_reason_canceled: 'iptal edildi',
+    refusal_reason_unpaid: 'ödenmedi',
+    refusal_reason_expired: 'süresi doldu',
+    refusal_reason_revoked: 'geri alındı',
+    refusal_reason_unknown: 'kullanılamıyor',
+    grace_expired_description:
+      'Lisansın ek süresi {{graceEndsAt}} tarihinde sona erdi. Bu örnek OSS varsayılanlarına döndü. Logto Cloud’dan yeni bir lisans anahtarı alın ve yeniden kurun.',
+    get_fresh_key_button: 'Yeni lisans anahtarı al',
     replace_button: 'Lisansı değiştir',
   },
   members: {
@@ -70,6 +84,16 @@ const tenants = {
     tenant_mfa: 'Çok faktörlü kimlik doğrulama',
     tenant_mfa_description:
       'Üyelerinizin bu kiracıya erişmek için çok faktörlü kimlik doğrulamayı yapılandırmasını zorunlu kılın.',
+    oss_description: 'Üyelerin bu örnekte Konsol’a nasıl eriştiğini yönetin.',
+    tenant_mfa_confirm_title: 'Tüm üyeler için MFA zorunlu olsun mu?',
+    tenant_mfa_confirm_description:
+      'Bu üyeler henüz MFA yapılandırmadı. Oturumları açık kalır ve bir sonraki girişlerinde yapılandırmaları istenir:',
+    tenant_mfa_confirm_self:
+      'Siz de henüz MFA yapılandırmadınız. Bir sonraki girişinizden önce hesap ayarlarınızdan yapılandırın.',
+    tenant_mfa_confirm_button: 'MFA’yı zorunlu kıl',
+    tenant_mfa_setup_required:
+      'Bu kiracı çok faktörlü kimlik doğrulama gerektiriyor. Şimdi yapılandırın, aksi halde bir sonraki girişinizde istenecek.',
+    tenant_mfa_setup_action: 'MFA yapılandır',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       'Ücretli planlarda kullanılabilir. Tüm üyelerin kuruluşunuzun kimlik sağlayıcısını kullanarak Logto Cloud Konsoluna giriş yapabilmesi için Enterprise SSO etkinleştirmek üzere bizimle iletişime geçin.',

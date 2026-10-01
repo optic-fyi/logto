@@ -34,6 +34,20 @@ const tenants = {
     environment_non_production: 'غیرتولیدی',
     expires_at_field: 'تاریخ انقضا',
     installed_at_field: 'تاریخ نصب',
+    last_refreshed_at_field: 'آخرین به‌روزرسانی در',
+    grace_ends_at_field: 'پایان مهلت ارفاقی در',
+    refresh_expired_description:
+      'کلید مجوز در {{expiresAt}} منقضی شد. تا زمانی که Logto تلاش می‌کند آن را به‌روزرسانی کند، قابلیت‌های دارای مجوز تا {{graceEndsAt}} در دسترس می‌مانند.',
+    refresh_refused_description:
+      'به‌روزرسانی مجوز رد شد، زیرا مجوز {{reason}} است. قابلیت‌های دارای مجوز تا {{graceEndsAt}} در دسترس می‌مانند.',
+    refusal_reason_canceled: 'لغوشده',
+    refusal_reason_unpaid: 'پرداخت‌نشده',
+    refusal_reason_expired: 'منقضی‌شده',
+    refusal_reason_revoked: 'باطل‌شده',
+    refusal_reason_unknown: 'در دسترس نیست',
+    grace_expired_description:
+      'مهلت ارفاقی مجوز در {{graceEndsAt}} پایان یافت. این استقرار به پیش‌فرض‌های OSS بازگشته است. یک کلید مجوز تازه از Logto Cloud بگیرید و دوباره آن را نصب کنید.',
+    get_fresh_key_button: 'دریافت کلید مجوز تازه',
     replace_button: 'جایگزینی مجوز',
   },
   members: {
@@ -69,6 +83,16 @@ const tenants = {
     tenant_mfa: 'احراز هویت چندعاملی',
     tenant_mfa_description:
       'از اعضای خود بخواهید احراز هویت چندعاملی را برای دسترسی به این مستأجر راه‌اندازی کنند.',
+    oss_description: 'نحوه دسترسی اعضا به کنسول در این نمونه را مدیریت کنید.',
+    tenant_mfa_confirm_title: 'احراز هویت چندعاملی برای همه اعضا الزامی شود؟',
+    tenant_mfa_confirm_description:
+      'این اعضا هنوز احراز هویت چندعاملی را راه‌اندازی نکرده‌اند. آن‌ها وارد سیستم باقی می‌مانند و در ورود بعدی از آن‌ها خواسته می‌شود آن را راه‌اندازی کنند:',
+    tenant_mfa_confirm_self:
+      'شما هم هنوز احراز هویت چندعاملی را راه‌اندازی نکرده‌اید. پیش از ورود بعدی، آن را در تنظیمات حساب خود راه‌اندازی کنید.',
+    tenant_mfa_confirm_button: 'الزامی کردن MFA',
+    tenant_mfa_setup_required:
+      'این مستأجر احراز هویت چندعاملی را الزامی کرده است. اکنون آن را راه‌اندازی کنید، وگرنه در ورود بعدی از شما خواسته می‌شود.',
+    tenant_mfa_setup_action: 'راه‌اندازی MFA',
     enterprise_sso: 'SSO سازمانی',
     enterprise_sso_description:
       'در طرح‌های پولی در دسترس است. برای فعال‌سازی SSO سازمانی تا همه اعضا بتوانند با ارائه‌دهنده هویت سازمان خود به کنسول Logto Cloud وارد شوند، با ما تماس بگیرید.',

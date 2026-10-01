@@ -86,7 +86,7 @@ const installLicense = async (payload = buildLicensePayload()) => {
 
 /** Point the mocked `systems` row at what the last `PUT` wrote. */
 const useInstalledLicenseFromLastPut = () => {
-  const [, installed] = upsertSystem.mock.calls.at(-1) ?? [];
+  const [, installed] = upsertSystem.mock.calls.find(([key]) => key === LicenseKey.License) ?? [];
   findSystemByKey.mockResolvedValue({ value: installed });
 };
 
@@ -132,6 +132,11 @@ describe('system license route', () => {
 
     expect(key).toEqual(LicenseKey.License);
     expect(installed).toMatchObject({ jwt });
+    expect(upsertSystem).toHaveBeenCalledWith(
+      LicenseKey.LicenseRefreshState,
+      expect.objectContaining({ lastRefreshedAt: new Date(payload.iat * 1000).toISOString() })
+    );
+    expect(upsertSystem).toHaveBeenCalledWith(LicenseKey.LicenseDeploymentId, expect.any(String));
 
     useInstalledLicenseFromLastPut();
 
@@ -180,9 +185,8 @@ describe('system license route', () => {
     expect(upsertSystem).not.toHaveBeenCalled();
   });
 
-  it('PUT /systems/license should not blame the key when this build trusts none', async () => {
-    // eslint-disable-next-line unicorn/no-useless-undefined -- the mocked return value is what this asserts on
-    getLicensePublicKey.mockImplementationOnce(async () => undefined);
+  it('PUT /systems/license should not blame the key when the public key cannot be loaded', async () => {
+    getLicensePublicKey.mockRejectedValueOnce(new TypeError('Invalid license public key'));
     const jwt = await signLicenseKey(buildLicensePayload(), keyPair.privateKey);
 
     const response = await systemRequest.put('/systems/license').send({ license: jwt });

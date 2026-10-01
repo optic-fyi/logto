@@ -32,6 +32,20 @@ const tenants = {
     environment_non_production: 'غير الإنتاج',
     expires_at_field: 'ينتهي في',
     installed_at_field: 'تم التثبيت في',
+    last_refreshed_at_field: 'آخر تحديث في',
+    grace_ends_at_field: 'تنتهي فترة السماح في',
+    refresh_expired_description:
+      'انتهت صلاحية مفتاح الترخيص في {{expiresAt}}. ستبقى الميزات المرخصة متاحة حتى {{graceEndsAt}} بينما يحاول Logto تحديثه.',
+    refresh_refused_description:
+      'تم رفض تحديث الترخيص لأن حالة الترخيص هي {{reason}}. ستبقى الميزات المرخصة متاحة حتى {{graceEndsAt}}.',
+    refusal_reason_canceled: 'ملغى',
+    refusal_reason_unpaid: 'غير مدفوع',
+    refusal_reason_expired: 'منتهي الصلاحية',
+    refusal_reason_revoked: 'مسحوب',
+    refusal_reason_unknown: 'غير متاح',
+    grace_expired_description:
+      'انتهت فترة السماح للترخيص في {{graceEndsAt}}. عاد هذا النشر إلى إعدادات OSS الافتراضية. احصل على مفتاح ترخيص جديد من Logto Cloud وثبّته مرة أخرى.',
+    get_fresh_key_button: 'الحصول على مفتاح ترخيص جديد',
     replace_button: 'استبدال الترخيص',
   },
   members: {
@@ -65,6 +79,16 @@ const tenants = {
     tenant_info_saved: 'تم حفظ معلومات المستأجر بنجاح.',
     tenant_mfa: 'المصادقة متعددة العوامل',
     tenant_mfa_description: 'اطلب من أعضائك إعداد المصادقة متعددة العوامل للوصول إلى هذا المستأجر.',
+    oss_description: 'إدارة كيفية وصول الأعضاء إلى وحدة التحكم على هذه النسخة.',
+    tenant_mfa_confirm_title: 'طلب المصادقة متعددة العوامل لجميع الأعضاء؟',
+    tenant_mfa_confirm_description:
+      'لم يقم هؤلاء الأعضاء بإعداد المصادقة متعددة العوامل بعد. سيظلون مسجلين الدخول، وسيُطلب منهم إعدادها عند تسجيل الدخول التالي:',
+    tenant_mfa_confirm_self:
+      'لم تقم أنت أيضًا بإعداد المصادقة متعددة العوامل. قم بإعدادها في إعدادات حسابك قبل تسجيل الدخول التالي.',
+    tenant_mfa_confirm_button: 'طلب المصادقة متعددة العوامل',
+    tenant_mfa_setup_required:
+      'يتطلب هذا المستأجر المصادقة متعددة العوامل. قم بإعدادها الآن، وإلا سيُطلب منك ذلك عند تسجيل الدخول التالي.',
+    tenant_mfa_setup_action: 'إعداد المصادقة متعددة العوامل',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       'متاح في الخطط المدفوعة. اتصل بنا لتمكين Enterprise SSO حتى يتمكن جميع الأعضاء من تسجيل الدخول إلى Logto Cloud Console باستخدام موفر هوية مؤسستك.',

@@ -32,6 +32,20 @@ const tenants = {
     environment_non_production: '非生產',
     expires_at_field: '到期日',
     installed_at_field: '安裝日期',
+    last_refreshed_at_field: '上次更新時間',
+    grace_ends_at_field: '寬限期結束日期',
+    refresh_expired_description:
+      '授權金鑰已於 {{expiresAt}} 到期。Logto 嘗試更新金鑰期間，授權功能仍可使用至 {{graceEndsAt}}。',
+    refresh_refused_description:
+      '授權更新被拒絕，因為授權已{{reason}}。授權功能仍可使用至 {{graceEndsAt}}。',
+    refusal_reason_canceled: '取消',
+    refusal_reason_unpaid: '未付款',
+    refusal_reason_expired: '到期',
+    refusal_reason_revoked: '撤銷',
+    refusal_reason_unknown: '不可用',
+    grace_expired_description:
+      '授權寬限期已於 {{graceEndsAt}} 結束。此執行個體已恢復為 OSS 預設值。請從 Logto Cloud 取得新的授權金鑰並重新安裝。',
+    get_fresh_key_button: '取得新的授權金鑰',
     replace_button: '更換授權',
   },
   members: {
@@ -62,6 +76,14 @@ const tenants = {
     tenant_info_saved: '租戶資訊成功儲存。',
     tenant_mfa: '多因素驗證',
     tenant_mfa_description: '要求成員設定多因素驗證才能存取此租戶。',
+    oss_description: '管理成員存取此執行個體主控台的方式。',
+    tenant_mfa_confirm_title: '要求所有成員啟用 MFA？',
+    tenant_mfa_confirm_description:
+      '以下成員尚未設定 MFA。他們會保持登入狀態，並在下次登入時被要求設定：',
+    tenant_mfa_confirm_self: '你也尚未設定 MFA。請在下次登入前到帳戶設定中完成設定。',
+    tenant_mfa_confirm_button: '要求 MFA',
+    tenant_mfa_setup_required: '此租戶要求多因素驗證。請立即設定，否則將在下次登入時被要求設定。',
+    tenant_mfa_setup_action: '設定 MFA',
     enterprise_sso: '企業 SSO',
     enterprise_sso_description:
       '僅限付費方案。聯繫我們啟用企業 SSO，讓所有成員可以使用您組織的身分提供者登入 Logto Cloud 控制台。',

@@ -33,6 +33,20 @@ const tenants = {
     environment_non_production: 'ไม่ใช่โปรดักชัน',
     expires_at_field: 'หมดอายุวันที่',
     installed_at_field: 'ติดตั้งเมื่อ',
+    last_refreshed_at_field: 'รีเฟรชล่าสุดเมื่อ',
+    grace_ends_at_field: 'ระยะเวลาผ่อนผันสิ้นสุดวันที่',
+    refresh_expired_description:
+      'คีย์ใบอนุญาตหมดอายุเมื่อ {{expiresAt}} ฟีเจอร์ที่ได้รับอนุญาตจะยังใช้งานได้จนถึง {{graceEndsAt}} ขณะที่ Logto พยายามรีเฟรชคีย์',
+    refresh_refused_description:
+      'การรีเฟรชใบอนุญาตถูกปฏิเสธ เนื่องจากใบอนุญาต{{reason}} ฟีเจอร์ที่ได้รับอนุญาตจะยังใช้งานได้จนถึง {{graceEndsAt}}',
+    refusal_reason_canceled: 'ถูกยกเลิก',
+    refusal_reason_unpaid: 'ยังไม่ได้ชำระเงิน',
+    refusal_reason_expired: 'หมดอายุ',
+    refusal_reason_revoked: 'ถูกเพิกถอน',
+    refusal_reason_unknown: 'ไม่พร้อมใช้งาน',
+    grace_expired_description:
+      'ระยะเวลาผ่อนผันของใบอนุญาตสิ้นสุดเมื่อ {{graceEndsAt}} การติดตั้งนี้กลับไปใช้ค่าเริ่มต้นของ OSS แล้ว รับคีย์ใบอนุญาตใหม่จาก Logto Cloud และติดตั้งอีกครั้ง',
+    get_fresh_key_button: 'รับคีย์ใบอนุญาตใหม่',
     replace_button: 'เปลี่ยนใบอนุญาต',
   },
   members: {
@@ -68,6 +82,16 @@ const tenants = {
     tenant_mfa: 'การยืนยันตัวตนหลายปัจจัย',
     tenant_mfa_description:
       'กำหนดให้สมาชิกของคุณตั้งค่าการยืนยันตัวตนหลายปัจจัยเพื่อเข้าถึงผู้เช่านี้',
+    oss_description: 'จัดการวิธีที่สมาชิกเข้าถึงคอนโซลบนอินสแตนซ์นี้',
+    tenant_mfa_confirm_title: 'กำหนดให้สมาชิกทุกคนต้องใช้ MFA หรือไม่?',
+    tenant_mfa_confirm_description:
+      'สมาชิกเหล่านี้ยังไม่ได้ตั้งค่า MFA พวกเขาจะยังคงลงชื่อเข้าใช้อยู่ และจะถูกขอให้ตั้งค่าในการลงชื่อเข้าใช้ครั้งถัดไป:',
+    tenant_mfa_confirm_self:
+      'คุณเองก็ยังไม่ได้ตั้งค่า MFA ตั้งค่าได้ในการตั้งค่าบัญชีของคุณก่อนการลงชื่อเข้าใช้ครั้งถัดไป',
+    tenant_mfa_confirm_button: 'กำหนดให้ใช้ MFA',
+    tenant_mfa_setup_required:
+      'ผู้เช่านี้กำหนดให้ใช้การยืนยันตัวตนหลายปัจจัย ตั้งค่าตอนนี้ มิฉะนั้นคุณจะถูกขอให้ตั้งค่าในการลงชื่อเข้าใช้ครั้งถัดไป',
+    tenant_mfa_setup_action: 'ตั้งค่า MFA',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       'มีให้บริการในแผนชำระเงิน ติดต่อเราเพื่อเปิดใช้งาน Enterprise SSO เพื่อให้สมาชิกทุกคนสามารถลงชื่อเข้าใช้คอนโซล Logto Cloud โดยใช้ผู้ให้บริการตัวตนขององค์กรของคุณ',

@@ -34,6 +34,20 @@ const tenants = {
     environment_non_production: 'Não produção',
     expires_at_field: 'Expira em',
     installed_at_field: 'Instalada em',
+    last_refreshed_at_field: 'Última atualização em',
+    grace_ends_at_field: 'O período de tolerância termina em',
+    refresh_expired_description:
+      'A chave de licença expirou em {{expiresAt}}. Os recursos licenciados continuam disponíveis até {{graceEndsAt}} enquanto o Logto tenta atualizá-la.',
+    refresh_refused_description:
+      'A atualização da licença foi recusada porque a licença está {{reason}}. Os recursos licenciados continuam disponíveis até {{graceEndsAt}}.',
+    refusal_reason_canceled: 'cancelada',
+    refusal_reason_unpaid: 'não paga',
+    refusal_reason_expired: 'expirada',
+    refusal_reason_revoked: 'revogada',
+    refusal_reason_unknown: 'indisponível',
+    grace_expired_description:
+      'O período de tolerância da licença terminou em {{graceEndsAt}}. Esta instância voltou aos padrões do OSS. Obtenha uma nova chave no Logto Cloud e instale-a novamente.',
+    get_fresh_key_button: 'Obter uma nova chave de licença',
     replace_button: 'Substituir licença',
   },
   members: {
@@ -71,6 +85,16 @@ const tenants = {
     tenant_mfa: 'Autenticação multifator',
     tenant_mfa_description:
       'Exija que seus membros configurem a autenticação multifator para acessar este locatário.',
+    oss_description: 'Gerencie como os membros acessam o Console nesta instância.',
+    tenant_mfa_confirm_title: 'Exigir MFA para todos os membros?',
+    tenant_mfa_confirm_description:
+      'Estes membros ainda não configuraram a MFA. Eles continuam conectados e precisarão configurá-la no próximo login:',
+    tenant_mfa_confirm_self:
+      'Você também ainda não configurou a MFA. Configure-a nas configurações da sua conta antes do seu próximo login.',
+    tenant_mfa_confirm_button: 'Exigir MFA',
+    tenant_mfa_setup_required:
+      'Este locatário exige autenticação multifator. Configure-a agora ou ela será solicitada no seu próximo login.',
+    tenant_mfa_setup_action: 'Configurar MFA',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       'Disponível em planos pagos. Entre em contato conosco para habilitar o Enterprise SSO para que todos os membros possam fazer login no console Logto Cloud usando o provedor de identidade da sua organização.',

@@ -16,6 +16,7 @@ import TextLink from '@/ds-components/TextLink';
 import useDocumentationUrl from '@/hooks/use-documentation-url';
 import CustomUiAssetsUploader from '@/pages/SignInExperience/components/CustomUiAssetsUploader';
 
+import useBrandingEntitlements from '../../../hooks/use-branding-entitlements';
 import type { SignInExperienceForm } from '../../../types';
 import FormSectionTitle from '../../components/FormSectionTitle';
 
@@ -84,9 +85,16 @@ function CustomUiForm() {
   const { t } = useTranslation(undefined, { keyPrefix: 'admin_console' });
   const { getDocumentationUrl } = useDocumentationUrl();
   const { control } = useFormContext<SignInExperienceForm>();
-  const { currentSubscriptionQuota } = useContext(SubscriptionDataContext);
+  const { currentSubscriptionQuota, license } = useContext(SubscriptionDataContext);
   const isBringYourUiEnabled = currentSubscriptionQuota.bringYourUiEnabled;
-  const shouldShowOssBringYourUi = !isCloud;
+  const { isCustomUiCspEnabled } = useBrandingEntitlements();
+  // A self-hosted license that grants Bring your UI unlocks the upload, onto the storage the
+  // deployment has configured, and the Custom UI CSP. The license is only read while self-hosted
+  // plans are a dev feature.
+  const isLicensedBringYourUi = !isCloud && Boolean(license?.quota.bringYourUi);
+  const shouldShowUploader = isCloud || isLicensedBringYourUi;
+  const shouldShowOssBringYourUi = !shouldShowUploader;
+  const shouldShowCustomUiCspForm = isCloud || isCustomUiCspEnabled;
 
   return (
     <>
@@ -99,7 +107,7 @@ function CustomUiForm() {
           title="custom_ui.bring_your_ui_title"
           featureTag={cond(isCloud && { isVisible: !isBringYourUiEnabled, plan: latestProPlanId })}
         />
-        {isCloud && (
+        {shouldShowUploader && (
           <FormField
             title="sign_in_exp.custom_ui.bring_your_ui_upload_title"
             description={
@@ -123,7 +131,7 @@ function CustomUiForm() {
               control={control}
               render={({ field: { onChange, value } }) => (
                 <CustomUiAssetsUploader
-                  disabled={!isBringYourUiEnabled}
+                  disabled={isCloud && !isBringYourUiEnabled}
                   value={value}
                   onChange={onChange}
                 />
@@ -131,7 +139,7 @@ function CustomUiForm() {
             />
           </FormField>
         )}
-        {isCloud && <CustomUiCspForm isDisabled={!isBringYourUiEnabled} />}
+        {shouldShowCustomUiCspForm && <CustomUiCspForm isDisabled={!isCustomUiCspEnabled} />}
         {shouldShowOssBringYourUi && <OssBringYourUiCard />}
       </Card>
     </>

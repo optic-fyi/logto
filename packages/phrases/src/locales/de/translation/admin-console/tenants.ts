@@ -34,6 +34,20 @@ const tenants = {
     environment_non_production: 'Nicht-Produktion',
     expires_at_field: 'Läuft ab am',
     installed_at_field: 'Installiert am',
+    last_refreshed_at_field: 'Zuletzt aktualisiert am',
+    grace_ends_at_field: 'Kulanzzeit endet am',
+    refresh_expired_description:
+      'Der Lizenzschlüssel ist am {{expiresAt}} abgelaufen. Lizenzierte Funktionen bleiben bis {{graceEndsAt}} verfügbar, während Logto versucht, ihn zu aktualisieren.',
+    refresh_refused_description:
+      'Die Lizenzaktualisierung wurde abgelehnt, weil die Lizenz {{reason}} ist. Lizenzierte Funktionen bleiben bis {{graceEndsAt}} verfügbar.',
+    refusal_reason_canceled: 'gekündigt',
+    refusal_reason_unpaid: 'unbezahlt',
+    refusal_reason_expired: 'abgelaufen',
+    refusal_reason_revoked: 'widerrufen',
+    refusal_reason_unknown: 'nicht verfügbar',
+    grace_expired_description:
+      'Die Kulanzzeit der Lizenz endete am {{graceEndsAt}}. Diese Bereitstellung verwendet wieder die OSS-Standards. Hole einen neuen Lizenzschlüssel aus Logto Cloud und installiere ihn erneut.',
+    get_fresh_key_button: 'Neuen Lizenzschlüssel abrufen',
     replace_button: 'Lizenz ersetzen',
   },
   members: {
@@ -71,6 +85,16 @@ const tenants = {
     tenant_mfa: 'Multi-Faktor-Authentifizierung',
     tenant_mfa_description:
       'Verlangen Sie von Ihren Mitgliedern, dass sie die Multi-Faktor-Authentifizierung einrichten, um auf diesen Mandanten zuzugreifen.',
+    oss_description: 'Verwalten Sie, wie Mitglieder auf die Konsole dieser Instanz zugreifen.',
+    tenant_mfa_confirm_title: 'MFA für alle Mitglieder verlangen?',
+    tenant_mfa_confirm_description:
+      'Diese Mitglieder haben MFA noch nicht eingerichtet. Sie bleiben angemeldet und werden bei ihrer nächsten Anmeldung aufgefordert, MFA einzurichten:',
+    tenant_mfa_confirm_self:
+      'Sie haben MFA ebenfalls noch nicht eingerichtet. Richten Sie es vor Ihrer nächsten Anmeldung in Ihren Kontoeinstellungen ein.',
+    tenant_mfa_confirm_button: 'MFA verlangen',
+    tenant_mfa_setup_required:
+      'Dieser Mandant verlangt Multi-Faktor-Authentifizierung. Richten Sie sie jetzt ein, sonst werden Sie bei Ihrer nächsten Anmeldung dazu aufgefordert.',
+    tenant_mfa_setup_action: 'MFA einrichten',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       'Verfügbar in kostenpflichtigen Plänen. Kontaktieren Sie uns, um Enterprise SSO zu aktivieren, damit alle Mitglieder sich mit dem Identitätsanbieter Ihrer Organisation bei der Logto Cloud Console anmelden können.',

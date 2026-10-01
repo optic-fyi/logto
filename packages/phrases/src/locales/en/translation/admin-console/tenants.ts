@@ -33,6 +33,20 @@ const tenants = {
     environment_non_production: 'Non-production',
     expires_at_field: 'Expires on',
     installed_at_field: 'Installed on',
+    last_refreshed_at_field: 'Last refreshed on',
+    grace_ends_at_field: 'Grace period ends on',
+    refresh_expired_description:
+      'The license key expired on {{expiresAt}}. Licensed features remain available until {{graceEndsAt}} while Logto tries to refresh it.',
+    refresh_refused_description:
+      'The license refresh was refused because the license is {{reason}}. Licensed features remain available until {{graceEndsAt}}.',
+    refusal_reason_canceled: 'canceled',
+    refusal_reason_unpaid: 'unpaid',
+    refusal_reason_expired: 'expired',
+    refusal_reason_revoked: 'revoked',
+    refusal_reason_unknown: 'not available',
+    grace_expired_description:
+      'The license grace period ended on {{graceEndsAt}}. This deployment has reverted to OSS defaults. Get a fresh license key from Logto Cloud and install it again.',
+    get_fresh_key_button: 'Get a fresh license key',
     replace_button: 'Replace license',
   },
   members: {
@@ -68,6 +82,16 @@ const tenants = {
     tenant_mfa: 'Multi-factor authentication',
     tenant_mfa_description:
       'Require your members to set up multi-factor authentication to access this tenant.',
+    oss_description: 'Manage how members access Console on this instance.',
+    tenant_mfa_confirm_title: 'Require MFA for all members?',
+    tenant_mfa_confirm_description:
+      'These members have not set up MFA yet. They stay signed in, and will be asked to set it up the next time they sign in:',
+    tenant_mfa_confirm_self:
+      'You have not set up MFA either. Set it up in your account settings before your next sign-in.',
+    tenant_mfa_confirm_button: 'Require MFA',
+    tenant_mfa_setup_required:
+      'This tenant requires multi-factor authentication. Set it up now, or you will be asked to at your next sign-in.',
+    tenant_mfa_setup_action: 'Set up MFA',
     enterprise_sso: 'Enterprise SSO',
     enterprise_sso_description:
       "Available on paid plans. Contact us to enable enterprise SSO so all members can sign in to the Logto Cloud Console using your organization's identity provider.",
