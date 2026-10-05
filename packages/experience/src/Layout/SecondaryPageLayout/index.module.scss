@@ -7,6 +7,7 @@
 .container {
   @include _.full-width;
   margin-block: _.unit(2);
+  @include _.fade-up-children;
 }
 
 .header {

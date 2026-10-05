@@ -10,7 +10,8 @@
     transition-property: border;
     transition-timing-function: ease-in-out;
     transition-duration: 0.2s;
-    background: inherit;
+    background: var(--optic-card);
+    border-radius: var(--radius);
     align-items: stretch;
 
     // fix in safari input field line-height issue
@@ -18,7 +19,7 @@
 
     input {
       transition: width 0.3s ease-in;
-      padding: 0 _.unit(4);
+      padding: 0 _.unit(5);
       flex: 1;
       background: inherit;
       caret-color: var(--color-brand-default);

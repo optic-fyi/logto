@@ -3,9 +3,11 @@
 .content {
   box-shadow: var(--color-shadow-2);
   position: absolute;
-  border-radius: 8px;
+  border-radius: 16px;
+  @include _.slide-in;
 
   &.onTop {
+    --optic-slide-from: 8px;
     box-shadow: var(--color-shadow-2-reversed);
   }
 
@@ -16,8 +18,8 @@
 
 .dropdownContainer {
   background: var(--color-bg-float-overlay);
-  border: 1px solid var(--color-line-divider);
-  border-radius: 8px;
+  border: 2px solid var(--optic-border-strong);
+  border-radius: 16px;
 }
 
 .overlay {

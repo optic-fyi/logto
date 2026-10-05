@@ -1,8 +1,8 @@
 @use '@/shared/scss/underscore' as _;
 
 .wrapper {
-  border: _.border(var(--color-line-divider));
-  border-radius: 8px;
+  border: _.border(var(--optic-border-strong), 2);
+  border-radius: 16px;
   padding: _.unit(4);
   @include _.flex-row;
 }
@@ -10,7 +10,7 @@
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: 12px;
   object-fit: fill;
   object-position: center;
   margin-inline-end: _.unit(3);

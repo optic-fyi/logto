@@ -8,6 +8,7 @@ import PageContext from '@/Providers/PageContextProvider/PageContext';
 import ConnectIcon from '@/assets/icons/connect-icon.svg?react';
 import ThirdPartyAppIconDark from '@/assets/icons/third-party-app-dark.svg?react';
 import ThirdPartyAppIcon from '@/assets/icons/third-party-app.svg?react';
+import OpticLogo from '@/components/OpticLogo';
 import DynamicT from '@/shared/components/DynamicT';
 
 import styles from './index.module.scss';
@@ -41,7 +42,7 @@ const BrandingHeader = ({
 
   return (
     <div className={classNames(styles.container, className)}>
-      {shouldShowLogo && (
+      {shouldShowLogo ? (
         <div className={styles.logoWrapper}>
           {thirdPartyLogo &&
             (isThirdPartyLogoBroken ? (
@@ -59,6 +60,11 @@ const BrandingHeader = ({
             ))}
           {shouldConnectSvg && <ConnectIcon className={styles.connectIcon} />}
           {logo && <img className={styles.logo} alt="app logo" src={logo} />}
+        </div>
+      ) : (
+        // No tenant logo configured: the OPTIC lockup is the default brand mark.
+        <div className={styles.logoWrapper}>
+          <OpticLogo />
         </div>
       )}
 

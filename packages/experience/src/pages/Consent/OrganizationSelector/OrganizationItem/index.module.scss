@@ -23,10 +23,10 @@
   }
 
   &[data-selected='true'] {
-    color: var(--color-brand-default);
+    color: var(--color-type-link);
 
     .icon {
-      color: var(--color-brand-default);
+      color: var(--color-type-link);
     }
   }
 }

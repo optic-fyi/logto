@@ -1,11 +1,13 @@
 @use './colors' as colors;
 @use './fonts' as fonts;
+@use './underscore' as _;
 
 body {
   @include colors.static;
   @include fonts.fonts;
 
-  --radius: 8px;
+  // OPTIC rounds everything: controls become pills, cards sit at 1.8x this value.
+  --radius: 22px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: auto;
   margin: 0;
@@ -23,8 +25,9 @@ html[data-theme='dark'] body {
   @include colors.dark;
 }
 
-html[data-theme] body:not(.desktop) {
-  background: var(--color-bg-body);
+// OPTIC pages sit on grid paper, on every platform.
+html[data-theme] body {
+  @include _.grid-paper;
 }
 
 * {
@@ -52,5 +55,56 @@ input[type='number'] {
 }
 
 :focus-visible {
-  outline: solid 1px var(--color-brand-default);
+  outline: 3px solid var(--optic-ring-soft);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--optic-primary);
+  color: var(--optic-primary-foreground);
+}
+
+// Entrance keyframes shared by every CSS module through `_.fade-up` and friends.
+@keyframes optic-fade-up {
+  from {
+    opacity: 0%;
+    transform: translateY(22px);
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 100%;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+// Same values as the OPTIC site and dashboards (`design/src/base.css`). `!important` is the point
+// of a reduced-motion reset: it has to beat every component's own `animation` / `transition`.
+/* stylelint-disable declaration-no-important, time-min-milliseconds */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+/* stylelint-enable declaration-no-important, time-min-milliseconds */
+
+// Dialog and popover entrances (`tw-animate-css` in `@optic-fyi/ui`). They use the individual
+// `scale` / `translate` properties so they compose with the `transform` that centers a modal.
+@keyframes optic-zoom-in {
+  from {
+    opacity: 0%;
+    scale: 0.95;
+  }
+}
+
+@keyframes optic-slide-in {
+  from {
+    opacity: 0%;
+    translate: 0 var(--optic-slide-from, -8px);
+  }
 }

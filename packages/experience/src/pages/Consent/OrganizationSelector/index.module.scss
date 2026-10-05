@@ -6,21 +6,21 @@
 }
 
 .scopeListWrapper {
-  border: _.border(var(--color-line-divider));
+  border: _.border(var(--optic-border-strong), 2);
   border-bottom: unset;
-  border-radius: 8px 8px 0 0;
+  border-radius: 16px 16px 0 0;
   padding: _.unit(2) 0;
 }
 
 .cardWrapper {
-  border: _.border(var(--color-line-divider));
-  border-radius: 8px;
+  border: _.border(var(--optic-border-strong), 2);
+  border-radius: 16px;
   padding: _.unit(2);
   position: relative;
 
   &[data-active='true'] {
-    border-color: var(--color-brand-default);
-    outline: 3px solid var(--color-overlay-brand-focused);
+    border-color: var(--optic-ring);
+    outline: 4px solid var(--optic-ring-soft);
   }
 
   &.withoutTopRadius {

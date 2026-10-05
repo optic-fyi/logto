@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @function unit($factor: 1) {
   @return #{$factor * 4}px;
 }
@@ -57,4 +59,57 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/**
+ * OPTIC grid paper: 28px squares in `--optic-grid-line` over a flat color.
+ * The one gradient the OPTIC design language allows.
+ */
+@mixin grid-paper($base: var(--color-bg-body)) {
+  background-color: $base;
+  background-image:
+    linear-gradient(var(--optic-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--optic-grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+}
+
+$fade-up-delays: (1: 0.05s, 2: 0.16s, 3: 0.27s, 4: 0.38s, 5: 0.5s);
+
+/**
+ * OPTIC entrance motion (`.fade-up-1..5` in `@optic/ui`): fades up out of a blur, one beat after
+ * the previous step. The keyframes are global (`optic-fade-up`, see `normalized.scss`).
+ *
+ * `backwards` instead of `both`: the end state is the element's own, so no `filter` is left behind
+ * to turn the element into a containing block for fixed-position descendants.
+ *
+ * Refers to the keyframes through a custom property: see `--optic-keyframes-fade-up`.
+ */
+@mixin fade-up($step: 1) {
+  animation:
+    1s var(--optic-ease-out) map.get($fade-up-delays, $step) backwards
+    var(--optic-keyframes-fade-up);
+}
+
+/** Staggers the direct children with `fade-up`, the sixth and later share the last step. */
+@mixin fade-up-children {
+  > * {
+    @include fade-up(5);
+  }
+
+  @for $step from 1 through 4 {
+    > :nth-child(#{$step}) {
+      @include fade-up($step);
+    }
+  }
+}
+
+/** OPTIC dialog entrance (`fade-in-0 zoom-in-95 duration-100` in `@optic-fyi/ui`). */
+@mixin zoom-in {
+  animation: 0.1s ease var(--optic-keyframes-zoom-in);
+}
+
+/** OPTIC popover entrance: fades in sliding 8px out of the trigger (`slide-in-from-top-2`). */
+@mixin slide-in {
+  animation: 0.1s ease var(--optic-keyframes-slide-in);
 }

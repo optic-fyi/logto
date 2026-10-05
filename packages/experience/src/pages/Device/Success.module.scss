@@ -12,8 +12,9 @@
   height: 80px;
   margin-bottom: _.unit(4);
   border-radius: 50%;
-  background: var(--color-success-default);
-  color: var(--color-static-white);
+  border: 2px solid var(--optic-mint-deep);
+  background: var(--optic-mint);
+  color: var(--optic-mint-foreground);
   display: flex;
   align-items: center;
   justify-content: center;

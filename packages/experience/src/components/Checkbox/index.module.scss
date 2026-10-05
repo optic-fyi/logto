@@ -22,8 +22,15 @@
         color: var(--color-type-secondary);
       }
 
+      // OPTIC checkbox: fills mint when checked, with mint ink for the tick.
       &:nth-child(2) {
-        color: var(--color-brand-default);
+        color: var(--optic-mint);
+        stroke: var(--optic-mint-deep);
+        stroke-width: 2px;
+      }
+
+      &:nth-child(3) {
+        fill: var(--optic-mint-foreground);
       }
     }
   }
@@ -42,6 +49,12 @@
   input:checked:not(:disabled) ~ .icon > *:nth-child(2),
   input:checked:not(:disabled) ~ .icon > *:nth-child(3) {
     display: block;
+  }
+
+  input:focus-visible ~ .icon {
+    border-radius: 5px;
+    outline: 3px solid var(--optic-ring-soft);
+    outline-offset: 1px;
   }
 }
 

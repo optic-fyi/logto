@@ -1,10 +1,17 @@
 @use '@/shared/scss/underscore' as _;
 
+/**
+ * OPTIC link: extrabold, underlined on hover with a honey rule. Honey itself is too light to carry
+ * text on cream (< 4.5:1), so the text uses `--color-type-link` (the deep honey shade).
+ */
 .link {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   display: inline-flex;
   justify-content: center;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--optic-primary);
 
   > svg {
     margin-inline-end: _.unit(2);
@@ -12,14 +19,13 @@
 
   &.primary {
     font: var(--font-label-2);
-    color: var(--color-brand-default);
+    color: var(--color-type-link);
     text-decoration: none;
 
     &:active {
-      color: var(--color-brand-hover);
+      text-decoration: underline;
     }
   }
-
 
   &.secondary {
     color: var(--color-type-primary);
@@ -28,20 +34,15 @@
   }
 }
 
-
 :global(body.desktop) {
   .link {
     &.primary:hover {
-      color: var(--color-brand-hover);
-    }
-
-    &.primary:focus-visible {
-      outline: _.border(var(--color-overlay-brand-focused));
+      text-decoration: underline;
     }
 
     &.secondary:hover,
     &.secondary:active {
-      color: var(--color-brand-default);
+      color: var(--color-type-link);
     }
   }
 }

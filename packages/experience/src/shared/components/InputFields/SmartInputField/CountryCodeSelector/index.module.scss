@@ -23,7 +23,7 @@
   }
 
   &:focus-visible {
-    border: _.border(var(--color-brand-default));
+    border-color: var(--optic-ring);
   }
 
   > svg {

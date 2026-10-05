@@ -62,6 +62,7 @@ import TrustedDevice from './pages/TrustedDevice';
 import VerificationCode from './pages/VerificationCode';
 import { UserMfaFlow } from './types';
 import 'overlayscrollbars/overlayscrollbars.css';
+import '@fontsource-variable/nunito/index.css';
 import './shared/scss/normalized.scss';
 import './scss/overlayscrollbars.scss';
 

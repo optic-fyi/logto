@@ -26,7 +26,6 @@
     align-self: stretch;
     padding: _.unit(4) _.unit(5);
     position: relative;
-    background: var(--color-bg-body);
   }
 
   .signature {
@@ -44,9 +43,11 @@
     min-height: 540px;
     position: relative;
     padding: _.unit(6);
-    border-radius: 16px;
+    // OPTIC window: 2px strong border, rounded-2xl, hard 8px down-right offset.
+    border: 2px solid var(--optic-border-strong);
+    border-radius: 29px;
     background: var(--color-bg-float);
-    box-shadow: var(--color-shadow-2);
+    box-shadow: var(--optic-shadow-block-lg);
   }
 
   .signature {

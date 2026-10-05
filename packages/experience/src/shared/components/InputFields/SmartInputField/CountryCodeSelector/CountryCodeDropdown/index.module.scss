@@ -73,9 +73,9 @@
 
 :global(body.desktop) {
   .dropdownContent {
-    border: _.border(var(--color-line-divider));
+    border: _.border(var(--optic-border-strong), 2);
     box-shadow: var(--color-shadow-2);
-    border-radius: _.unit(2);
+    border-radius: 16px;
   }
 
   .innerInputFiled {

@@ -16,9 +16,11 @@
   padding: _.unit(2) _.unit(4);
   max-width: 295px;
   font: var(--font-body-1);
-  color: var(--color-static-white);
+  color: var(--color-type-primary);
+  border: 2px solid var(--optic-border-strong);
   border-radius: var(--radius);
   background: var(--color-bg-toast);
+  box-shadow: var(--optic-shadow-block);
   text-align: center;
   word-break: break-word;
   pointer-events: auto;
@@ -30,17 +32,24 @@
 
 /* stylelint-disable selector-class-pattern */
 :global {
+  // OPTIC `toastIn`: rises 12px and settles from 98%; leaves upward, 8px.
   .ReactModal__Content[role='toast'] {
     opacity: 0%;
-    transition: opacity 0.3s ease-in-out;
+    transform: translateY(12px) scale(0.98);
+    transition:
+      opacity 0.45s var(--optic-ease-out),
+      transform 0.45s var(--optic-ease-out);
   }
 
   .ReactModal__Content--after-open[role='toast'] {
     opacity: 100%;
+    transform: none;
   }
 
   .ReactModal__Content--before-close[role='toast'] {
     opacity: 0%;
+    transform: translateY(-8px) scale(0.98);
+    transition-duration: 0.3s;
   }
 }
 /* stylelint-enable selector-class-pattern */
@@ -48,6 +57,5 @@
 :global(body.desktop) {
   .toast {
     padding: _.unit(3) _.unit(4);
-    box-shadow: var(--color-shadow-2);
   }
 }

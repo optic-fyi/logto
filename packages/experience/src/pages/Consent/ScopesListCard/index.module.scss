@@ -6,8 +6,8 @@
 }
 
 .cardWrapper {
-  border: _.border(var(--color-line-divider));
-  border-radius: 8px;
+  border: _.border(var(--optic-border-strong), 2);
+  border-radius: 16px;
   padding: _.unit(2) 0;
 }
 

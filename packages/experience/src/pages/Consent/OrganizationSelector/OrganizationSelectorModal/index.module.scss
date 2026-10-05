@@ -8,9 +8,9 @@
 }
 
 .dropdownModal {
-  border: _.border(var(--color-line-divider));
+  border: _.border(var(--optic-border-strong), 2);
   box-shadow: var(--color-shadow-2);
-  border-radius: _.unit(2);
+  border-radius: 16px;
   background: var(--color-bg-float);
   position: absolute;
   z-index: 50;

@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@cap.js/wasm": "0.0.7",
+    "@fontsource-variable/nunito": "^5.3.0",
     "@jest/types": "^29.5.0",
     "@logto/connector-kit": "workspace:^",
     "@logto/core-kit": "workspace:^",
