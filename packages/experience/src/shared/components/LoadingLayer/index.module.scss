@@ -1,25 +1,28 @@
 @use '@/shared/scss/underscore' as _;
 
+// `.spinner` from `optic-main/app/app.css`, scaled up from 14px/2px for a full-page loader.
 .loadingIcon {
-  color: var(--color-type-primary);
-  animation: rotating 1s linear infinite;
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--border-strong);
+  border-top-color: var(--amber);
+  animation: spin 0.9s linear infinite;
 }
 
+// The loader card: a `.toast`-style surface.
 .container {
-  width: 60px;
-  height: 60px;
-  border: 2px solid var(--optic-border-strong);
+  width: 64px;
+  height: 64px;
+  border: _.border(var(--border));
   border-radius: var(--radius);
   background-color: var(--color-bg-toast);
-  box-shadow: var(--optic-shadow-block);
+  box-shadow: var(--shadow-md);
   @include _.flex-column;
 }
 
-@keyframes rotating {
-  from {
-    transform: rotate(0deg);
-  }
-
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }

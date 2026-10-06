@@ -1,17 +1,17 @@
 @use '@/shared/scss/underscore' as _;
 
-/**
- * OPTIC link: extrabold, underlined on hover with a honey rule. Honey itself is too light to carry
- * text on cream (< 4.5:1), so the text uses `--color-type-link` (the deep honey shade).
- */
+// The site's link (`.auth-alt a` in `optic-main/app/app.css`): ink text, weight 600, underline at
+// 3px offset. The underline is amber (BUILD_PLAN "link text = ink with an amber underline").
 .link {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   display: inline-flex;
   justify-content: center;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
-  text-decoration-color: var(--optic-primary);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-underline-offset: 3px;
 
   > svg {
     margin-inline-end: _.unit(2);
@@ -19,30 +19,11 @@
 
   &.primary {
     font: var(--font-label-2);
-    color: var(--color-type-link);
-    text-decoration: none;
-
-    &:active {
-      text-decoration: underline;
-    }
+    font-weight: 600;
   }
 
   &.secondary {
-    color: var(--color-type-primary);
     font: inherit;
-    text-decoration: none;
-  }
-}
-
-:global(body.desktop) {
-  .link {
-    &.primary:hover {
-      text-decoration: underline;
-    }
-
-    &.secondary:hover,
-    &.secondary:active {
-      color: var(--color-type-link);
-    }
+    font-weight: 600;
   }
 }

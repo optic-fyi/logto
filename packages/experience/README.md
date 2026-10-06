@@ -4,18 +4,15 @@ The register and sign-in experience for end-users.
 
 ## OPTIC theme
 
-This fork renders the sign-in experience in the OPTIC design language ("soft brutalism on grid paper"), the same one as the OPTIC parent and kid dashboards (`@optic-fyi/ui` in the OPTIC monorepo).
+This fork renders the sign-in experience in the OPTIC design system, the one behind optic.fyi and the parent dashboard (`design/` and `optic-main/` in the OPTIC monorepo). It follows the rules in `design/README.md`: one source of truth, the marketing site's values are canonical, and each concept is defined once.
 
-- **Palette**: `src/shared/scss/_colors.scss`. The raw `--optic-*` tokens mirror `packages/ui/src/styles/theme.css`, and Logto's semantic `--color-*` variables point at them, so every existing component picks the palette up. Light and dark follow the existing `data-theme` switch. Honey is the brand color; sky is focus, mint is success, coral is destructive.
-- **Brand color is fixed.** The primary color configured in the Console sign-in experience is no longer applied to this app (honey is paired with deep ink, and an arbitrary color would break that contrast). Logos, favicon and custom CSS from the sign-in experience still work.
-- **Two values are not in the OPTIC palette**: `--optic-link` and `--optic-danger-text` are deeper shades of honey and coral, because the pastel originals are below 4.5:1 on cream and cannot carry text.
-- **Type**: Nunito Variable (`@fontsource-variable/nunito`), headings and controls extrabold, body medium. The system stack stays as the fallback for scripts Nunito does not cover.
-- **Surfaces**: 2px borders in the hue's deep shade, hard offset shadows (`--optic-shadow-block`, `-lg`), no blur or soft shadows, pages on 28px grid paper (`_.grid-paper` in `_underscore.scss`).
-- **Motion** matches the OPTIC site and dashboards, and honors `prefers-reduced-motion`:
-  - Buttons are keys: 4px ledge, lift 2px on hover, press flush (`shared/components/Button`).
-  - Page content fades up out of a blur, staggered (`_.fade-up-children`, keyframes in `normalized.scss`). Global keyframes are referenced through `--optic-keyframes-*` custom properties because CSS modules rename keyframes and PostCSS cannot parse `:global()` inside `animation`.
-  - Dialogs and dropdowns fade and zoom/slide in over 100ms; toasts rise in.
-  - `components/OpticLogo` is the animated OPTIC lockup from the OPTIC logo animation (eye opens, looks around, blinks, looks at you, the name comes out). It is the default header logo when no logo is configured for the tenant or application.
+- **Tokens are vendored, not rewritten.** `src/shared/styles/optic/tokens.css` and `brand.css` are verbatim copies of `design/src/tokens.css` and `design/src/brand.css`. To update the look, re-copy them. Logto's own `--color-*` variables in `src/shared/scss/_colors.scss` are only a mapping onto those tokens (no literal colors), and `html[data-theme]`, which Logto already sets, flips light and dark.
+- **White page, gold highlights.** `src/shared/styles/optic/app-theme.css` overrides a handful of tokens on top of the vendored ones: a white page and card in light mode, and the solid button in gold in both modes. It mirrors section 1 of the dashboard's `apps/parent-dashboard/src/styles/dashboard.css`, so signing in and using the dashboard read as one product. Keep the two in step.
+- **The primitives match the site.** Each component's SCSS restates the geometry of the matching primitive in `design/src/components.css` using only tokens: the pill button (padding 13px 24px, lifts 2px on hover), the input (1px hairline, `--radius-sm`, amber focus ring), the link (ink with an amber underline), the card (`.auth-card` in `optic-main/app/app.css`), toasts, dialogs and the checkbox.
+- **Type** is Inter Variable, bundled in `src/shared/assets/fonts/` (SIL OFL licence alongside). The system stack stays as the fallback for scripts Inter does not cover, since Logto is localized.
+- **Motion** is the site's: page content fades up out of a blur, one beat after the previous element (`fade-up-children` in `src/shared/scss/_underscore.scss`); dialogs rise in as `.modal--anim` does; buttons lift on hover. `prefers-reduced-motion` parks everything.
+- **Brand mark.** `src/components/Brand` renders the site header's eye mark and `Optic.fyi` name. The mark blinks every 8 seconds and the eye comes round to look at the cursor on hover, both from the vendored `brand.css`. It is the header logo whenever the tenant or application has not set one; a configured logo still wins.
+- **The brand color is fixed.** The primary color configured in the Console sign-in experience is no longer applied to this app: gold is paired with ink at a fixed contrast, and an arbitrary color would break it. Logos, favicon and custom CSS from the sign-in experience still work.
 - **Favicon**: `src/shared/assets/favicon.png`, `apple-touch-icon.png` and `src/favicon.ico` are the OPTIC mark. A favicon configured in the sign-in experience still takes precedence.
 
 ### Previewing without a Logto core

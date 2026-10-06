@@ -10,23 +10,25 @@
     transition-property: border;
     transition-timing-function: ease-in-out;
     transition-duration: 0.2s;
-    background: var(--optic-card);
-    border-radius: var(--radius);
+    // The site's `.field input`: 10px radius on `--surface-2`, 11px / 14px padding. The border and
+    // focus ring are drawn by `NotchedBorder` on top of this box.
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
     align-items: stretch;
 
     // fix in safari input field line-height issue
-    height: 44px;
+    height: 50px;
 
     input {
       transition: width 0.3s ease-in;
-      padding: 0 _.unit(5);
+      padding: 0 14px;
       flex: 1;
       background: inherit;
       caret-color: var(--color-brand-default);
       font: var(--font-body-1);
       color: var(--color-type-primary);
       outline: none;
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
 
       &::placeholder {
         color: var(--color-type-secondary);
@@ -125,18 +127,6 @@
 .errorMessage {
   margin-top: _.unit(1);
   margin-inline-start: _.unit(0.5);
-}
-
-
-:global(body.desktop) {
-  .container {
-    .inputField {
-      /* stylelint-disable-next-line no-descending-specificity */
-      input {
-        font: var(--font-body-2);
-      }
-    }
-  }
 }
 
 

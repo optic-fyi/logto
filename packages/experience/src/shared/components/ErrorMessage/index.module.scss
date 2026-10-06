@@ -1,8 +1,10 @@
 @use '@/shared/scss/underscore' as _;
 
+// `.form-msg.error` (`optic-main/app/app.css`): .88rem in `--error`.
 .error {
   font: var(--font-body-2);
-  color: var(--color-danger-default);
+  font-size: 0.88rem;
+  color: var(--error);
 
   ul {
     padding-inline-start: 1rem;

@@ -1,15 +1,10 @@
 @use '@/shared/scss/underscore' as _;
 
+// A floating menu is a `.card` surface: `--surface`, 1px `--border`, `--radius`, `--shadow-md`.
 .content {
-  box-shadow: var(--color-shadow-2);
+  box-shadow: var(--shadow-md);
   position: absolute;
-  border-radius: 16px;
-  @include _.slide-in;
-
-  &.onTop {
-    --optic-slide-from: 8px;
-    box-shadow: var(--color-shadow-2-reversed);
-  }
+  border-radius: var(--radius);
 
   &:focus {
     outline: none;
@@ -17,9 +12,9 @@
 }
 
 .dropdownContainer {
-  background: var(--color-bg-float-overlay);
-  border: 2px solid var(--optic-border-strong);
-  border-radius: 16px;
+  @include _.solid-surface;
+  border: _.border(var(--border));
+  border-radius: var(--radius);
 }
 
 .overlay {

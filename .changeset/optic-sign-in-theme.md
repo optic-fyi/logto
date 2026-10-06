@@ -2,10 +2,10 @@
 "@logto/experience": minor
 ---
 
-restyle the sign-in experience in the OPTIC design language
+restyle the sign-in experience in the OPTIC design system
 
-The sign-in experience now uses the OPTIC theme ("soft brutalism on grid paper") shared with the OPTIC parent and kid dashboards: honey/cream palette in light and dark, Nunito, 2px borders with hard offset shadows, and grid-paper pages. Motion follows the OPTIC kit (ledged buttons that lift on hover and press flush, staggered fade-up entrances, dialog and toast animations) and respects `prefers-reduced-motion`.
+The sign-in experience now looks and moves like optic.fyi and the OPTIC parent dashboard. The shared OPTIC design tokens are vendored and Logto's color variables map onto them, in light and dark. Pages are white with gold highlights, set in Inter, with the site's pill buttons, inputs, links, card, dialogs and toasts, its staggered fade-up entrance, and reduced-motion support.
 
-When no logo is configured, the header shows the animated OPTIC lockup, and the favicon defaults to the OPTIC mark. A logo or favicon configured in the sign-in experience still takes precedence.
+When no logo is configured, the header shows the Optic brand mark, which blinks and follows the cursor like the one on the site, and the favicon defaults to the OPTIC mark. A logo or favicon configured in the sign-in experience still takes precedence.
 
-The primary color configured in the Console sign-in experience is no longer applied to the sign-in experience: the brand color is fixed to the OPTIC honey.
+The primary color configured in the Console sign-in experience is no longer applied to the sign-in experience: the brand color is fixed to the OPTIC gold.

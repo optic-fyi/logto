@@ -39,15 +39,16 @@
   }
 
   .main {
-    width: 540px;
+    // The site auth card (`.auth-card` in optic-main/app/app.css): 1px hairline, `--radius-lg`,
+    // `--shadow-md`, padding clamp(24px, 4vw, 40px). 480px less that padding is Logto's 400px content.
+    width: 480px;
     min-height: 540px;
     position: relative;
-    padding: _.unit(6);
-    // OPTIC window: 2px strong border, rounded-2xl, hard 8px down-right offset.
-    border: 2px solid var(--optic-border-strong);
-    border-radius: 29px;
+    padding: clamp(24px, 4vw, 40px);
+    border: _.border(var(--border));
+    border-radius: var(--radius-lg);
     background: var(--color-bg-float);
-    box-shadow: var(--optic-shadow-block-lg);
+    box-shadow: var(--shadow-md);
   }
 
   .signature {

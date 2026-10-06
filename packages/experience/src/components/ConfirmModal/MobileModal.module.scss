@@ -1,5 +1,7 @@
 @use '@/shared/scss/underscore' as _;
 
+@include _.fade-up-keyframes;
+
 .overlay {
   z-index: 100;
 }
@@ -13,8 +15,7 @@
   margin: 0 auto;
   transform: translate(0, -50%);
   outline: none;
-  border-radius: 29px;
-  @include _.zoom-in;
+  border-radius: var(--radius-lg);
 
   &:focus-visible {
     outline: none;
@@ -22,11 +23,13 @@
 }
 
 .container {
-  padding: _.unit(5);
-  background: var(--color-bg-body-overlay);
-  border: 2px solid var(--optic-border-strong);
-  border-radius: 29px;
-  box-shadow: var(--optic-shadow-block);
+  @include _.solid-surface;
+  border: _.border(var(--border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  // `.modal--anim` (`optic-main/app/app.css`): the card fades up on open, the overlay fades in.
+  animation: fadeUp 0.45s var(--ease-out) backwards;
+  padding: clamp(24px, 4vw, 32px);
 
   &:focus-visible {
     outline: none;
@@ -59,7 +62,7 @@
 
   .container {
     padding: 0;
-    border-radius: 29px;
+    border-radius: var(--radius-lg);
     width: 100%;
     height: 100%;
     @include _.flex_column(stretch, center);

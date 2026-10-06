@@ -1,28 +1,27 @@
 @use '@/shared/scss/underscore' as _;
 
+// Each digit box is the site's `.field input`: 10px radius, 1px `--border-strong`, `--surface-2`,
+// and on focus an amber border plus a 2px amber outline at 1px offset.
 .passcode {
   @include _.flex-row;
   justify-content: space-between;
 
   input {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    border: _.border(var(--color-line-border), 2);
-    background: var(--optic-card);
+    width: 48px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    border: _.border(var(--border-strong));
+    background: var(--surface-2);
     text-align: center;
-    font: var(--font-label-1);
+    font: var(--font-body-1);
     color: var(--color-type-primary);
     caret-color: var(--color-brand-default);
-    transition:
-      border-color 0.1s,
-      box-shadow 0.1s;
+    transition: border-color 0.2s ease-in-out;
 
-    // OPTIC focus: sky border plus a 4px sky ring.
     &:focus {
-      border-color: var(--optic-ring);
-      outline: none;
-      box-shadow: 0 0 0 4px var(--optic-ring-soft);
+      border-color: var(--amber);
+      outline: 2px solid var(--amber);
+      outline-offset: 1px;
     }
 
     &::placeholder {
@@ -34,12 +33,4 @@
 .passcode + .errorMessage {
   margin-inline-start: _.unit(0.5);
   margin-top: _.unit(1);
-}
-
-:global(body.desktop) {
-  .passcode {
-    input {
-      font: var(--font-body-2);
-    }
-  }
 }

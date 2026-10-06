@@ -1,15 +1,28 @@
 @use './colors' as colors;
 @use './fonts' as fonts;
-@use './underscore' as _;
+
+// Inter Variable, bundled from the official rsms.me/inter release (license:
+// `shared/assets/fonts/Inter-LICENSE.txt`, SIL OFL 1.1). Declared exactly like
+// `design/src/base.css`; if the file ever goes missing `--font` falls back to "Segoe UI".
+/* stylelint-disable-next-line scss/at-rule-no-unknown */
+@font-face {
+  font-family: Inter;
+  src: url('../assets/fonts/Inter-Variable.woff2') format('woff2-variations');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
 
 body {
   @include colors.static;
+  @include colors.theme;
   @include fonts.fonts;
 
-  // OPTIC rounds everything: controls become pills, cards sit at 1.8x this value.
-  --radius: 22px;
+  // `--radius` is the design token's 14px (cards, dropdowns); inputs use `--radius-sm`,
+  // the auth card `--radius-lg`, controls `--radius-pill`.
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: auto;
+  text-rendering: optimizelegibility;
   margin: 0;
   padding: 0;
   word-break: break-word;
@@ -17,17 +30,25 @@ body {
   font: var(--font-body-2);
 }
 
-html[data-theme='light'] body {
-  @include colors.light;
+html[data-theme] {
+  background: var(--bg);
+
+  body {
+    background: var(--bg);
+  }
 }
 
-html[data-theme='dark'] body {
-  @include colors.dark;
-}
-
-// OPTIC pages sit on grid paper, on every platform.
-html[data-theme] body {
-  @include _.grid-paper;
+// Paper grain over the whole page, the same overlay as the site (`body::after` in
+// `optic-main/css/styles.css`); `--grain` comes from the vendored tokens.
+body::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain);
+  /* stylelint-disable-next-line string-quotes -- the data URL contains single quotes */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 * {
@@ -54,29 +75,15 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+// The one focus ring for the whole app (`design/src/base.css`).
 :focus-visible {
-  outline: 3px solid var(--optic-ring-soft);
-  outline-offset: 2px;
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--optic-primary);
-  color: var(--optic-primary-foreground);
-}
-
-// Entrance keyframes shared by every CSS module through `_.fade-up` and friends.
-@keyframes optic-fade-up {
-  from {
-    opacity: 0%;
-    transform: translateY(22px);
-    filter: blur(8px);
-  }
-
-  to {
-    opacity: 100%;
-    transform: none;
-    filter: blur(0);
-  }
+  background: var(--ink);
+  color: var(--cream);
 }
 
 // Same values as the OPTIC site and dashboards (`design/src/base.css`). `!important` is the point
@@ -92,19 +99,3 @@ input[type='number'] {
   }
 }
 /* stylelint-enable declaration-no-important, time-min-milliseconds */
-
-// Dialog and popover entrances (`tw-animate-css` in `@optic-fyi/ui`). They use the individual
-// `scale` / `translate` properties so they compose with the `transform` that centers a modal.
-@keyframes optic-zoom-in {
-  from {
-    opacity: 0%;
-    scale: 0.95;
-  }
-}
-
-@keyframes optic-slide-in {
-  from {
-    opacity: 0%;
-    translate: 0 var(--optic-slide-from, -8px);
-  }
-}

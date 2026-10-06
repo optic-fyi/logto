@@ -28,12 +28,24 @@
 
 @mixin title {
   font: var(--font-headline-1);
+  letter-spacing: var(--letter-spacing-heading);
   color: var(--color-type-primary);
 }
 
 @mixin title-desktop {
   font: var(--font-headline-2);
+  letter-spacing: var(--letter-spacing-heading);
   color: var(--color-type-primary);
+}
+
+/**
+ * `--surface` for layers that float over other content (dropdowns, modals, toasts). In dark mode
+ * the token is a 4.5% white tint, so on its own the content behind would show through; laying the
+ * tint over `--bg` keeps the exact same color but makes it opaque. In light mode it is a no-op.
+ */
+@mixin solid-surface {
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--surface), var(--surface));
 }
 
 @mixin full-page {
@@ -61,38 +73,46 @@
   text-overflow: ellipsis;
 }
 
-/**
- * OPTIC grid paper: 28px squares in `--optic-grid-line` over a flat color.
- * The one gradient the OPTIC design language allows.
- */
-@mixin grid-paper($base: var(--color-bg-body)) {
-  background-color: $base;
-  background-image:
-    linear-gradient(var(--optic-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--optic-grid-line) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-position: -1px -1px;
-}
-
 $fade-up-delays: (1: 0.05s, 2: 0.16s, 3: 0.27s, 4: 0.38s, 5: 0.5s);
 
 /**
- * OPTIC entrance motion (`.fade-up-1..5` in `@optic/ui`): fades up out of a blur, one beat after
- * the previous step. The keyframes are global (`optic-fade-up`, see `normalized.scss`).
+ * The site's `fadeUp` keyframes (`design/src/components.css`). Emitted at the stylesheet root so
+ * each CSS module that animates owns a copy: CSS modules rename keyframes per file, so a global
+ * one cannot be referenced from `animation`.
+ */
+@mixin fade-up-keyframes {
+  @at-root {
+    @keyframes fadeUp {
+      from {
+        opacity: 0%;
+        transform: translateY(22px);
+        filter: blur(8px);
+      }
+
+      to {
+        opacity: 100%;
+        transform: none;
+        filter: blur(0);
+      }
+    }
+  }
+}
+
+/**
+ * Site entrance motion (`.fade-up` / `.fade-up-1..5`): fades up out of a blur, one beat after the
+ * previous step. Needs `fade-up-keyframes` in the same file.
  *
  * `backwards` instead of `both`: the end state is the element's own, so no `filter` is left behind
  * to turn the element into a containing block for fixed-position descendants.
- *
- * Refers to the keyframes through a custom property: see `--optic-keyframes-fade-up`.
  */
 @mixin fade-up($step: 1) {
-  animation:
-    1s var(--optic-ease-out) map.get($fade-up-delays, $step) backwards
-    var(--optic-keyframes-fade-up);
+  animation: fadeUp 1s var(--ease-out) map.get($fade-up-delays, $step) backwards;
 }
 
 /** Staggers the direct children with `fade-up`, the sixth and later share the last step. */
 @mixin fade-up-children {
+  @include fade-up-keyframes;
+
   > * {
     @include fade-up(5);
   }
@@ -102,14 +122,4 @@ $fade-up-delays: (1: 0.05s, 2: 0.16s, 3: 0.27s, 4: 0.38s, 5: 0.5s);
       @include fade-up($step);
     }
   }
-}
-
-/** OPTIC dialog entrance (`fade-in-0 zoom-in-95 duration-100` in `@optic-fyi/ui`). */
-@mixin zoom-in {
-  animation: 0.1s ease var(--optic-keyframes-zoom-in);
-}
-
-/** OPTIC popover entrance: fades in sliding 8px out of the trigger (`slide-in-from-top-2`). */
-@mixin slide-in {
-  animation: 0.1s ease var(--optic-keyframes-slide-in);
 }

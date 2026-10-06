@@ -12,9 +12,10 @@
   height: 80px;
   margin-bottom: _.unit(4);
   border-radius: 50%;
-  border: 2px solid var(--optic-mint-deep);
-  background: var(--optic-mint);
-  color: var(--optic-mint-foreground);
+  // The shared `.badge-live` pairing: ok text on the ok surface with the ok hairline.
+  border: 1px solid var(--ok-border);
+  background: var(--ok-bg);
+  color: var(--ok);
   display: flex;
   align-items: center;
   justify-content: center;

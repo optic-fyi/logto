@@ -1,0 +1,24 @@
+/**
+ * The site's `.brand` (`optic-main/css/styles.css`): mark and name side by side, 11px apart,
+ * name at weight 650 / 1.14rem / -0.03em, mark 32px.
+ */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--text);
+  font-size: 1.14rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.65;
+
+  svg {
+    flex: none;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.dot {
+  color: var(--dim);
+}

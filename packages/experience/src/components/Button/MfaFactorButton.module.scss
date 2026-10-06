@@ -5,7 +5,8 @@
   padding-inline: _.unit(3) _.unit(4);
   height: unset;
   gap: _.unit(4);
-  border-radius: 20px;
+  border-radius: var(--radius);
+  border-color: var(--border);
 }
 
 .icon {

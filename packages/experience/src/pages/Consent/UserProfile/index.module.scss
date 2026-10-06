@@ -1,8 +1,8 @@
 @use '@/shared/scss/underscore' as _;
 
 .wrapper {
-  border: _.border(var(--optic-border-strong), 2);
-  border-radius: 16px;
+  border: _.border(var(--border));
+  border-radius: var(--radius);
   padding: _.unit(4);
   @include _.flex-row;
 }

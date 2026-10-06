@@ -1,36 +1,35 @@
 @use '@/shared/scss/underscore' as _;
 
 /**
- * OPTIC "key" button (`Button` in `@optic-fyi/ui`): a 2px border in the hue's deep shade, a pastel
- * fill with deep ink, and a hard 4px ledge underneath. It lifts 2px on hover (ledge 6px) and
- * presses flush on click (ledge 0).
- *
- * The ledge is a hard `box-shadow`, and the offsets are chosen so that its bottom edge never moves
- * (rest: 0 + 4, hover: -2 + 6, press: +4 + 0). That is what the split ledge in the OPTIC kit does
- * with a wrapper element, without needing one.
+ * The site's `.btn` (`design/src/components.css`): a pill, padding 13px 24px, .96rem / 550,
+ * lifting 2px on hover. `primary` is `.btn-primary` (solid ink, cream in dark), `secondary` is
+ * the default outline `.btn`, `danger` is `.btn-danger` (`optic-main/app/app.css`).
  */
 .button {
-  --ledge-color: var(--optic-border-strong);
-  --ledge-size: 4px;
-  --ring-shadow: 0 0 #0000;
-
   @include _.flex-row;
+  position: relative;
   justify-content: center;
-  align-items: center;
-  height: 44px;
-  padding: 0 _.unit(5);
-  border: 2px solid var(--ledge-color);
-  border-radius: var(--radius);
-  box-shadow: 0 var(--ledge-size) 0 0 var(--ledge-color), var(--ring-shadow);
+  padding: 13px 24px;
+  border: _.border(var(--border-strong));
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
   cursor: pointer;
-  font: var(--font-label-1);
+  font-family: var(--font);
+  font-size: 0.96rem;
+  font-weight: 550;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
   -webkit-appearance: none;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    transform 0.1s,
-    box-shadow 0.1s,
-    background-color 0.1s;
+    transform 0.3s var(--ease-out),
+    border-color 0.3s ease,
+    background 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
   user-select: none;
   overflow: hidden;
 
@@ -46,6 +45,11 @@
       inset-inline-start: 0;
       opacity: 0%;
       transition: opacity 0.2s ease;
+
+      > svg {
+        width: 18px;
+        height: 18px;
+      }
     }
 
     &.iconVisible {
@@ -58,22 +62,13 @@
     }
   }
 
-  &:focus-visible {
-    --ring-shadow: 0 0 0 4px var(--optic-ring-soft);
-    border-color: var(--optic-ring);
-    outline: none;
-  }
-
   &:not(:disabled):active {
-    --ledge-size: 0;
-    transform: translateY(4px);
+    transform: translateY(0);
   }
 
   &.disabled:not(.loading),
   &:disabled:not(.loading) {
-    --ledge-size: 0;
-    opacity: 60%;
-    transform: none;
+    opacity: 50%;
     cursor: not-allowed;
   }
 }
@@ -87,46 +82,36 @@
 }
 
 .primary {
-  --ledge-color: var(--optic-primary-deep);
-  background: var(--optic-primary);
-  color: var(--optic-primary-foreground);
-
-  &.loadingActive {
-    background-color: var(--optic-accent);
-    color: var(--optic-accent-foreground);
-  }
-}
-
-.secondary {
-  --ledge-color: var(--optic-border-strong);
-  background: var(--optic-card);
-  color: var(--optic-foreground);
+  background: var(--btn-solid-bg);
+  border-color: var(--btn-solid-bg);
+  color: var(--btn-solid-fg);
+  font-weight: 600;
 }
 
 .danger {
-  --ledge-color: var(--optic-destructive-deep);
-  background: var(--optic-destructive);
-  color: var(--optic-destructive-foreground);
-
-  &.loadingActive {
-    background-color: var(--optic-coral);
-  }
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--cream);
+  font-weight: 600;
 }
 
 :global(body.desktop) {
-  .button:not(:disabled):not(:active):hover {
-    --ledge-size: 6px;
+  .button:not(:disabled):hover {
     transform: translateY(-2px);
+    border-color: currentcolor;
   }
 
-  .secondary:not(:disabled):hover {
-    background: var(--optic-accent);
-    color: var(--optic-accent-foreground);
+  .primary:not(:disabled):hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--btn-solid-bg);
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  :global(body.desktop) .button:not(:disabled):not(:active):hover {
-    transform: none;
+  .danger:not(:disabled):hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--error);
+  }
+
+  .button:not(:disabled):active {
+    transform: translateY(0);
   }
 }

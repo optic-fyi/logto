@@ -1,16 +1,3 @@
-@use '@/shared/scss/colors' as colors;
-@use '@/shared/scss/underscore' as _;
-
-body {
-  &.light {
-    @include colors.light;
-  }
-
-  &.dark {
-    @include colors.dark;
-  }
-}
-
 /* Preview Settings */
 .preview {
   pointer-events: none;

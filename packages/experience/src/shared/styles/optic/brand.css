@@ -1,0 +1,38 @@
+/* Vendored verbatim from design/src/brand.css of the OPTIC monorepo; do not edit here.
+   Re-sync: copy the file over and keep this comment (see packages/experience/README.md). */
+/* =========================================================
+   @optic/ui — brand mark
+   Crescent eyeball + gold pupil, from the logo animation.
+   Lifted verbatim from optic-main/css/styles.css §22.
+   The crescent takes currentColor so it inverts with the band.
+   ========================================================= */
+.brand__mark .brand__pupil { fill: var(--amber); }
+
+/* Hovering the homepage link brings the eye round to look at you — the beat
+   the logo animation ends on, with the same numbers: the lid walks back to
+   the centre and the crescent closes into an even ring, the pupil riding
+   with it.
+
+   This is transitions rather than keyframes on purpose. It waits before it
+   reacts, so sweeping the cursor past the logo on the way to the nav does
+   nothing; and leaving mid-way eases back to the mark from wherever it had
+   got to, instead of snapping. */
+.brand__mark .bm-eye  { transform-box: view-box; transform-origin: 100px 100px; }
+.brand__mark .bm-gap,
+.brand__mark .bm-gaze { transition: transform .52s cubic-bezier(.3, .9, .35, 1) 0s; }
+
+.brand:hover .bm-gap  { transform: translate(-50.035px, 50.035px); transition-delay: .42s; }
+.brand:hover .bm-gaze { transform: translate(-53.553px, 53.553px); transition-delay: .42s; }
+
+/* The logo animation blinks once per 8s loop — every header/footer mark does
+   the same, as a barely-there squash of the whole svg. The transform lives on
+   the svg element itself so it never touches the inner hover-eye groups, and
+   the reduced-motion block in base.css parks it automatically. */
+@keyframes brand-blink {
+  0%, 32.9%, 36.4%, 100% { transform: scaleY(1); }
+  34.6% { transform: scaleY(.1); }
+}
+.brand__mark {
+  transform-box: fill-box; transform-origin: center;
+  animation: brand-blink 8s linear infinite;
+}

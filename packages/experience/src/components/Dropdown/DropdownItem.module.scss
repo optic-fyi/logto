@@ -2,7 +2,7 @@
 
 .item {
   padding: _.unit(2);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font: var(--font-body-2);
   cursor: pointer;
   display: flex;
@@ -11,16 +11,17 @@
   gap: _.unit(4);
   border: 1px solid transparent;
 
+  // `.row:hover`
   &:hover {
     background: var(--color-overlay-neutral-hover);
   }
 
   &.danger {
-    color: var(--color-overlay-danger-hover);
+    color: var(--error);
   }
 
   &:focus-visible {
-    border: solid 1px var(--optic-ring);
+    border-color: var(--amber);
     outline: none;
   }
 

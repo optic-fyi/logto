@@ -24,8 +24,7 @@
       transition: transform 0.2s ease-in-out;
 
       &:focus-visible {
-        border-radius: 8px;
-        outline: 3px solid var(--optic-ring-soft);
+        border-radius: var(--radius-sm);
       }
 
       &.up {

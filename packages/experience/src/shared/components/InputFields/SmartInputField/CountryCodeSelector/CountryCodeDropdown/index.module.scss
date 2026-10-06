@@ -19,7 +19,7 @@
 
 
 .dropdownContent {
-  background: var(--color-bg-float);
+  @include _.solid-surface;
   padding: _.unit(2) _.unit(3);
 }
 
@@ -73,9 +73,9 @@
 
 :global(body.desktop) {
   .dropdownContent {
-    border: _.border(var(--optic-border-strong), 2);
-    box-shadow: var(--color-shadow-2);
-    border-radius: 16px;
+    border: _.border(var(--border));
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius);
   }
 
   .innerInputFiled {

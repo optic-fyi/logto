@@ -27,7 +27,6 @@ const themeToFavicon = Object.freeze({
  * - apple-touch-icon: set apple touch icon
  * - body class: set preview body class
  * - body class: set platform body class
- * - body class: set theme body class
  * - custom css: set custom css style tag
  */
 
@@ -45,8 +44,7 @@ const AppMeta = () => {
       <body
         className={classNames(
           conditionalString(isPreview && styles.preview),
-          platform === 'mobile' ? 'mobile' : 'desktop',
-          conditionalString(styles[theme])
+          platform === 'mobile' ? 'mobile' : 'desktop'
         )}
       />
     </Helmet>

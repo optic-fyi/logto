@@ -1,17 +1,25 @@
 @use '@/shared/scss/underscore' as _;
 
+// The border and focus ring of the site's `.field input`: 1px `--border-strong`, and on focus an
+// amber border plus a 2px amber outline at 1px offset. They are drawn around the input box by
+// two fieldsets whose legends cut the notch for the floating label.
 .container {
   position: absolute;
-  inset: -0.4px -2px 0;
+  inset: 0;
   pointer-events: none;
 
   .border,
   .outline {
     text-align: start;
     position: absolute;
-    inset: -10px 0 -0.5px;
-    border: _.border(var(--color-line-border), 2);
-    border-radius: var(--radius);
+    // The fieldset border starts at the vertical middle of the legend, so the legend height
+    // (20px) is reserved above the input box.
+    inset: -10px 0 0;
+    // Reset the UA fieldset margin and padding: the notch position is set by the legend alone.
+    margin: 0;
+    padding: 0;
+    border: _.border(var(--border-strong));
+    border-radius: var(--radius-sm);
     pointer-events: none;
     display: block;
     transition-property: outline, border;
@@ -21,8 +29,8 @@
     legend {
       display: inline-block;
       visibility: hidden;
-      // To keep the label in the middle of the empty space
-      margin-inline-start: 1px;
+      // Starts where the label box starts: its left edge (10px) minus the 1px border
+      margin-inline-start: 9px;
       padding: 0;
       // fix to the label font height to keep space for the input container
       height: 20px;
@@ -39,21 +47,28 @@
     }
   }
 
+  // `outline: 2px solid var(--amber); outline-offset: 1px`, as a fieldset so it can carry the
+  // notch: 3px outside the border box, a 2px border, radius grown by the same 3px. The legend is
+  // shifted right by the 3px offset and the 1px border-width difference.
   .outline {
     display: none;
-    // OPTIC `ring-4`: a 4px sky ring hugging the 2px border.
-    inset: -14px -4px -4.5px;
-    border-radius: calc(var(--radius) + 4px);
-    border: 4px solid var(--optic-ring-soft);
+    inset: -12.5px -3px -3px;
+    border: _.border(var(--amber), 2);
+    border-radius: calc(var(--radius-sm) + 3px);
+
+    legend {
+      margin-inline-start: 11px;
+    }
   }
 
   .label {
     position: absolute;
-    inset-inline-start: _.unit(3.5);
+    // Aligns the inactive label text with the input text (14px padding) through its 4px padding
+    inset-inline-start: 10px;
     font: var(--font-body-1);
     color: var(--color-type-secondary);
     pointer-events: none;
-    top: 48%;
+    top: 50%;
     transform: translateY(-50%);
     transition: 0.2s ease-out;
     transition-property: position, font, top, color;
@@ -80,7 +95,7 @@
 
   &.focused {
     .border {
-      border-color: var(--optic-ring);
+      border-color: var(--amber);
     }
 
     .label {
@@ -95,11 +110,11 @@
 
 .container.danger {
   .border {
-    border-color: var(--optic-destructive-deep);
+    border-color: var(--error);
   }
 
   .outline {
-    border-color: var(--color-overlay-danger-focused);
+    border-color: var(--error);
   }
 
   &.active {
@@ -114,16 +129,6 @@
   .outline {
     legend {
       width: 0;
-    }
-  }
-}
-
-:global(body.desktop) {
-  .container {
-    &:not(.active) {
-      .label {
-        font: var(--font-body-2);
-      }
     }
   }
 }

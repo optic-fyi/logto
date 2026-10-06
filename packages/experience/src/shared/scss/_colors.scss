@@ -1,318 +1,91 @@
 /**
- * Color Theme: OPTIC "soft brutalism on grid paper".
+ * Color Theme: OPTIC.
  *
- * The raw `--optic-*` tokens mirror `@optic-fyi/ui` (`packages/ui/src/styles/theme.css` in the OPTIC
- * monorepo). Logto's semantic `--color-*` variables are then pointed at them, so every existing
- * component picks the OPTIC palette up without being touched.
+ * Logto's semantic `--color-*` variables are mapped onto the shared OPTIC design tokens
+ * (`src/shared/styles/optic/tokens.css`, vendored verbatim from `design/src/tokens.css`). Nothing
+ * here is a literal color: the tokens already flip between light and dark under
+ * `html[data-theme]`, which Logto sets, so one mapping serves both themes.
  *
- * Rules carried over from the OPTIC kit:
- * - Pastel fill + deep ink of the same hue, never white text on a pastel.
- * - Matte: no glows, blur or soft shadows. Depth is a hard offset (`--optic-shadow-*`).
- * - Honey = brand, sky = focus/info, mint = success, coral = destructive, lavender = playful extra.
- *
- * `--optic-link` and `--optic-danger-text` are the only values that are not in the OPTIC palette:
- * honey and coral are too light to carry text on cream (< 4.5:1), so these are the deeper shades.
+ * Mapping rules (see README "OPTIC theme"):
+ * - Ink/cream is the primary action (`--btn-solid-bg/fg`), amber is the accent (focus, spinner,
+ *   checkbox), as on optic.fyi. Links are ink with an amber underline.
+ * - Surfaces: `--bg` page, `--surface` cards, `--surface-2` inputs and hover fills.
+ * - Hover/pressed fills are `--surface-2` and `--border`, never a tint of the brand color.
+ * - Status colors come from `--error*`, `--ok*`, `--warn*`.
  */
 
-/* Foundation */
-
-/* Static */
 @mixin static {
-  --color-static-white: #fff;
-  --color-static-black: #000;
-  --color-static-dark-type-primary: #f7f8f8; // For loading icon use
-  --color-shadow-1: var(--optic-shadow-block);
-  --color-shadow-2: var(--optic-shadow-block);
-  --color-shadow-2-reversed: 0 -4px 0 0 var(--optic-border-strong);
-
-  /* Motion: same easing as the OPTIC site and dashboards (`design/src/tokens.css`). */
-  --optic-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /*
-   * Names of the global keyframes in `normalized.scss`. CSS modules rename every keyframe they
-   * see, and PostCSS cannot parse `:global(...)` inside an `animation` value, so modules refer to
-   * the global ones through these custom properties instead (see `fade-up` in `_underscore.scss`).
-   */
-  --optic-keyframes-fade-up: optic-fade-up;
-  --optic-keyframes-zoom-in: optic-zoom-in;
-  --optic-keyframes-slide-in: optic-slide-in;
+  --color-static-white: var(--cream);
+  --color-static-black: var(--night);
+  --color-shadow-1: var(--shadow-sm);
+  --color-shadow-2: var(--shadow-md);
+  --color-shadow-3: var(--shadow-lg);
 }
 
-@mixin light {
-  /* OPTIC palette */
-  --optic-background: #fff8ec;
-  --optic-foreground: #2f2a3a;
-  --optic-card: #fffdf7;
-  --optic-primary: #dfaa56;
-  --optic-primary-foreground: #3b2a12;
-  --optic-primary-deep: #c58e2b;
-  --optic-secondary: #cfe6f5;
-  --optic-secondary-foreground: #1e3a52;
-  --optic-muted: #f3ebdd;
-  --optic-muted-foreground: #6b6275;
-  --optic-accent: #fbebcf;
-  --optic-accent-foreground: #3b2a12;
-  --optic-destructive: #e98b88;
-  --optic-destructive-foreground: #4a1414;
-  --optic-destructive-deep: #c9615e;
-  --optic-border: #eadfcb;
-  --optic-input: #e3d6bf;
-  --optic-border-strong: #d9c7a6;
-  --optic-grid-line: #f1e4cc;
-  --optic-ring: #8ec5e8;
-  --optic-ring-soft: rgba(142, 197, 232, 30%);
-  --optic-sky: #8ec5e8;
-  --optic-sky-foreground: #16324a;
-  --optic-sky-deep: #5b97c2;
-  --optic-mint: #9ed3a8;
-  --optic-mint-foreground: #173d22;
-  --optic-mint-deep: #6baa78;
-  --optic-coral: #f2a2a0;
-  --optic-coral-foreground: #4a1414;
-  --optic-coral-deep: #d27471;
-  --optic-lavender: #c3b1e1;
-  --optic-lavender-foreground: #2e2150;
-  --optic-lavender-deep: #9a84c4;
-  --optic-link: #8f6419;
-  --optic-danger-text: #b5443f;
-  --optic-success-text: #2f7a3f;
-  --optic-shadow-block: 4px 4px 0 0 var(--optic-border-strong);
-  --optic-shadow-block-lg: 8px 8px 0 0 var(--optic-border-strong);
-
-  /* Color Platte */
-  --color-neutral-0: #0000;
-  --color-neutral-10: var(--optic-foreground);
-  --color-neutral-20: #4a4357;
-  --color-neutral-50: var(--optic-muted-foreground);
-  --color-neutral-80: var(--optic-border-strong);
-  --color-neutral-90: var(--optic-border);
-  --color-neutral-95: var(--optic-muted);
-  --color-neutral-99: var(--optic-card);
-  --color-neutral-100: var(--optic-card);
-
-  --color-neutral-variant-60: #b7aebf;
-  --color-neutral-variant-70: var(--optic-border-strong);
-  --color-neutral-variant-80: var(--optic-input);
-  --color-neutral-variant-90: var(--optic-border);
-
-  --color-danger-30: #8f2f30;
-  --color-danger-40: var(--optic-danger-text);
-  --color-danger-50: #a8393a;
-
-  --color-success-60: var(--optic-mint-deep);
-  --color-success-70: var(--optic-success-text);
-  --color-success-80: #3a8f4b;
-  --color-success-90: var(--optic-mint);
-
-  --color-brand-30: var(--optic-primary-deep);
-  --color-brand-40: var(--optic-primary);
-  --color-brand-50: var(--optic-primary);
-  --color-brand-60: var(--optic-accent);
-  --color-brand-70: var(--optic-accent);
-
-  --color-alert-60: var(--optic-link);
-  --color-alert-70: #7a5410;
-  --color-alert-90: var(--optic-accent);
-  --color-alert-99: var(--optic-accent);
+@mixin theme {
+  /* Color palette (only the steps components still read directly) */
+  --color-neutral-99: var(--surface);
+  --color-neutral-variant-60: var(--dim);
+  --color-neutral-variant-80: var(--border-strong);
+  --color-neutral-variant-90: var(--surface-2);
 
   /* Text & Icon */
-  --color-type-primary: var(--optic-foreground);
-  --color-type-secondary: var(--optic-muted-foreground);
-  --color-type-disable: rgba(47, 42, 58, 40%); // 40% --optic-foreground
-  --color-type-link: var(--optic-link);
+  --color-type-primary: var(--text);
+  --color-type-secondary: var(--muted);
+  --color-type-disable: var(--dim);
+  --color-type-link: var(--text);
 
   /* Line */
-  --color-line-divider: var(--optic-border);
-  --color-line-border: var(--optic-input);
-  --color-line-border-transparent: rgba(47, 42, 58, 25%); // 25% --optic-foreground
+  --color-line-divider: var(--border);
+  --color-line-border: var(--border-strong);
+  --color-line-border-transparent: var(--border-strong);
 
   /* Container */
-  --color-container-on-alert: var(--color-alert-70);
-  --color-container-alert: var(--color-alert-99);
+  --color-container-on-alert: var(--warn);
+  --color-container-alert: var(--warn-bg);
 
   /* Background */
-  --color-bg-body-base: var(--optic-background);
-  --color-bg-body: var(--optic-background);
-  --color-bg-layer-1: var(--optic-card);
-  --color-bg-layer-2: var(--optic-muted);
-  --color-bg-body-overlay: var(--optic-card);
-  --color-bg-float-base: var(--optic-background);
-  --color-bg-float: var(--optic-card);
-  --color-bg-float-overlay: var(--optic-card);
-  --color-bg-mask: rgba(47, 42, 58, 35%); // 35% --optic-foreground
-  --color-bg-toast: var(--optic-card);
-  --color-bg-state-unselected: var(--optic-border);
-  --color-bg-state-disabled: rgba(107, 98, 117, 14%); // 14% --optic-muted-foreground
-  --color-bg-light: var(--optic-muted);
+  --color-bg-body-base: var(--bg);
+  --color-bg-body: var(--bg);
+  --color-bg-layer-1: var(--surface);
+  --color-bg-layer-2: var(--surface-2);
+  --color-bg-body-overlay: var(--surface);
+  --color-bg-float-base: var(--bg);
+  --color-bg-float: var(--surface);
+  --color-bg-float-overlay: var(--surface);
+  --color-bg-mask: color-mix(in srgb, var(--night) 50%, transparent); // `.modal-overlay`
+  --color-bg-toast: var(--surface);
+  --color-bg-state-unselected: var(--border);
+  --color-bg-state-disabled: var(--surface-2);
+  --color-bg-light: var(--surface-2);
+  --color-surface: var(--surface);
+  --color-surface-1: var(--surface-2);
 
-  /* Brand */
-  --color-brand-default: var(--optic-primary);
-  --color-brand-hover: var(--optic-primary);
-  --color-brand-pressed: var(--optic-primary-deep);
-  --color-brand-loading: var(--optic-accent);
+  /* Brand: solid ink on paper, solid cream on night (`.btn-primary`) */
+  --color-brand-default: var(--btn-solid-bg);
+  --color-brand-hover: var(--btn-solid-bg);
+  --color-brand-pressed: var(--btn-solid-bg);
+  --color-brand-loading: var(--amber);
 
-  /* Danger */
-  --color-danger-default: var(--optic-danger-text);
-  --color-danger-hover: var(--color-danger-50);
-  --color-danger-pressed: var(--color-danger-30);
+  /* Danger (`.btn-danger`, `.form-msg.error`) */
+  --color-danger-default: var(--error);
+  --color-danger-hover: var(--error);
+  --color-danger-pressed: var(--error);
 
-  /* Success */
-  --color-success-default: var(--optic-success-text);
-  --color-success-hover: var(--color-success-80);
-  --color-success-pressed: var(--color-success-60);
-  --color-success-disable: var(--color-success-90);
+  /* Success (`.form-msg.ok`) */
+  --color-success-default: var(--ok);
+  --color-success-hover: var(--ok);
+  --color-success-pressed: var(--ok);
+  --color-success-disable: var(--ok-border);
 
-  /* Overlay */
-  --color-overlay-neutral-hover: rgba(223, 170, 86, 20%); // 20% --optic-primary
-  --color-overlay-neutral-pressed: rgba(223, 170, 86, 32%); // 32% --optic-primary
-  --color-overlay-neutral-focused: var(--optic-ring-soft);
-  --color-overlay-danger-hover: rgba(233, 139, 136, 20%); // 20% --optic-destructive
-  --color-overlay-danger-pressed: rgba(233, 139, 136, 32%); // 32% --optic-destructive
-  --color-overlay-danger-focused: rgba(233, 139, 136, 40%); // 40% --optic-destructive
-  --color-overlay-brand-hover: rgba(223, 170, 86, 20%); // 20% --optic-primary
-  --color-overlay-brand-pressed: rgba(223, 170, 86, 32%); // 32% --optic-primary
-  --color-overlay-brand-focused: var(--optic-ring-soft);
-
-  --color-surface: var(--color-neutral-99);
-}
-
-@mixin dark {
-  /* OPTIC palette */
-  --optic-background: #1e1b26;
-  --optic-foreground: #f4eee2;
-  --optic-card: #28242f;
-  --optic-primary: #c58e2b;
-  --optic-primary-foreground: #1e1b26;
-  --optic-primary-deep: #8f6419;
-  --optic-secondary: #2c3a4a;
-  --optic-secondary-foreground: #cfe6f5;
-  --optic-muted: #332e3b;
-  --optic-muted-foreground: #b7aebf;
-  --optic-accent: #3a3024;
-  --optic-accent-foreground: #f7ddb0;
-  --optic-destructive: #d97b78;
-  --optic-destructive-foreground: #2a0e0e;
-  --optic-destructive-deep: #a5504d;
-  --optic-border: #3d3746;
-  --optic-input: #463f50;
-  --optic-border-strong: #14121a;
-  --optic-grid-line: #2a2633;
-  --optic-ring: #5e9ccb;
-  --optic-ring-soft: rgba(94, 156, 203, 30%);
-  --optic-sky: #5e9ccb;
-  --optic-sky-foreground: #0f2233;
-  --optic-sky-deep: #3f7299;
-  --optic-mint: #6fb07f;
-  --optic-mint-foreground: #0f2616;
-  --optic-mint-deep: #4c8558;
-  --optic-coral: #d97b78;
-  --optic-coral-foreground: #2a0e0e;
-  --optic-coral-deep: #a5504d;
-  --optic-lavender: #9a86c6;
-  --optic-lavender-foreground: #1c1433;
-  --optic-lavender-deep: #735fa0;
-  --optic-link: #f7ddb0;
-  --optic-danger-text: #d97b78;
-  --optic-success-text: #6fb07f;
-  --optic-shadow-block: 4px 4px 0 0 var(--optic-border-strong);
-  --optic-shadow-block-lg: 8px 8px 0 0 var(--optic-border-strong);
-
-  /* Color Platte */
-  --color-neutral-0: #fff;
-  --color-neutral-10: var(--optic-foreground);
-  --color-neutral-20: #e6dfd2;
-  --color-neutral-50: var(--optic-muted-foreground);
-  --color-neutral-80: var(--optic-input);
-  --color-neutral-90: var(--optic-border);
-  --color-neutral-95: var(--optic-muted);
-  --color-neutral-99: var(--optic-card);
-  --color-neutral-100: var(--optic-background);
-
-  --color-neutral-variant-60: #8d8596;
-  --color-neutral-variant-70: var(--optic-input);
-  --color-neutral-variant-80: var(--optic-border);
-  --color-neutral-variant-90: var(--optic-muted);
-
-  --color-danger-30: #a5504d;
-  --color-danger-40: var(--optic-danger-text);
-  --color-danger-50: #e98b88;
-  --color-danger-60: #e98b88;
-  --color-danger-70: var(--optic-danger-text);
-  --color-danger-80: #a5504d;
-
-  --color-success-60: var(--optic-mint-deep);
-  --color-success-70: var(--optic-success-text);
-  --color-success-80: #8cc79b;
-  --color-success-90: var(--optic-mint-deep);
-
-  --color-brand-30: var(--optic-primary-deep);
-  --color-brand-40: var(--optic-primary);
-  --color-brand-50: var(--optic-primary);
-  --color-brand-60: var(--optic-accent);
-  --color-brand-70: var(--optic-primary);
-
-  --color-alert-60: var(--optic-accent-foreground);
-  --color-alert-70: var(--optic-accent-foreground);
-  --color-alert-90: var(--optic-accent);
-  --color-alert-99: var(--optic-accent);
-
-  /* Text & Icon */
-  --color-type-primary: var(--optic-foreground);
-  --color-type-secondary: var(--optic-muted-foreground);
-  --color-type-disable: rgba(244, 238, 226, 38%); // 38% --optic-foreground
-  --color-type-link: var(--optic-link);
-
-  /* Line */
-  --color-line-divider: var(--optic-border);
-  --color-line-border: var(--optic-input);
-  --color-line-border-transparent: rgba(244, 238, 226, 20%); // 20% --optic-foreground
-
-  /* Container */
-  --color-container-on-alert: var(--optic-primary-deep);
-  --color-container-alert: var(--optic-accent-foreground);
-
-  /* Background */
-  --color-bg-body-base: var(--optic-background);
-  --color-bg-body: var(--optic-background);
-  --color-bg-body-overlay: var(--optic-card);
-  --color-bg-layer-1: var(--optic-card);
-  --color-bg-layer-2: var(--optic-muted);
-  --color-bg-float-base: var(--optic-background);
-  --color-bg-float: var(--optic-card);
-  --color-bg-float-overlay: var(--optic-card);
-  --color-bg-mask: rgba(10, 8, 14, 60%);
-  --color-bg-toast: var(--optic-card);
-  --color-bg-state-unselected: var(--optic-border);
-  --color-bg-state-disabled: rgba(183, 174, 191, 14%); // 14% --optic-muted-foreground
-  --color-bg-light: var(--optic-muted);
-
-  /* Brand */
-  --color-brand-default: var(--optic-primary);
-  --color-brand-hover: var(--optic-primary);
-  --color-brand-pressed: var(--optic-primary-deep);
-  --color-brand-loading: var(--optic-accent);
-
-  /* Danger */
-  --color-danger-default: var(--optic-danger-text);
-  --color-danger-hover: var(--color-danger-60);
-  --color-danger-pressed: var(--color-danger-80);
-
-  /* Success */
-  --color-success-default: var(--optic-success-text);
-  --color-success-hover: var(--color-success-80);
-  --color-success-pressed: var(--color-success-60);
-  --color-success-disable: var(--color-success-90);
-
-  /* Overlay */
-  --color-overlay-neutral-hover: rgba(197, 142, 43, 22%); // 22% --optic-primary
-  --color-overlay-neutral-pressed: rgba(197, 142, 43, 34%); // 34% --optic-primary
-  --color-overlay-neutral-focused: var(--optic-ring-soft);
-  --color-overlay-danger-hover: rgba(217, 123, 120, 20%); // 20% --optic-destructive
-  --color-overlay-danger-pressed: rgba(217, 123, 120, 32%); // 32% --optic-destructive
-  --color-overlay-danger-focused: rgba(217, 123, 120, 40%); // 40% --optic-destructive
-  --color-overlay-brand-hover: rgba(197, 142, 43, 22%); // 22% --optic-primary
-  --color-overlay-brand-pressed: rgba(197, 142, 43, 34%); // 34% --optic-primary
-  --color-overlay-brand-focused: var(--optic-ring-soft);
-
-  --color-surface: var(--color-neutral-99);
+  /* Overlay: hover/pressed fills (`.row:hover`, `.btn-ghost:hover`) */
+  --color-overlay-neutral-hover: var(--surface-2);
+  --color-overlay-neutral-pressed: var(--border);
+  --color-overlay-neutral-focused: var(--amber);
+  --color-overlay-danger-hover: var(--error-bg);
+  --color-overlay-danger-pressed: var(--error-border);
+  --color-overlay-danger-focused: var(--error);
+  --color-overlay-brand-hover: var(--surface-2);
+  --color-overlay-brand-pressed: var(--border);
+  --color-overlay-brand-focused: var(--amber);
 }

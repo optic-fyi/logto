@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import type {
   DetailedHTMLProps,
   HTMLAttributes,
@@ -52,7 +51,7 @@ const Dropdown = ({
 }: Props) => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const { position, positionState, mutate } = usePosition({
+  const { position, mutate } = usePosition({
     verticalAlign: 'bottom',
     horizontalAlign,
     offset: { vertical: 4, horizontal: 0 },
@@ -81,7 +80,7 @@ const Dropdown = ({
         },
       }}
       shouldFocusAfterRender={false}
-      className={classNames(styles.content, positionState.verticalAlign === 'top' && styles.onTop)}
+      className={styles.content}
       overlayClassName={styles.overlay}
       overlayElement={noOverlay && ((_, contentElement) => contentElement)}
       onRequestClose={(event) => {

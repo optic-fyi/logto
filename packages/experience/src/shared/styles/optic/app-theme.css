@@ -1,0 +1,28 @@
+/* App theme for the sign-in experience: a white page with gold highlights.
+   Mirrors section 1 of `apps/parent-dashboard/src/styles/dashboard.css` in the OPTIC
+   monorepo, so signing in and using the dashboard look like one product. It is a token
+   override on top of the vendored `tokens.css`, not a restyle: no component is touched
+   and nothing here is hard-coded outside this token block. Dark keeps the design
+   system's own dark tokens.
+
+   Load order matters: this file comes after `tokens.css` and wins on equal specificity. */
+
+/* Light: the beige paper becomes white, surfaces stay a hair warmer. Logto sets
+   `html[data-theme]`, so the explicit light selector is the one that applies. */
+[data-theme="light"] {
+  --bg: #fff;
+  --bg-soft: #faf8f4;
+  --surface: #fff;
+  --surface-2: #faf8f4;
+  --border: rgba(20, 18, 15, 0.09);
+  --border-strong: rgba(20, 18, 15, 0.2);
+  --shadow-sm: 0 1px 2px rgba(20, 18, 15, 0.05);
+  --shadow-md: 0 10px 30px rgba(20, 18, 15, 0.07);
+  --grain: 0;
+}
+
+/* Gold is the highlight in both schemes: the solid button and anything that follows it. */
+:root {
+  --btn-solid-bg: var(--amber);
+  --btn-solid-fg: var(--ink);
+}

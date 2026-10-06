@@ -4,8 +4,8 @@
   font: var(--font-label-1);
   color: var(--color-type-primary);
   border: _.border('transparent');
-  border-top-left-radius: var(--radius);
-  border-bottom-left-radius: var(--radius);
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
   background: none;
   position: relative;
   height: 100%;
@@ -23,7 +23,7 @@
   }
 
   &:focus-visible {
-    border-color: var(--optic-ring);
+    border-color: var(--amber);
   }
 
   > svg {
