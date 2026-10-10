@@ -63,6 +63,7 @@ import VerificationCode from './pages/VerificationCode';
 import { UserMfaFlow } from './types';
 import 'overlayscrollbars/overlayscrollbars.css';
 import './shared/scss/normalized.scss';
+import './shared/scss/optic-ui.css';
 import './scss/overlayscrollbars.scss';
 
 handleSearchParametersData();

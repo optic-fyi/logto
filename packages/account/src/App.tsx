@@ -71,6 +71,7 @@ import { accountCenterBasePath, handleAccountCenterRoute } from './utils/account
 import { getAccountTabSettings } from './utils/account-tabs';
 import '@experience/shared/scss/normalized.scss';
 import './scss/normalized.scss';
+import './scss/optic-ui.css';
 
 handleAccountCenterRoute();
 void initI18n();

@@ -67,7 +67,8 @@
   flex-shrink: 0;
   padding: _.unit(0.5) _.unit(2);
   border-radius: 14px;
-  background: rgba(78, 162, 84, 12%);
+  border: 2px solid var(--mint-deep);
+  background: color-mix(in srgb, var(--mint) 30%, transparent);
   font: var(--font-label-3);
   color: var(--color-type-primary);
   white-space: nowrap;

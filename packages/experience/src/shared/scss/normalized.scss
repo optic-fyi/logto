@@ -5,7 +5,7 @@ body {
   @include colors.static;
   @include fonts.fonts;
 
-  --radius: 8px;
+  --radius: 16px; // the kit's `--radius: 1rem`
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: auto;
   margin: 0;
@@ -25,6 +25,17 @@ html[data-theme='dark'] body {
 
 html[data-theme] body:not(.desktop) {
   background: var(--color-bg-body);
+}
+
+// Desktop: the card floats on grid paper, the same two-gradient pattern as the kit's `bg-grid`
+// (28px squares in `--color-neutral-variant-90`, which is the kit's `--grid-line`).
+html[data-theme] body.desktop {
+  background-color: var(--color-bg-body-base);
+  background-image:
+    linear-gradient(var(--color-neutral-variant-90) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-neutral-variant-90) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
 }
 
 * {
@@ -52,5 +63,13 @@ input[type='number'] {
 }
 
 :focus-visible {
-  outline: solid 1px var(--color-brand-default);
+  // Sky focus ring in the kit's `--ring` hue, drawn as an outline so it works on every element.
+  outline: solid 3px var(--color-overlay-brand-focused);
+  outline-offset: 2px;
+}
+
+// `tabindex="-1"` marks an element that is focused by script (a `react-modal` dialog, say) and is
+// never reachable by keyboard, so a ring on it tells the user nothing. Real controls keep theirs.
+[tabindex='-1']:focus-visible {
+  outline: none;
 }

@@ -1,84 +1,100 @@
-/* Color Theme */
-/* Foundation */
+/*
+ * Color theme: the Optic palette ("soft brutalism on grid paper").
+ *
+ * Source of truth for the values is `packages/optic-ui/src/styles/theme.css` (synced from the
+ * optic-fyi monorepo's packages/ui). Logto's token NAMES are kept so no stylesheet has to change;
+ * only their values are Optic's. They are hex literals because these mixins are applied on `body`
+ * via `html[data-theme]`, while the kit's variables live on `:root` / `.dark`.
+ *
+ * Roles, verified against WCAG AA (4.5:1) on the card surface:
+ * - `--color-brand-default`, `--color-type-link`, `--color-danger-default` are used as TEXT, border
+ *   and outline colour, so they hold the kit's dark `*-foreground` ink (light) or the lifted hue
+ *   (dark), never the pastel fill, which fails contrast as text.
+ * - Filled controls take their pastel fill from the kit components (`optic-ui/button`).
+ * - No gradients, no blur, no soft shadows: surfaces are flat and shadows are hard offsets.
+ */
 
 /* Static */
 @mixin static {
   --color-static-white: #fff;
   --color-static-black: #000;
-  --color-static-dark-type-primary: #f7f8f8; // For loading icon use
-  --color-shadow-1: 0 4px 8px rgba(0, 0, 0, 8%);
-  --color-shadow-2: 0 4px 8px rgba(0, 0, 0, 2%);
-  --color-shadow-2-reversed: 0 -4px 8px rgba(0, 0, 0, 2%);
+  --color-static-dark-type-primary: #f4eee2; // For loading icon use
+  --color-shadow-1: 4px 4px 0 0 var(--color-line-border);
+  --color-shadow-2: 4px 4px 0 0 var(--color-line-border);
+  --color-shadow-2-reversed: 4px -4px 0 0 var(--color-line-border);
 }
 
 @mixin light {
-  /* Color Platte */
+  /* Color palette: neutral ramp, warm-tinted like the kit's cream/ink */
   --color-neutral-0: #0000;
-  --color-neutral-10: #191c1d;
-  --color-neutral-20: #2d3132;
-  --color-neutral-50: #747778;
-  --color-neutral-80: #c4c7c7;
-  --color-neutral-90: #e0e3e3;
-  --color-neutral-95: #eff1f1;
-  --color-neutral-100: #fff;
+  --color-neutral-10: #2f2a3a; // foreground
+  --color-neutral-20: #3b3347;
+  --color-neutral-50: #6b6275; // muted-foreground
+  --color-neutral-80: #d9c7a6; // border-strong
+  --color-neutral-90: #eadfcb; // border
+  --color-neutral-95: #f3ebdd; // muted
+  --color-neutral-99: #fffdf7; // card
+  --color-neutral-100: #fffdf7; // card
 
-  --color-neutral-variant-60: #928f9a;
-  --color-neutral-variant-70: #adaab4;
-  --color-neutral-variant-80: #c9c5d0;
-  --color-neutral-variant-90: #e5e1ec;
+  --color-neutral-variant-60: #8a8195;
+  --color-neutral-variant-70: #b7aebf;
+  --color-neutral-variant-80: #e3d6bf; // input
+  --color-neutral-variant-90: #f1e4cc; // grid-line
 
-  --color-danger-30: #930006;
-  --color-danger-40: #ba1b1b;
-  --color-danger-50: #dd3730;
+  /* Danger: ramp from the kit's coral. 30/40 are ink-safe on card, 50 is the pastel fill */
+  --color-danger-30: #2a0e0e;
+  --color-danger-40: #4a1414; // coral-foreground, 14.7:1 on card
+  --color-danger-50: #c9615e; // destructive-deep
 
-  --color-success-60: #4ea254;
-  --color-success-70: #68be6c;
-  --color-success-80: #83da85;
-  --color-success-90: #9fe79f;
+  /* Success: ramp from the kit's mint */
+  --color-success-60: #6baa78; // mint-deep
+  --color-success-70: #9ed3a8; // mint
+  --color-success-80: #b6dfbe;
+  --color-success-90: #d3ecd8;
 
-  --color-brand-30: #4300da;
-  --color-brand-40: #5d34f2;
-  --color-brand-50: #7958ff;
-  --color-brand-60: #9b80f9;
-  --color-brand-70: #af9eff;
+  /* Brand: ramp from the kit's honey */
+  --color-brand-30: #3b2a12; // primary-foreground
+  --color-brand-40: #3b2a12; // primary-foreground, 13.5:1 on card
+  --color-brand-50: #c58e2b; // primary-deep
+  --color-brand-60: #dfaa56; // primary
+  --color-brand-70: #e8c07e;
 
-  --color-alert-60: #ca8000;
-  --color-alert-70: #eb9918;
-  --color-alert-90: #ffddb5;
-  --color-alert-99: #fff5eb;
+  --color-alert-60: #8f6419;
+  --color-alert-70: #c58e2b;
+  --color-alert-90: #f5dcae;
+  --color-alert-99: #fbebcf; // accent
 
   /* Text & Icon */
   --color-type-primary: var(--color-neutral-10);
   --color-type-secondary: var(--color-neutral-50);
-  --color-type-disable: rgba(25, 28, 29, 35%); // 35% --color-neutral-10
+  --color-type-disable: rgba(47, 42, 58, 45%); // 45% --color-neutral-10
   --color-type-link: var(--color-brand-default);
 
   /* Line */
-  --color-line-divider: rgba(25, 28, 29, 12%); // 12% --color-neutral-10
-  --color-line-border: var(--color-neutral-80);
-  --color-line-border-transparent: rgba(25, 28, 29, 25%); // 25% --color-neutral-10
+  --color-line-divider: #eadfcb; // border
+  --color-line-border: #d9c7a6; // border-strong
+  --color-line-border-transparent: rgba(47, 42, 58, 25%); // 25% --color-neutral-10
 
   /* Container */
-  --color-container-on-alert: var(--color-alert-70);
+  --color-container-on-alert: var(--color-alert-60);
   --color-container-alert: var(--color-alert-99);
 
-  /* Background */
-  --color-bg-body-base: var(--color-neutral-95);
-  --color-bg-body: var(--color-neutral-100);
-  --color-bg-layer-1: var(--color-static-white);
-  --color-bg-layer-2: var(--color-neutral-95);
-  --color-bg-body-overlay: var(--color-neutral-100);
-  --color-bg-float-base: var(--color-neutral-variant-90);
-  --color-bg-float: var(--color-neutral-100);
-  --color-bg-float-overlay: var(--color-neutral-100);
-  --color-bg-mask: rgba(0, 0, 0, 40%); // 4% --color-neutral-0
-  --color-bg-toast: var(--color-neutral-20);
-  --color-bg-state-unselected: var(--color-neutral-90);
-  --color-bg-state-disabled: rgba(25, 28, 29, 8%); // 8% --color-neutral-10
-  --color-bg-light: var(--color-neutral-95);
+  /* Background: grid-paper page, card surfaces */
+  --color-bg-body-base: #fff8ec; // background
+  --color-bg-body: #fffdf7; // card
+  --color-bg-layer-1: #fffdf7; // card
+  --color-bg-layer-2: #f3ebdd; // muted
+  --color-bg-body-overlay: #fffdf7;
+  --color-bg-float-base: #fff8ec; // background
+  --color-bg-float: #fffdf7; // card
+  --color-bg-float-overlay: #fffdf7;
+  --color-bg-mask: rgba(47, 42, 58, 45%);
+  --color-bg-toast: #2f2a3a;
+  --color-bg-state-unselected: #eadfcb;
+  --color-bg-state-disabled: rgba(47, 42, 58, 8%); // 8% --color-neutral-10
+  --color-bg-light: #f3ebdd;
 
   /* Brand */
-  // Note: System brand color. May be overwritten dynamically by js
   --color-brand-default: var(--color-brand-40);
   --color-brand-hover: var(--color-brand-50);
   --color-brand-pressed: var(--color-brand-30);
@@ -96,118 +112,107 @@
   --color-success-disable: var(--color-success-90);
 
   /* Overlay */
-  --color-overlay-neutral-hover: rgba(25, 28, 29, 8%); // 8% --color-neutral-10
-  --color-overlay-neutral-pressed: rgba(25, 28, 29, 12%); // 12% --color-neutral-10
-  --color-overlay-neutral-focused: rgba(25, 28, 29, 16%); // 16% --color-neutral-10
-  --color-overlay-danger-hover: rgba(186, 27, 27, 8%); // 8% --color-danger-40
-  --color-overlay-danger-pressed: rgba(186, 27, 27, 12%); // 12% --color-danger-40
-  --color-overlay-danger-focused: rgba(186, 27, 27, 16%); // 16% --color-danger-40
-  // Note: System brand color. May be overwritten dynamically by js
-  --color-overlay-brand-hover: rgba(93, 52, 242, 8%); // 8% --color-brand-default
-  --color-overlay-brand-pressed: rgba(93, 52, 242, 12%); // 12% --color-brand-default
-  --color-overlay-brand-focused: rgba(93, 52, 242, 16%); // 16% --color-brand-default
+  --color-overlay-neutral-hover: rgba(47, 42, 58, 8%); // 8% --color-neutral-10
+  --color-overlay-neutral-pressed: rgba(47, 42, 58, 12%); // 12% --color-neutral-10
+  --color-overlay-neutral-focused: rgba(142, 197, 232, 40%); // kit ring (sky)
+  --color-overlay-danger-hover: rgba(74, 20, 20, 8%); // 8% --color-danger-40
+  --color-overlay-danger-pressed: rgba(74, 20, 20, 12%); // 12% --color-danger-40
+  --color-overlay-danger-focused: rgba(233, 139, 136, 40%); // kit destructive, like `aria-invalid:ring`
+  --color-overlay-brand-hover: rgba(223, 170, 86, 20%); // 20% honey
+  --color-overlay-brand-pressed: rgba(223, 170, 86, 30%); // 30% honey
+  --color-overlay-brand-focused: rgba(142, 197, 232, 40%); // kit ring (sky)
 
   --color-surface: var(--color-neutral-99);
 }
 
 @mixin dark {
-  /* Color Platte */
+  /* Color palette: the kit's dark ramp */
   --color-neutral-0: #fff;
-  --color-neutral-10: #f7f8f8;
-  --color-neutral-20: #eff1f1;
-  --color-neutral-50: #a9acac;
-  --color-neutral-80: #5c5f60;
-  --color-neutral-90: #444748;
-  --color-neutral-95: #2d3132;
-  --color-neutral-99: #191c1d;
-  --color-neutral-100: #000;
+  --color-neutral-10: #f4eee2; // foreground
+  --color-neutral-20: #ebe4d6;
+  --color-neutral-50: #b7aebf; // muted-foreground
+  --color-neutral-80: #14121a; // border-strong
+  --color-neutral-90: #3d3746; // border
+  --color-neutral-95: #332e3b; // muted
+  --color-neutral-99: #28242f; // card
+  --color-neutral-100: #1e1b26; // background
 
   --color-neutral-variant-60: #928f9a;
   --color-neutral-variant-70: #78767f;
-  --color-neutral-variant-80: #5f5d67;
-  --color-neutral-variant-90: #47464e;
+  // The kit's dark `--input` (#463f50) is 1.5:1 on the card; Logto's original was 2.7:1. This is the
+  // kit palette's purple-grey one step lighter, 2.6:1, so input outlines stay as visible as before.
+  --color-neutral-variant-80: #6a6275;
+  --color-neutral-variant-90: #2a2633; // grid-line
 
-  --color-danger-30: #ffdad4;
-  --color-danger-40: #ffb4a9;
-  --color-danger-50: #ff897a;
-  --color-danger-60: #ff5449;
-  --color-danger-70: #dd3730;
-  --color-danger-80: #ba1b1b;
+  --color-danger-30: #ffd9d7;
+  --color-danger-40: #f2a2a0; // coral
+  --color-danger-50: #d97b78; // destructive
+  --color-danger-60: #d97b78;
+  --color-danger-70: #d97b78;
+  --color-danger-80: #a5504d; // destructive-deep
 
-  --color-success-60: #4ea254;
-  --color-success-70: #32873d;
-  --color-success-80: #116d26;
-  --color-success-90: #005314;
+  --color-success-60: #6fb07f; // mint
+  --color-success-70: #6fb07f; // mint
+  --color-success-80: #4c8558; // mint-deep
+  --color-success-90: #2d5236;
 
-  --color-brand-30: #e6deff;
-  --color-brand-40: #cabeff;
-  --color-brand-50: #af9eff;
-  --color-brand-60: #6137f6;
-  --color-brand-70: #7958ff;
+  --color-brand-30: #f7ddb0; // accent-foreground
+  --color-brand-40: #f7ddb0; // accent-foreground, 11.5:1 on card
+  --color-brand-50: #e8c07e;
+  --color-brand-60: #8f6419; // primary-deep
+  --color-brand-70: #c58e2b; // primary
 
+  /* Flat surfaces: Logto's dark theme tinted these with gradients; the kit forbids gradients. */
   --color-surface: var(--color-neutral-99);
-  --color-surface-2:
-    linear-gradient(0deg, rgba(202, 190, 255, 8%), rgba(202, 190, 255, 8%)),
-    linear-gradient(0deg, rgba(196, 199, 199, 2%), rgba(196, 199, 199, 2%)),
-    #191c1d;
-  --color-surface-3:
-    linear-gradient(0deg, rgba(202, 190, 255, 11%), rgba(202, 190, 255, 11%)),
-    linear-gradient(0deg, rgba(196, 199, 199, 2%), rgba(196, 199, 199, 2%)),
-    #191c1d;
-  --color-surface-4:
-    linear-gradient(0deg, rgba(202, 190, 255, 14%), rgba(202, 190, 255, 14%)),
-    linear-gradient(0deg, rgba(196, 199, 199, 2%), rgba(196, 199, 199, 2%)),
-    #191c1d;
+  --color-surface-1: #28242f;
+  --color-surface-2: #28242f;
+  --color-surface-3: #28242f;
+  --color-surface-4: #332e3b;
 
-  --color-alert-60: #ca8000;
-  --color-alert-70: #a76900;
-  --color-alert-90: #663e00;
-  --color-alert-99: #2b1700;
+  --color-alert-60: #c58e2b;
+  --color-alert-70: #c58e2b;
+  --color-alert-90: #3a3024; // accent
+  --color-alert-99: #3a3024; // accent
 
   /* Text & Icon */
   --color-type-primary: var(--color-neutral-10);
   --color-type-secondary: var(--color-neutral-50);
-  --color-type-disable: rgba(247, 248, 248, 35%); // 35% --color-neutral-10;
+  --color-type-disable: rgba(244, 238, 226, 40%); // 40% --color-neutral-10
   --color-type-link: var(--color-brand-default);
 
   /* Line */
-  --color-line-divider: rgba(247, 248, 248, 14%); // 14% --color-neutral-10
-  --color-line-border: var(--color-neutral-80);
-  --color-line-border-transparent: rgba(247, 248, 248, 20%); // 20% --color-neutral-10
+  --color-line-divider: #3d3746; // border
+  --color-line-border: #463f50; // input
+  --color-line-border-transparent: rgba(244, 238, 226, 20%); // 20% --color-neutral-10
 
   /* Container */
   --color-container-on-alert: var(--color-alert-60);
   --color-container-alert: var(--color-alert-90);
 
   /* Background */
-  --color-bg-body-base: var(--color-neutral-100);
+  --color-bg-body-base: #1e1b26; // background
   --color-bg-body: var(--color-surface);
   --color-bg-body-overlay: var(--color-surface-2);
-  --color-bg-layer-1:
-    linear-gradient(0deg, rgba(202, 190, 255, 8%), rgba(202, 190, 255, 8%)),
-    linear-gradient(0deg, rgba(196, 199, 199, 2%), rgba(196, 199, 199, 2%)),
-    #191c1d;
+  --color-bg-layer-1: #28242f; // card
   --color-bg-layer-2: var(--color-surface-4);
-  --color-bg-float-base: var(--color-neutral-100);
+  --color-bg-float-base: #1e1b26; // background
   --color-bg-float: var(--color-surface-3);
   --color-bg-float-overlay: var(--color-surface-4);
-  --color-bg-mask: rgba(0, 0, 0, 60%); // 60% --color-neutral-100;
-  --color-bg-toast: var(--color-neutral-80);
-  --color-bg-state-unselected: var(--color-neutral-90);
-  --color-bg-state-disabled: rgba(247, 248, 248, 8%); // 8% --color-neutral-10
-  --color-bg-light: #f7f8f829;
-
+  --color-bg-mask: rgba(0, 0, 0, 60%);
+  --color-bg-toast: #463f50;
+  --color-bg-state-unselected: #3d3746;
+  --color-bg-state-disabled: rgba(244, 238, 226, 8%); // 8% --color-neutral-10
+  --color-bg-light: rgba(244, 238, 226, 16%);
 
   /* Brand */
-  // Note: System brand color. May be overwritten dynamically by js
-  --color-brand-default: var(--color-brand-70);
+  --color-brand-default: var(--color-brand-40);
   --color-brand-hover: var(--color-brand-50);
   --color-brand-pressed: var(--color-brand-30);
   --color-brand-loading: var(--color-brand-60);
 
   /* Danger */
-  --color-danger-default: var(--color-danger-70);
-  --color-danger-hover: var(--color-danger-60);
+  --color-danger-default: var(--color-danger-40);
+  --color-danger-hover: var(--color-danger-30);
   --color-danger-pressed: var(--color-danger-80);
 
   /* Success */
@@ -217,14 +222,13 @@
   --color-success-disable: var(--color-success-90);
 
   /* Overlay */
-  --color-overlay-neutral-hover: rgba(247, 248, 248, 8%); // 8% --color-neutral-10
-  --color-overlay-neutral-pressed: rgba(247, 248, 248, 12%); // 12% --color-neutral-10
-  --color-overlay-neutral-focused: rgba(247, 248, 248, 16%); // 16% --color-neutral-10
-  --color-overlay-danger-hover: rgba(221, 55, 48, 8%); // 8% --color-danger-40
-  --color-overlay-danger-pressed: rgba(221, 55, 48, 12%); // 12% --color-danger-40
-  --color-overlay-danger-focused: rgba(221, 55, 48, 16%); // 16% --color-danger-40
-  // Note: System brand color. May be overwritten dynamically by js
-  --color-overlay-brand-hover: rgba(202, 190, 255, 8%); // 8% --color-brand-40
-  --color-overlay-brand-pressed: rgba(202, 190, 255, 12%); // 12% --color-brand-40
-  --color-overlay-brand-focused: rgba(202, 190, 255, 16%); // 16% --color-brand-40
+  --color-overlay-neutral-hover: rgba(244, 238, 226, 8%); // 8% --color-neutral-10
+  --color-overlay-neutral-pressed: rgba(244, 238, 226, 12%); // 12% --color-neutral-10
+  --color-overlay-neutral-focused: rgba(94, 156, 203, 50%); // kit ring (sky, dark)
+  --color-overlay-danger-hover: rgba(242, 162, 160, 10%); // 10% --color-danger-40
+  --color-overlay-danger-pressed: rgba(242, 162, 160, 16%); // 16% --color-danger-40
+  --color-overlay-danger-focused: rgba(217, 123, 120, 40%); // kit destructive (dark), like `aria-invalid:ring`
+  --color-overlay-brand-hover: rgba(247, 221, 176, 10%); // 10% --color-brand-40
+  --color-overlay-brand-pressed: rgba(247, 221, 176, 16%); // 16% --color-brand-40
+  --color-overlay-brand-focused: rgba(94, 156, 203, 50%); // kit ring (sky, dark)
 }

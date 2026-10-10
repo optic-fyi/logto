@@ -12,11 +12,12 @@
 
 .modal {
   background: var(--color-bg-float);
-  border-radius: _.unit(4);
+  border: 2px solid var(--color-line-border);
+  border-radius: calc(var(--radius) * 1.8); // the kit's `rounded-2xl`
   padding: _.unit(6);
   max-width: 600px;
   width: calc(100% - _.unit(8));
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--color-shadow-2); // was `--shadow-2`, which is not defined anywhere
 }
 
 .header {

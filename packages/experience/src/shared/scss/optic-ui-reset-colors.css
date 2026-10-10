@@ -1,0 +1,13 @@
+/*
+ * Drops Tailwind's default color palette. Imported by `optic-ui.css` AFTER Tailwind's theme and
+ * BEFORE the kit's tokens, because `--color-*: initial` clears every `--color-*` theme variable
+ * declared so far; placed after the kit's tokens it would also clear the kit's own colors
+ * (`--color-primary`, `--color-card`, ...) and every color utility would silently stop working.
+ *
+ * Why drop it: Tailwind's palette defines `--color-neutral-50`, `--color-neutral-100`, ... on
+ * `:root`, and Logto defines the same names on `body` (see `_colors.scss`), which would make those
+ * tokens depend on cascade order. The kit only uses its own semantic colors, never `bg-red-500`.
+ */
+@theme {
+  --color-*: initial;
+}

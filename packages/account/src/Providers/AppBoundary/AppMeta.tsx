@@ -22,7 +22,7 @@ const themeToFavicon = Object.freeze({
  * @see https://github.com/nfl/react-helmet
  *
  * - lang: set html lang attribute
- * - data-theme: set html data-theme attribute
+ * - data-theme, class "dark": set html theme attributes (the class drives the Optic UI kit)
  * - favicon: set favicon
  * - apple-touch-icon: set apple touch icon
  * - body class: set preview body class
@@ -38,7 +38,12 @@ const AppMeta = () => {
 
   return (
     <Helmet>
-      <html lang={i18next.language} dir={i18next.dir()} data-theme={theme} />
+      <html
+        lang={i18next.language}
+        dir={i18next.dir()}
+        data-theme={theme}
+        className={conditionalString(theme === Theme.Dark && 'dark')}
+      />
       <link rel="shortcut icon" href={favicon ?? defaultFavicon} />
       <link rel="apple-touch-icon" href={favicon ?? defaultAppleTouchLogo} sizes="180x180" />
       {accountCenterSettings?.customCss && <style>{accountCenterSettings.customCss}</style>}

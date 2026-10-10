@@ -49,6 +49,17 @@
   @return #{$width}px solid #{$color};
 }
 
+/// The Optic UI kit's card surface (`rounded-2xl border-2 border-border-strong bg-card shadow-block`).
+/// For a card that sits directly on the page, such as the account center's sections. `overflow: clip`
+/// keeps child backgrounds inside the rounded corners; the shadow is outside the box, so it is not clipped.
+@mixin card-surface {
+  background: var(--color-bg-float);
+  border: 2px solid var(--color-line-border);
+  border-radius: calc(var(--radius) * 1.8);
+  box-shadow: var(--color-shadow-2);
+  overflow: clip;
+}
+
 @mixin multi-line-ellipsis($line) {
   // https://css-tricks.com/almanac/properties/l/line-clamp/
   /* stylelint-disable-next-line value-no-vendor-prefix */

@@ -1,7 +1,5 @@
 import type { ReactElement } from 'react';
 
-import useColorTheme from '@/Providers/AppBoundary/use-color-theme';
-
 import ConfirmModalProvider from '../ConfirmModalProvider';
 import IframeModalProvider from '../IframeModalProvider';
 import ToastProvider from '../ToastProvider';
@@ -13,8 +11,6 @@ type Props = {
 };
 
 const AppBoundary = ({ children }: Props) => {
-  useColorTheme();
-
   return (
     <>
       <AppMeta />

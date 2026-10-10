@@ -13,25 +13,27 @@
     height: 0;
   }
 
+  // The kit's `Switch`: a pill track with a 2px border, a flat knob with a hard ledge.
   .slider {
     position: absolute;
     cursor: pointer;
     inset: 0;
-    background-color: var(--color-neutral-90);
-    transition: 0.3s;
+    background-color: var(--color-bg-state-unselected);
+    border: 2px solid var(--color-line-border);
+    transition: 0.15s;
     border-radius: 12px;
 
     &::before {
       position: absolute;
       content: '';
-      height: 20px;
-      width: 20px;
+      height: 16px;
+      width: 16px;
       left: 2px;
-      bottom: 2px;
-      background-color: #fff;
-      transition: 0.3s;
+      top: 2px;
+      background-color: var(--color-bg-layer-1);
+      border: 2px solid var(--color-line-border);
+      transition: 0.15s;
       border-radius: 50%;
-      box-shadow: 0 3px 7px rgba(0, 0, 0, 12%);
     }
   }
 
@@ -43,15 +45,18 @@
   }
 
   input:focus-visible + .slider {
-    outline: 2px solid var(--color-brand-default);
+    outline: 3px solid var(--color-overlay-brand-focused);
     outline-offset: 2px;
   }
 
+  // Checked: mint fill with its deep border, like the kit's checked switch/checkbox.
   input:checked + .slider {
-    background-color: var(--color-success-70, #68be6a);
+    background-color: var(--mint);
+    border-color: var(--mint-deep);
   }
 
   input:checked + .slider::before {
     transform: translateX(20px);
+    border-color: var(--mint-deep);
   }
 }

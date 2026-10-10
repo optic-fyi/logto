@@ -1,0 +1,86 @@
+/*
+ * Declarative design tokens: the dark variant, the `@theme` mapping from the palette variables in
+ * theme.css to Tailwind utilities, and the grid/dot canvases. No element selectors, so it is safe
+ * to import into an app that has its own base styles (e.g. the Logto fork) without Tailwind's
+ * preflight or the kit's `@layer base`. `globals.css` imports this plus the base layer.
+ */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Nunito Variable', ui-rounded, sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+    --color-primary-deep: var(--primary-deep);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive-deep: var(--destructive-deep);
+    --color-border-strong: var(--border-strong);
+    --color-grid-line: var(--grid-line);
+    --color-sky: var(--sky);
+    --color-sky-foreground: var(--sky-foreground);
+    --color-sky-deep: var(--sky-deep);
+    --color-mint: var(--mint);
+    --color-mint-foreground: var(--mint-foreground);
+    --color-mint-deep: var(--mint-deep);
+    --color-coral: var(--coral);
+    --color-coral-foreground: var(--coral-foreground);
+    --color-coral-deep: var(--coral-deep);
+    --color-lavender: var(--lavender);
+    --color-lavender-foreground: var(--lavender-foreground);
+    --color-lavender-deep: var(--lavender-deep);
+    --shadow-ledge: 0 4px 0 0 var(--ledge-color, var(--border-strong));
+    --shadow-ledge-hover: 0 6px 0 0 var(--ledge-color, var(--border-strong));
+    --shadow-block: 4px 4px 0 0 var(--border-strong);
+    --shadow-block-lg: 8px 8px 0 0 var(--border-strong);
+}
+
+/* Grid-paper canvas: 28px squares in --grid-line. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+}
+
+/* Dot-grid canvas variant. */
+@utility bg-dots {
+  background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+}

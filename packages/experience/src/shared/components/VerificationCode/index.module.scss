@@ -7,16 +7,19 @@
   input {
     width: 44px;
     height: 44px;
-    border-radius: _.unit(2);
-    border: _.border(var(--color-line-border));
+    // The kit's `InputOTP` slot border and focus colours. Logto draws six separate boxes (the kit
+    // draws one joined bar), so the radius is the kit's `rounded-md`: `rounded-xl` on a 44px box
+    // would be a circle.
+    border-radius: calc(var(--radius) * 0.8);
+    border: _.border(var(--color-neutral-variant-80), 2);
     background: transparent;
     text-align: center;
     font: var(--font-label-1);
     color: var(--color-type-primary);
-    caret-color: var(--color-brand-default);
+    caret-color: var(--color-type-primary);
 
     &:focus {
-      border: _.border(var(--color-brand-default));
+      border: _.border(var(--ring), 2);
       outline: none;
     }
 
@@ -38,7 +41,7 @@
       outline: 3px solid transparent;
 
       &:focus {
-        border: _.border(var(--color-brand-default));
+        border: _.border(var(--ring), 2);
         outline-color: var(--color-overlay-brand-focused);
       }
     }

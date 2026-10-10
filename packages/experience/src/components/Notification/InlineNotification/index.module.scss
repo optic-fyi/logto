@@ -6,7 +6,8 @@
   color: var(--color-type-primary);
   margin: 0 auto _.unit(2);
   background: var(--color-alert-99);
-  border: _.border(var(--color-alert-70));
-  border-radius: var(--radius);
+  // The kit's `Alert`: `border-2` and the same corner radius as the cards it sits above.
+  border: _.border(var(--color-alert-70), 2);
+  border-radius: calc(var(--radius) * 1.4);
   @include _.flex_row;
 }

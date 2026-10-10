@@ -1,0 +1,8 @@
+/*
+ * The Optic UI kit for the account center: the shared entry stylesheet from the experience
+ * package, plus this app's own sources for Tailwind's class scanner. The shared file's `@source`
+ * paths are relative to itself, so on their own they would only scan the experience package.
+ */
+@import '@experience/shared/scss/optic-ui.css';
+
+@source '../';

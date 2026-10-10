@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
 import { defineConfig, mergeConfig, type UserConfig } from 'vite';
@@ -21,6 +22,8 @@ const buildConfig = (mode: string): UserConfig => ({
     },
   },
   plugins: [
+    // Tailwind utilities for the Optic UI kit components; see `src/shared/scss/optic-ui.css`.
+    tailwindcss(),
     react(),
     svgr(),
     viteCompression({ disable: mode === 'development' }),

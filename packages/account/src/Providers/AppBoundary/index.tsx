@@ -1,4 +1,3 @@
-import useColorTheme from '@/Providers/AppBoundary/use-color-theme';
 import type { ReactElement } from 'react';
 
 import ReauthPromptProvider from '../ReauthPromptProvider';
@@ -11,8 +10,6 @@ type Props = {
 };
 
 const AppBoundary = ({ children }: Props) => {
-  useColorTheme();
-
   return (
     <>
       <AppMeta />

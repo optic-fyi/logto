@@ -1,0 +1,32 @@
+/*
+ * Entry stylesheet for the Optic UI kit (`@optic-fyi/ui`) inside the Logto user-facing apps
+ * (experience and account center, which imports this file through `@experience`).
+ *
+ * This deliberately does NOT import the kit's `styles.css` (its `globals.css`). That file is for
+ * an app that adopts the whole kit, and it would
+ *   - pull in Tailwind's preflight, a global reset that overrides these apps' CSS-module styles, and
+ *   - apply the kit's `@layer base` to `body`, `*`, `h1..h4` and `::selection`.
+ * Instead this imports the same pieces without those two things, so Tailwind utilities exist for
+ * the kit components while everything else keeps its existing styles.
+ */
+
+@layer theme, base, components, utilities;
+
+/* Tailwind: design tokens and utilities. No `preflight.css`. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Drop Tailwind's default colors. Must come after its theme and before the kit's tokens. */
+@import './optic-ui-reset-colors.css';
+
+/* The kit's animation utilities and font (via the kit, which declares them), plus its variants. */
+@import '@optic-fyi/ui/styles/vendor.css';
+@import '@optic-fyi/ui/styles/shadcn.css';
+
+/* The kit's palette (`:root` and `.dark`) and its mapping onto Tailwind utilities. */
+@import '@optic-fyi/ui/styles/theme.css';
+@import '@optic-fyi/ui/styles/tokens.css';
+
+/* Scan the kit components and this app's own sources for utility classes. */
+@source '../../../../optic-ui/src';
+@source '../../';

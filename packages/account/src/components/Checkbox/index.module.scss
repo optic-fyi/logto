@@ -18,12 +18,21 @@
     > * {
       display: none;
 
+      // Unchecked: the hollow rounded square. Deliberately NOT the kit's `--input` border colour:
+      // that is 1.4:1 on the card, and a control's boundary needs 3:1. `--color-type-secondary` is
+      // the kit's `muted-foreground` (5.7:1 light, 7.1:1 dark).
       &:nth-child(1) {
         color: var(--color-type-secondary);
       }
 
+      // Checked: the kit's mint fill. The check glyph (3rd shape) takes mint's dark ink, because
+      // the SVG hard-codes it white and white on a pastel fill fails contrast.
       &:nth-child(2) {
-        color: var(--color-brand-default);
+        color: var(--mint);
+      }
+
+      &:nth-child(3) {
+        fill: var(--mint-foreground);
       }
     }
   }

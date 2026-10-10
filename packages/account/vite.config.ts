@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
 import { findUp } from 'find-up';
@@ -58,6 +59,8 @@ const buildConfig = (mode: string): UserConfig => ({
   },
   plugins: [
     experienceAliasPlugin(),
+    // Tailwind utilities for the Optic UI kit components; see `experience/src/shared/scss/optic-ui.css`.
+    tailwindcss(),
     react(),
     svgr(),
     viteCompression({ disable: mode === 'development' }),

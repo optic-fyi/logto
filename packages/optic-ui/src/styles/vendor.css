@@ -1,0 +1,13 @@
+/*
+ * The third-party stylesheets the kit's components rely on: the `animate-in` / `fade-in` / ...
+ * utilities (tw-animate-css) and the Nunito variable font.
+ *
+ * For apps that cannot import `globals.css` because they have their own base styles (the Logto
+ * fork). Package imports here resolve from the kit's own `node_modules`, where these are
+ * declared, so the importing app need not declare them or rely on package-manager hoisting.
+ *
+ * `globals.css` does NOT import this file: it lists the same two packages itself, in a position
+ * that fixes the order of the compiled CSS for the existing apps. Keep the two lists in step.
+ */
+@import "tw-animate-css";
+@import "@fontsource-variable/nunito";

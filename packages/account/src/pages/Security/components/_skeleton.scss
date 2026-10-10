@@ -1,30 +1,18 @@
+// A flat pulse instead of a moving gradient sweep: the Optic kit is matte (no gradients).
 @mixin skeleton-block($radius: 8px) {
-  position: relative;
-  overflow: hidden;
   border-radius: $radius;
   background: var(--color-bg-state-disabled);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background-image:
-      linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0%),
-        rgba(255, 255, 255, 20%),
-        rgba(255, 255, 255, 45%),
-        rgba(255, 255, 255, 0%)
-      );
-    animation: shimmer 2s infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }
 
 @mixin shimmer-keyframes {
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
+  @keyframes skeleton-pulse {
+    50% {
+      opacity: 50%;
     }
   }
 }

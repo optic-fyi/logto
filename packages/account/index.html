@@ -13,8 +13,8 @@
 
 <body>
   <script>
-    // Keep this blocking script in the HTML so the theme, platform class, and brand color
-    // are applied before React loads and the browser has a chance to paint the wrong UI.
+    // Keep this blocking script in the HTML so the theme and platform class are applied
+    // before React loads and the browser has a chance to paint the wrong UI.
     (function () {
       var theme = 'light';
       document.documentElement.setAttribute('data-theme', theme);
@@ -33,16 +33,9 @@
           && window.matchMedia('(prefers-color-scheme: dark)').matches;
         theme = (darkOk && prefersDark) ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
-        if (typeof ssr === 'object' && ssr !== null && ssr.signInExperience
-          && ssr.signInExperience.data && ssr.signInExperience.data.color) {
-          var color = ssr.signInExperience.data.color;
-          var primaryColor = theme === 'dark' && color.darkPrimaryColor
-            ? color.darkPrimaryColor
-            : color.primaryColor;
-          if (primaryColor) {
-            document.body.style.setProperty('--color-brand-default', primaryColor);
-          }
-        }
+        // The Optic UI kit's dark-mode switch. The tenant's brand color is intentionally not
+        // applied here: the Optic palette owns the brand color of this app.
+        document.documentElement.classList.toggle('dark', theme === 'dark');
       } catch (e) { /* noop */ }
     })();
   </script>
