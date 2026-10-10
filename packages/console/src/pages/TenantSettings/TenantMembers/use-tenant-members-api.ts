@@ -7,6 +7,7 @@ import { adminTenantEndpoint, meApi } from '@/consts';
 import { isCloud } from '@/consts/env';
 import { TenantsContext } from '@/contexts/TenantsProvider';
 import { useStaticApi } from '@/hooks/use-api';
+import { toCloudTenantRole } from '@/utils/tenant-role';
 
 /**
  * The tenant member and invitation operations Console performs, whichever service holds them.
@@ -19,7 +20,6 @@ type TenantMembersApi = {
   invitationsKey: string;
   getMembers: () => Promise<TenantMemberResponse[]>;
   removeMember: (userId: string) => Promise<void>;
-  updateMemberRole: (userId: string, roleName: TenantRole) => Promise<void>;
   getInvitations: () => Promise<TenantInvitationResponse[]>;
   invite: (invitee: string[], roleName: TenantRole) => Promise<void>;
   resendInvitation: (invitationId: string) => Promise<void>;
@@ -28,7 +28,9 @@ type TenantMembersApi = {
 };
 
 /** Logto Cloud holds the members and invitations of every Cloud tenant. */
-const useCloudTenantMembersApi = (): TenantMembersApi => {
+export const useCloudTenantMembersApi = (): TenantMembersApi & {
+  updateMemberRole: (userId: string, roleName: TenantRole) => Promise<void>;
+} => {
   const cloudApi = useAuthedCloudApi();
   const { currentTenantId: tenantId } = useContext(TenantsContext);
 
@@ -46,7 +48,7 @@ const useCloudTenantMembersApi = (): TenantMembersApi => {
       updateMemberRole: async (userId, roleName) => {
         await cloudApi.put('/api/tenants/:tenantId/members/:userId/roles', {
           params: { tenantId, userId },
-          body: { roleName },
+          body: { roleName: toCloudTenantRole(roleName) },
         });
       },
       getInvitations: async () =>
@@ -54,7 +56,7 @@ const useCloudTenantMembersApi = (): TenantMembersApi => {
       invite: async (invitee, roleName) => {
         await cloudApi.post('/api/tenants/:tenantId/invitations', {
           params: { tenantId },
-          body: { invitee, roleName },
+          body: { invitee, roleName: toCloudTenantRole(roleName) },
         });
       },
       resendInvitation: async (invitationId) => {
@@ -93,15 +95,10 @@ const useOssTenantMembersApi = (): TenantMembersApi => {
       removeMember: async (userId) => {
         await api.delete(`me/tenant/members/${encodeURIComponent(userId)}`);
       },
-      updateMemberRole: async (userId, roleName) => {
-        await api.put(`me/tenant/members/${encodeURIComponent(userId)}/roles`, {
-          json: { roleName },
-        });
-      },
       getInvitations: async () =>
         api.get('me/tenant/invitations').json<TenantInvitationResponse[]>(),
-      invite: async (invitee, roleName) => {
-        await api.post('me/tenant/invitations', { json: { invitee, roleName } });
+      invite: async (invitee) => {
+        await api.post('me/tenant/invitations', { json: { invitee } });
       },
       resendInvitation: async (invitationId) => {
         await api.post(`me/tenant/invitations/${encodeURIComponent(invitationId)}/message`);
