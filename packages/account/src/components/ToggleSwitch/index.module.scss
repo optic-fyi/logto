@@ -29,7 +29,11 @@
       height: 16px;
       width: 16px;
       left: 2px;
-      top: 2px;
+      // Track is 24px tall with a 2px border (20px inside); a fixed 16px knob
+      // centers with a -8px top margin. (top: 50% + translateY would clash with
+      // the checked state's translateX below, which overwrites `transform`.)
+      top: 50%;
+      margin-top: -8px;
       background-color: var(--color-bg-layer-1);
       border: 2px solid var(--color-line-border);
       transition: 0.15s;
