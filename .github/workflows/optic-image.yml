@@ -1,0 +1,67 @@
+name: Optic image
+
+# Publishes ghcr.io/optic-fyi/logto so optic-fyi/optic-fyi's docker compose can
+# pull the Logto image instead of rebuilding it (a ~4 minute pnpm monorepo
+# build) on every deploy.
+#
+# Tags per build of master:
+#   sha-<full commit sha>  what optic-fyi's compose pins: image == submodule pointer
+#   latest                 convenience only, never pin to it
+#
+# Independent of upstream's release.yml (which needs logto-io secrets); this
+# file is ours alone, so merging logto-io/logto into master will not conflict.
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/optic-fyi/logto
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=sha-${{ github.sha }}
+            type=raw,value=latest
+
+      # Only amd64: the VPS is amd64 and a QEMU arm64 build of this monorepo
+      # takes far longer than it is worth.
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
