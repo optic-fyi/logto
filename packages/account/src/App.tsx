@@ -288,6 +288,7 @@ const App = () => (
           UserScope.CustomData,
           UserScope.Sessions,
           UserScope.TrustedDevices,
+          UserScope.PersonalAccessTokens,
         ],
       }}
     >

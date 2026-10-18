@@ -2,6 +2,7 @@ import type router from '@logto/cloud/routes';
 import {
   type consoleSsoRouter,
   type emailLogsRouter,
+  type selfHostedLicensesRouter,
   type tenantAuthRouter,
   type userStripeCustomersRouter,
 } from '@logto/cloud/routes';
@@ -10,7 +11,6 @@ import { type GuardedPayload, type GuardedResponse, type RouterRoutes } from '@w
 type GetRoutes = RouterRoutes<typeof router>['get'];
 type PostRoutes = RouterRoutes<typeof router>['post'];
 type GetTenantAuthRoutes = RouterRoutes<typeof tenantAuthRouter>['get'];
-type PostTenantAuthRoutes = RouterRoutes<typeof tenantAuthRouter>['post'];
 type GetEmailLogsRoutes = RouterRoutes<typeof emailLogsRouter>['get'];
 type GetUserStripeCustomersRoutes = RouterRoutes<typeof userStripeCustomersRouter>['get'];
 
@@ -105,14 +105,6 @@ export type TenantInvitationResponse = GetArrayElementType<
   GuardedResponse<GetTenantAuthRoutes['/api/tenants/:tenantId/invitations']>
 >;
 
-/**
- * The copy of `TenantRole` that `@logto/cloud` bundles to type `roleName` in its invitation and
- * member role routes.
- */
-export type CloudTenantRole = GuardedPayload<
-  PostTenantAuthRoutes['/api/tenants/:tenantId/invitations']
->['body']['roleName'];
-
 export type TenantSettingsResponse = GuardedResponse<
   GetTenantAuthRoutes['/api/tenants/:tenantId/settings']
 >;
@@ -144,4 +136,14 @@ export type ConsoleSsoDomain = GuardedResponse<
   RouterRoutes<
     typeof consoleSsoRouter
   >['post']['/api/me/console-sso/connectors/:connectorId/domains']
+>;
+
+/** Account-level license metadata, without signed keys. */
+export type SelfHostedLicenseSummary = GuardedResponse<
+  RouterRoutes<typeof selfHostedLicensesRouter>['get']['/api/me/self-hosted-licenses/:id']
+>;
+
+/** The production and non-production keys returned by explicit issuance. */
+export type SelfHostedLicenseKeys = GuardedResponse<
+  RouterRoutes<typeof selfHostedLicensesRouter>['post']['/api/me/self-hosted-licenses/:id/keys']
 >;

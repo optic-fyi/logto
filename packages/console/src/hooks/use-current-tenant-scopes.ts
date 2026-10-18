@@ -7,16 +7,10 @@ import { adminTenantEndpoint, meApi } from '@/consts';
 import { isCloud, isDevFeaturesEnabled } from '@/consts/env';
 import { SubscriptionDataContext } from '@/contexts/SubscriptionDataProvider';
 import { TenantsContext } from '@/contexts/TenantsProvider';
+import { getIsReadOnlyAccess, getIsWriteAccessConfirmed } from '@/utils/read-only-access';
 
 import { type RequestError, useStaticApi } from './use-api';
 import useCurrentUser from './use-current-user';
-
-/**
- * Self-hosted plans: the tenant scopes of a self-hosted deployment come with its members and
- * invitations, which ship with the unlaunched self-hosted Pro and Enterprise plans. Removed
- * together with the other self-hosted plans guards at launch.
- */
-const shouldFetchOssTenantScopes = !isCloud && isDevFeaturesEnabled;
 
 const useCurrentTenantScopes = () => {
   const { currentTenantId } = useContext(TenantsContext);
@@ -35,9 +29,10 @@ const useCurrentTenantScopes = () => {
     mutate,
   } = useSWR<string[], RequestError>(
     // A self-hosted deployment has one tenant, whose scopes live on the admin tenant's `/me`.
+    // Cloud pages outside a tenant, such as Console SSO, have no tenant scopes.
     isCloud
-      ? userId && `api/tenants/${currentTenantId}/members/${userId}/scopes`
-      : shouldFetchOssTenantScopes && userId && 'me/tenant/scopes',
+      ? userId && currentTenantId && `api/tenants/${currentTenantId}/members/${userId}/scopes`
+      : userId && 'me/tenant/scopes',
     async () => {
       if (!isCloud) {
         const scopes = await meApiClient.get('me/tenant/scopes').json<OrganizationScope[]>();
@@ -48,7 +43,9 @@ const useCurrentTenantScopes = () => {
         params: { tenantId: currentTenantId, userId },
       });
       return scopes.map(({ name }) => name);
-    }
+    },
+    // A self-hosted member's role cannot change: every member is an admin.
+    { revalidateIfStale: isCloud }
   );
 
   const access = useMemo(
@@ -59,6 +56,16 @@ const useCurrentTenantScopes = () => {
       canRemoveMember: Boolean(scopes?.includes(TenantScope.RemoveMember)),
       canUpdateMemberRole: Boolean(scopes?.includes(TenantScope.UpdateMemberRole)),
       canManageTenant: Boolean(scopes?.includes(TenantScope.ManageTenant)),
+      // Until read-only tenant access is released, every member may convert a tenant.
+      canConvertToProduction:
+        !isDevFeaturesEnabled || Boolean(scopes?.includes(TenantScope.ManageTenant)),
+      // Read-only tenant access ships behind dev features: until it is released, no one is
+      // read-only and every write is allowed.
+      isReadOnly: getIsReadOnlyAccess({ isDevFeaturesEnabled, isCloud, scopes }),
+      isWriteAccessConfirmed: getIsWriteAccessConfirmed({ isDevFeaturesEnabled, isCloud, scopes }),
+      // The Management API refuses credentials to a read-only member, so they are requested only
+      // once the scopes confirm write access.
+      canReadCredentials: getIsWriteAccessConfirmed({ isDevFeaturesEnabled, isCloud, scopes }),
     }),
     [licenseQuota.consoleCollaboration, scopes]
   );
