@@ -6,6 +6,37 @@ import { getBrandCssVariables } from './brand-color';
 const stockLight = '#6139F6';
 const stockDark = '#8768F8';
 
+/** One channel of a `#rrggbb` colour, undoing sRGB gamma (WCAG 2.x). */
+const linearChannel = (hex: string, index: number): number => {
+  const value = Number.parseInt(hex.slice(index, index + 2), 16) / 255;
+  return value <= 0.039_28 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+};
+
+const relativeLuminance = (hex: string): number =>
+  0.2126 * linearChannel(hex, 1) + 0.7152 * linearChannel(hex, 3) + 0.0722 * linearChannel(hex, 5);
+
+/** WCAG contrast ratio between two `#rrggbb` colours. An independent copy of the formula, so the
+ * test does not trust the implementation it checks. */
+const contrastRatio = (first: string, second: string): number => {
+  const firstLuminance = relativeLuminance(first);
+  const secondLuminance = relativeLuminance(second);
+
+  return (
+    (Math.max(firstLuminance, secondLuminance) + 0.05) /
+    (Math.min(firstLuminance, secondLuminance) + 0.05)
+  );
+};
+
+const toHexByte = (value: number): string => value.toString(16).padStart(2, '0');
+
+/** Every `#rrggbb` whose channels are multiples of 15 (and 255): 18^3 = 5,832 colours. */
+const gridChannels = Array.from({ length: 18 }, (_, index) => Math.min(255, index * 15));
+const colourGrid: readonly string[] = gridChannels.flatMap((red) =>
+  gridChannels.flatMap((green) =>
+    gridChannels.map((blue) => `#${toHexByte(red)}${toHexByte(green)}${toHexByte(blue)}`)
+  )
+);
+
 describe('getBrandCssVariables', () => {
   // If this fails: a tenant that never customised branding loses the Optic palette to Logto purple.
   it.each([
@@ -89,6 +120,83 @@ describe('getBrandCssVariables', () => {
         theme: Theme.Light,
       })
     ).toMatchObject({ '--primary-deep': '#a0a0a0' });
+  });
+
+  // If this fails: dark brand colours (navy, slate, near-black) get an invisible ledge, because a
+  // plain 20% darken barely moves them (fill-to-ledge contrast 1.02-1.26 vs the kit's 1.38+).
+  it.each(['#111111', '#1e293b', '#0f172a', '#1e3a8a', '#14532d', '#450a0a', '#312e81', '#334155'])(
+    'keeps the ledge visibly distinct from a dark fill %s',
+    (primaryColor) => {
+      const variables = getBrandCssVariables({
+        primaryColor,
+        darkPrimaryColor: undefined,
+        theme: Theme.Light,
+      });
+
+      expect(
+        contrastRatio(variables?.['--primary'] ?? '', variables?.['--primary-deep'] ?? '')
+      ).toBeGreaterThanOrEqual(1.38);
+    }
+  );
+
+  // If this fails: some hue/lightness region has a ledge that blends into the button. Sweeps the
+  // RGB cube (and both extremes) rather than trusting a hand-picked list.
+  it('never lets the ledge fall below the contrast floor, anywhere in the colour space', () => {
+    // A broad grid for regions nobody thought to list. The two colours that first exposed the
+    // rounding bug are pinned separately below, since they are not on this grid.
+    const failures = colourGrid.flatMap((primaryColor) => {
+      const variables = getBrandCssVariables({
+        primaryColor,
+        darkPrimaryColor: undefined,
+        theme: Theme.Light,
+      });
+      const ratio = contrastRatio(
+        variables?.['--primary'] ?? '',
+        variables?.['--primary-deep'] ?? ''
+      );
+
+      return ratio < 1.38 ? [`${primaryColor} -> ${ratio.toFixed(3)}`] : [];
+    });
+
+    expect(failures).toEqual([]);
+  });
+
+  // If this fails: the contrast floor is tested before hex rounding again. Both colours computed
+  // to exactly 1.38 in floating point but landed at 1.379 once rounded to integer channels.
+  it.each(['#602000', '#c02060'])('keeps %s above the floor after hex rounding', (primaryColor) => {
+    const variables = getBrandCssVariables({
+      primaryColor,
+      darkPrimaryColor: undefined,
+      theme: Theme.Light,
+    });
+
+    expect(
+      contrastRatio(variables?.['--primary'] ?? '', variables?.['--primary-deep'] ?? '')
+    ).toBeGreaterThanOrEqual(1.38);
+  });
+
+  // If this fails: a near-black brand colour gets a stark white ledge instead of a dark-grey one.
+  // Both clear the contrast floor, so only the exact value tells them apart; pure black cannot be
+  // darkened at all, which is why these fills are tinted lighter rather than shaded.
+  it.each([
+    ['#000000', '#262626'],
+    ['#0a0a0a', '#2f2f2f'],
+  ])('gives near-black %s a dark-grey ledge (%s), not white', (primaryColor, ledge) => {
+    expect(
+      getBrandCssVariables({ primaryColor, darkPrimaryColor: undefined, theme: Theme.Light })
+    ).toMatchObject({ '--primary-deep': ledge });
+  });
+
+  // If this fails: the floor starts changing colours that already looked right, so branded
+  // buttons shift for tenants nobody asked to change.
+  it.each([
+    ['#2563eb', '#1e4fbc'],
+    ['#e11d48', '#b4173a'],
+    ['#16a34a', '#12823b'],
+  ])('leaves mid-tone %s on the plain 20%% shade', (primaryColor, ledge) => {
+    expect(
+      getBrandCssVariables({ primaryColor, darkPrimaryColor: undefined, theme: Theme.Light })
+    ).toMatchObject({ '--primary-deep': ledge });
   });
 
   // If this fails: an extreme brand colour overflows a channel or produces an invalid hex.

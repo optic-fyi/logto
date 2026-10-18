@@ -73,6 +73,47 @@ const shade = ([red, green, blue]: RgbChannels, amount: number): RgbChannels => 
   blue * (1 - amount),
 ];
 
+/** The weakest fill-to-ledge contrast in the kit's own pairs (Optic honey, 1.38). */
+const minLedgeContrast = 1.38;
+
+/** Scales each channel towards white; `amount` 0 keeps the colour, 1 gives white. */
+const tint = ([red, green, blue]: RgbChannels, amount: number): RgbChannels => [
+  red + (255 - red) * amount,
+  green + (255 - green) * amount,
+  blue + (255 - blue) * amount,
+];
+
+/** Rounds each channel to the integer `toHex` would emit, so contrast is judged on what ships. */
+const quantize = ([red, green, blue]: RgbChannels): RgbChannels => [
+  Math.round(red),
+  Math.round(green),
+  Math.round(blue),
+];
+
+/** Steps of 5% from `from` up to and including 100%. */
+const ledgeSteps = (from: number): readonly number[] =>
+  Array.from({ length: Math.round((1 - from) / 0.05) + 1 }, (_, index) => from + index * 0.05);
+
+/**
+ * The button's ledge colour: the fill shaded 20% (matching the kit's look on mid-tone colours),
+ * pushed further until it is visibly distinct from the fill.
+ *
+ * Multiplying a dark colour by 0.8 barely changes it (navy, slate and near-black end up within
+ * 1.02-1.26 contrast of their fill, so the ledge vanishes), hence the contrast floor. A fill so
+ * dark that even black cannot reach the floor gets a lighter ledge instead.
+ *
+ * Candidates are rounded to integer channels BEFORE the contrast test: the colour is emitted as
+ * hex, and rounding afterwards can shave a candidate just under the floor.
+ *
+ * @postcondition `contrast(fill, result) >= minLedgeContrast` for every fill, where `result` is
+ * the value after hex rounding (white always qualifies against a fill that black cannot clear).
+ */
+const ledgeFor = (fill: RgbChannels): RgbChannels =>
+  [
+    ...ledgeSteps(0.2).map((amount) => quantize(shade(fill, amount))),
+    ...ledgeSteps(0.05).map((amount) => quantize(tint(fill, amount))),
+  ].find((candidate) => contrast(fill, candidate) >= minLedgeContrast) ?? white;
+
 /**
  * Whether `hex` is a colour we can derive a palette from, and not Logto's stock purple.
  * An unparseable value is treated as "not customised" so a bad config falls back to Optic.
@@ -121,7 +162,7 @@ export const getBrandCssVariables = ({
 
   return {
     '--primary': brand,
-    '--primary-deep': toHex(shade(channels, 0.2)),
+    '--primary-deep': toHex(ledgeFor(channels)),
     '--primary-foreground': readableInk(channels),
     '--color-brand-default': brand,
     '--color-brand-hover': toHex(shade(channels, 0.1)),
