@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import usePlatform from '@/hooks/use-platform';
 import { layoutClassNames } from '@/utils/consts';
+
 import CustomContent from './CustomContent';
 import styles from './index.module.scss';
 
