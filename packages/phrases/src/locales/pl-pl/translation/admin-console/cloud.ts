@@ -14,6 +14,10 @@ const cloud = {
     non_production_key: 'Klucz nieprodukcyjny',
     keys_unavailable:
       'Klucze tej licencji są niedostępne. W razie potrzeby skontaktuj się ze wsparciem.',
+    keys_pending: 'Klucze będą dostępne, gdy licencja stanie się aktywna.',
+    keys_payment_required:
+      'Klucze są niedostępne do czasu opłacenia zaległej faktury. Opłać ją w „Zarządzaj płatnością”, a klucze znów będą dostępne.',
+    manage_payment: 'Zarządzaj płatnością',
     issue_keys: 'Pobierz klucze licencyjne',
     issue_error: 'Nie udało się wydać kluczy licencyjnych. Spróbuj ponownie.',
     install_title: 'Zainstaluj licencję',
@@ -22,7 +26,18 @@ const cloud = {
     install_copy:
       'Skopiuj klucz produkcyjny dla produkcji lub klucz nieprodukcyjny do prac programistycznych i testów.',
     install_paste: 'We własnej konsoli otwórz Ustawienia → Licencja, wklej klucz i zainstaluj go.',
+    usage_warning_description: 'Ta licencja przekracza limity użycia swojego planu:',
+    usage_warning_metric: '{{metric}} ({{env}}): {{value}} (limit {{limit}})',
+    deployments_title: 'Wdrożenia',
+    deployments_description:
+      'Wdrożenia, które odświeżyły tę licencję, wraz z ostatnim zgłoszonym przez każde z nich użyciem. Wartości miesięczne to wyższa z wartości z ostatniego miesiąca i bieżącego miesiąca. Nieaktywne wdrożenia nie odświeżyły licencji w ciągu ostatnich 15 dni i nie są wliczane do limitów.',
+    deployments_empty: 'Żadne wdrożenie nie odświeżyło jeszcze tej licencji.',
+    deployment_id: 'ID wdrożenia',
+    logto_version: 'Wersja Logto',
+    last_seen: 'Ostatnio widziane',
+    inactive: 'Nieaktywne',
     status: {
+      pending: 'Aktywowanie',
       active: 'Aktywna',
       past_due: 'Zaległa płatność',
       canceling: 'Anulowanie na koniec okresu',
@@ -30,6 +45,33 @@ const cloud = {
       unpaid: 'Nieopłacona',
       expired: 'Wygasła',
       revoked: 'Cofnięta',
+    },
+    purchase: {
+      description: 'Odblokuj płatne funkcje we własnej instancji Logto dzięki rocznej subskrypcji.',
+      price_per_month: '{{price}}/mies.',
+      billed_annually: 'Płatność roczna',
+      price_unavailable: 'Cena niedostępna',
+      feature_branding: 'Ukrycie brandingu Logto',
+      feature_custom_ui: 'Własny interfejs logowania',
+      feature_collaboration: 'Współpraca w konsoli',
+      feature_saml: 'Nielimitowane aplikacje SAML',
+      feature_deployment: 'Jedno wdrożenie produkcyjne',
+      subscribe: 'Subskrybuj',
+      enterprise: 'Potrzebujesz Enterprise? <a>Skontaktuj się z nami</a>',
+      activating: 'Płatność otrzymana. Aktywujemy Twoją licencję...',
+      processing:
+        'Twoja płatność jest nadal przetwarzana. Licencja pojawi się tutaj, gdy będzie aktywna.',
+      checkout_expired: 'Sesja płatności wygasła. Zasubskrybuj ponownie.',
+    },
+    cancel: {
+      action: 'Anuluj subskrypcję',
+      keep: 'Zachowaj subskrypcję',
+      confirm_title: 'Anulować subskrypcję?',
+      confirm_content:
+        'Licencja pozostaje aktywna do końca bieżącego okresu i nie zostanie odnowiona. Później jej kluczy nie będzie można już odświeżyć.',
+      success: 'Subskrypcja zostanie anulowana z końcem bieżącego okresu.',
+      payment_required: 'Przed anulowaniem opłać zaległą fakturę w „Zarządzaj płatnością”.',
+      failed: 'Nie udało się anulować subskrypcji. Spróbuj ponownie.',
     },
   },
   console_sso: {
@@ -64,6 +106,8 @@ const cloud = {
       'Rozpoczęcie od nowa może usunąć niedokończoną konfigurację SSO. Czy chcesz kontynuować?',
     resume_creation:
       'Znaleziono niedokończone tworzenie. Kontynuuj z tym samym dostawcą, aby odzyskać ten konektor.',
+    creation_charge_notice:
+      'Cena standardowa: <span>${{price, number}} miesięcznie za konektor SSO konsoli</span>. W razie potrzeby pomocy <a>skontaktuj się z nami</a>.',
   },
   general: {
     onboarding: 'Wdrażanie',

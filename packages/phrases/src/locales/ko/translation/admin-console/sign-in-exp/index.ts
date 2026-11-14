@@ -108,8 +108,21 @@ const sign_in_exp = {
     csp_source_invalid_error:
       '유효한 소스 표현식을 입력하세요. https:// URL을 사용하세요. connect-src는 wss://도 지원합니다. CSP 키워드와 세미콜론은 지원되지 않습니다.',
     csp_source_duplicate_error: '이 소스 표현식은 이미 목록에 있습니다.',
+    coop_tip:
+      '커스텀 로그인 UI를 교차 출처 창으로부터 격리하세요. 커스텀 UI 자산이 제공될 때만 적용됩니다.',
+    coop_unsafe_none: '설정 안 함 (헤더 없음)',
+    coop_warning:
+      '로그인 페이지를 팝업으로 열고 window.opener에 의존하는 앱은 더 이상 작동하지 않습니다. 커스텀 UI가 연 팝업도 소셜 로그인 콜백처럼 커스텀 UI로 다시 돌아오면 window.opener를 잃습니다. same-origin에서는 팝업이 열리자마자 window.opener를 잃습니다.',
   },
   account_center: {
+    recent_authentication: {
+      title: '최근 인증',
+      description:
+        '비밀번호 변경이나 2단계 인증 해제와 같은 민감한 계정 작업은 Account Center에서든 Account API를 호출하는 앱에서든 최근 로그인이 필요합니다. 이 기간은 로그인이 얼마나 최근이어야 하는지를 정의합니다.',
+      maximum_authentication_age_in_minutes: '최대 인증 경과 시간(분)',
+      maximum_authentication_age_in_minutes_tip:
+        '로그인이 민감한 작업에 충분히 최신으로 유지되는 기간입니다. 클라이언트는 `max_age` 파라미터로 더 짧은 기간을 요청할 수 있습니다.',
+    },
     title: '계정 센터',
     description: 'Logto API로 계정 센터 플로우를 사용자 지정하세요.',
     enable_account_api: '계정 센터와 Account API 활성화',
@@ -131,6 +144,8 @@ const sign_in_exp = {
           title: '보안 인증',
           description:
             '보안 설정을 변경하기 전에 사용자는 본인 확인을 완료하고 유효 기간 10분의 검증 기록 ID를 받아야 합니다. 인증 방법(이메일, 전화, 비밀번호)을 활성화하려면 아래 Account API 권한을 <strong>읽기 전용</strong>(최소) 또는 <strong>편집</strong>으로 설정하여 시스템이 사용자의 설정 여부를 감지할 수 있도록 하세요. <a>자세히 알아보기</a>',
+          description_step_up:
+            '보안 설정을 변경하기 전에 내장 Account Center에서는 최근 로그인이 필요합니다. 현재 로그인이 구성된 최근 인증 기간보다 오래된 경우 Account Center는 OIDC step-up을 시작하고 사용자에게 본인 확인을 요청합니다. 사용자가 Account Center에서 인증 방법(이메일, 전화 또는 비밀번호)을 보거나 관리할 수 있도록 하려면 아래에서 해당 Account API 권한을 <strong>읽기 전용</strong> 또는 <strong>편집</strong>으로 설정하세요. 이러한 민감한 작업의 경우 Account API를 직접 호출하는 앱은 계속 검증 기록 ID를 사용할 수 있습니다. <a>자세히 알아보기</a>',
         },
         groups: {
           identifiers: {
@@ -229,9 +244,9 @@ const sign_in_exp = {
       flows_title: '기본 제공 보안 설정 흐름 통합',
       single_task_flows_title: '즉시 제공되는 단일 작업 흐름 통합',
       flows_description:
-        '도메인과 경로를 결합하여 계정 설정 URL 을 형성하세요 (예: https://auth.foo.com/account/email). 선택적으로 `redirect=`를 추가하여 성공적인 업데이트 후 사용자를 앱으로 되돌리거나, `show_success=true`로 성공 페이지를 표시하거나, `ui_locales=`로 기본 언어를 재정의하거나, `identifier=`로 식별자 입력 필드를 미리 채울 수 있습니다.',
+        '도메인과 경로를 결합하여 계정 설정 URL 을 형성하세요 (예: https://auth.foo.com/account/email). 선택적으로 `redirect=`를 추가하여 성공적인 업데이트 후 사용자를 앱으로 되돌리거나, `show_success=true`로 성공 페이지를 표시하거나, `ui_locales=`로 기본 언어를 재정의하거나, `login_hint=`로 로그인 페이지의 식별자를 미리 채우거나, `identifier=`로 이메일, 전화번호 또는 사용자 이름 경로에서 새 값을 미리 채울 수 있습니다.',
       single_task_flows_description:
-        '사용자를 특정 흐름(예: 이메일 연결)으로 바로 라우팅합니다. 선택적으로 성공적인 업데이트 후 사용자를 앱으로 되돌리기 위해 `redirect=`를, 성공 페이지를 계속 표시하기 위해 `show_success=true`를, 기본 언어를 재정의하기 위해 `ui_locales=`를, 또는 식별자 입력 필드를 미리 채우기 위해 `identifier=`를 추가할 수 있습니다.',
+        '사용자를 특정 흐름(예: 이메일 연결)으로 바로 라우팅합니다. 선택적으로 성공적인 업데이트 후 사용자를 앱으로 되돌리기 위해 `redirect=`를, 성공 페이지를 계속 표시하기 위해 `show_success=true`를, 기본 언어를 재정의하기 위해 `ui_locales=`를, 로그인 페이지의 식별자를 미리 채우기 위해 `login_hint=`를, 또는 이메일, 전화번호 또는 사용자 이름 경로에서 새 값을 미리 채우기 위해 `identifier=`를 추가할 수 있습니다.',
       tooltips: {
         email: '주 이메일 주소 업데이트',
         phone: '주 전화번호 업데이트',

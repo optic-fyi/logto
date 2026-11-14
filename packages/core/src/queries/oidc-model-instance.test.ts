@@ -24,7 +24,6 @@ const {
   findPayloadByPayloadField,
   findPayloadByUid,
   findPayloadByUserCode,
-  consumeInstanceById,
   destroyInstanceById,
   revokeInstanceByGrantId,
   revokeInstanceByUserId,
@@ -262,28 +261,6 @@ describe('oidc-model-instance query', () => {
     expect(mockQuery).toHaveBeenCalledTimes(2);
   });
 
-  it('consumeInstanceById', async () => {
-    jest.useFakeTimers().setSystemTime(100_000);
-
-    const expectSql = sql`
-      update ${table}
-      set ${fields.consumedAt}=to_timestamp($1)
-      where ${fields.modelName}=$2
-      and ${fields.id}=$3
-    `;
-
-    mockQuery.mockImplementationOnce(async (sql, values) => {
-      expectSqlAssert(sql, expectSql.sql);
-      expect(values).toEqual([100, instance.modelName, instance.id]);
-
-      return createMockQueryResult([]);
-    });
-
-    await consumeInstanceById(instance.modelName, instance.id);
-
-    jest.useRealTimers();
-  });
-
   it('destroyInstanceById', async () => {
     const expectSql = sql`
       delete from ${table}
@@ -301,7 +278,7 @@ describe('oidc-model-instance query', () => {
     await destroyInstanceById(instance.modelName, instance.id);
   });
 
-  const revokeBatchSize = 500;
+  const revokeBatchSize = 2000;
   const revokeCases = {
     revokeInstanceByGrantId: {
       revoke: async (target: string) => revokeInstanceByGrantId(instance.modelName, target),
@@ -334,12 +311,12 @@ describe('oidc-model-instance query', () => {
   } as const;
 
   it.each([
-    ['revokeInstanceByGrantId', [500, 0]],
+    ['revokeInstanceByGrantId', [revokeBatchSize, 0]],
     // A partial batch must not end the loop — see the early-exit bug closed in #9151.
     ['revokeInstanceByGrantId', [300, 200, 0]],
-    ['revokeInstanceByUserId', [500, 0]],
+    ['revokeInstanceByUserId', [revokeBatchSize, 0]],
     ['revokeInstanceByUserId', [300, 200, 0]],
-    ['revokeInstanceByUserId', [500, undefined]],
+    ['revokeInstanceByUserId', [revokeBatchSize, undefined]],
   ] as const)('%s deletes in batches until drained %j', async (method, rowCounts) => {
     const target = 'target-id';
     const { revoke, expectSql } = revokeCases[method];

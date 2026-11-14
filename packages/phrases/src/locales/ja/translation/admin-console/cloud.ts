@@ -12,6 +12,10 @@ const cloud = {
     production_key: '本番環境用キー',
     non_production_key: '非本番環境用キー',
     keys_unavailable: 'このライセンスのキーは利用できません。サポートにお問い合わせください。',
+    keys_pending: 'ライセンスが有効になるとキーを利用できます。',
+    keys_payment_required:
+      '未払いの請求書が支払われるまでキーは利用できません。「支払いを管理」から支払うと、キーが再び利用可能になります。',
+    manage_payment: '支払いを管理',
     issue_keys: 'ライセンスキーを取得',
     issue_error: 'ライセンスキーを発行できませんでした。もう一度お試しください。',
     install_title: 'ライセンスのインストール',
@@ -20,7 +24,18 @@ const cloud = {
     install_copy: '本番環境には本番環境用キーを、開発・テストには非本番環境用キーをコピーします。',
     install_paste:
       'セルフホストのコンソールで「設定 → ライセンス」を開き、キーを貼り付けてインストールします。',
+    usage_warning_description: 'このライセンスはプランの使用量上限を超えています：',
+    usage_warning_metric: '{{metric}}（{{env}}）：{{value}}（上限 {{limit}}）',
+    deployments_title: 'デプロイ',
+    deployments_description:
+      'このライセンスを更新したデプロイと、それぞれが最後に報告した使用量です。月次の数値は先月と今月これまでのうち高い方です。非アクティブなデプロイは過去 15 日間更新されておらず、上限の計算に含まれません。',
+    deployments_empty: 'このライセンスを更新したデプロイはまだありません。',
+    deployment_id: 'デプロイ ID',
+    logto_version: 'Logto バージョン',
+    last_seen: '最終確認',
+    inactive: '非アクティブ',
     status: {
+      pending: '有効化中',
       active: '有効',
       past_due: '支払い期限超過',
       canceling: '期間終了時にキャンセル',
@@ -28,6 +43,34 @@ const cloud = {
       unpaid: '未払い',
       expired: '期限切れ',
       revoked: '取り消し済み',
+    },
+    purchase: {
+      description: '年間サブスクリプションで、独自の Logto インスタンスの有料機能を利用できます。',
+      price_per_month: '{{price}}/月',
+      billed_annually: '年払い',
+      price_unavailable: '価格を取得できません',
+      feature_branding: 'Logto ブランディングを非表示',
+      feature_custom_ui: '独自のサインイン UI',
+      feature_collaboration: 'コンソールでのコラボレーション',
+      feature_saml: '無制限の SAML アプリケーション',
+      feature_deployment: '本番デプロイ 1 件',
+      subscribe: '購読する',
+      enterprise: 'Enterprise が必要ですか？<a>お問い合わせ</a>',
+      activating: '支払いを受け付けました。ライセンスを有効化しています...',
+      processing: '支払いはまだ処理中です。ライセンスが有効になるとここに表示されます。',
+      checkout_expired:
+        'チェックアウトセッションの有効期限が切れました。もう一度購読してください。',
+    },
+    cancel: {
+      action: 'サブスクリプションをキャンセル',
+      keep: 'サブスクリプションを維持',
+      confirm_title: 'サブスクリプションをキャンセルしますか？',
+      confirm_content:
+        'ライセンスは現在の期間の終了まで有効で、更新されません。その後、キーを更新できなくなります。',
+      success: 'サブスクリプションは現在の期間の終了時にキャンセルされます。',
+      payment_required:
+        'キャンセルする前に未払いの請求書を支払ってください。「支払いを管理」から支払えます。',
+      failed: 'サブスクリプションをキャンセルできませんでした。もう一度お試しください。',
     },
   },
   console_sso: {
@@ -61,6 +104,8 @@ const cloud = {
       '最初からやり直すと、未完了の SSO 設定が削除される場合があります。続行しますか？',
     resume_creation:
       '未完了の作成操作が見つかりました。同じプロバイダーで続行して、このコネクターを復元してください。',
+    creation_charge_notice:
+      '標準料金：<span>コンソール SSO コネクター 1 つにつき月額 ${{price, number}}</span>。サポートが必要な場合は、お気軽に<a>お問い合わせ</a>ください。',
   },
   general: {
     onboarding: 'オンボーディング',

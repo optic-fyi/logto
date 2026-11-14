@@ -1,11 +1,12 @@
 import { notImplemented } from '@logto/cli/lib/connector/index.js';
-import { ConnectorType } from '@logto/schemas';
+import { ConnectorType, connectorResponseGuard } from '@logto/schemas';
 import { has } from '@silverhand/essentials';
 import { object, record, string, unknown } from 'zod';
 
 import RequestError from '#src/errors/RequestError/index.js';
 import koaGuard from '#src/middleware/koa-guard.js';
 import assertThat from '#src/utils/assert-that.js';
+import { assertNoAuthorizationError } from '#src/utils/connectors/authorization-error.js';
 import { transpileLogtoConnector } from '#src/utils/connectors/index.js';
 
 import type { RouterInitArgs } from '../routes/types.js';
@@ -28,21 +29,25 @@ export default function socialRoutes<T extends AuthedMeRouter>(
     connectors: { getLogtoConnectors, getLogtoConnectorById },
   } = tenant;
 
-  router.get('/social/connectors', async (ctx, next) => {
-    const connectors = await getLogtoConnectors();
-    const { socialSignInConnectorTargets } = await findDefaultSignInExperience();
+  router.get(
+    '/social/connectors',
+    koaGuard({ response: connectorResponseGuard.omit({ config: true }).array(), status: 200 }),
+    async (ctx, next) => {
+      const connectors = await getLogtoConnectors();
+      const { socialSignInConnectorTargets } = await findDefaultSignInExperience();
 
-    ctx.body = await Promise.all(
-      connectors
-        .filter(
-          ({ type, metadata: { target } }) =>
-            type === ConnectorType.Social && socialSignInConnectorTargets.includes(target)
-        )
-        .map(async (connector) => transpileLogtoConnector(connector))
-    );
+      ctx.body = await Promise.all(
+        connectors
+          .filter(
+            ({ type, metadata: { target } }) =>
+              type === ConnectorType.Social && socialSignInConnectorTargets.includes(target)
+          )
+          .map(async (connector) => transpileLogtoConnector(connector))
+      );
 
-    return next();
-  });
+      return next();
+    }
+  );
 
   router.post(
     '/social/authorization-uri',
@@ -118,6 +123,8 @@ export default function socialRoutes<T extends AuthedMeRouter>(
        * Same as above, passing `notImplemented` only works for connectors not relying on session storage.
        * E.g. Google and GitHub
        */
+      assertNoAuthorizationError(connectorData);
+
       const socialUserInfo = await connector.getUserInfo(connectorData, notImplemented);
 
       assertThat(

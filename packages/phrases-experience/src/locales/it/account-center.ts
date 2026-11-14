@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Locale catalog mirrors the complete Account Center phrase schema. */
 const account_center = {
   home: {
     title: 'Pagina non trovata',
@@ -19,37 +18,11 @@ const account_center = {
     sign_out: 'Esci',
   },
   verification: {
-    title: 'Verifica di sicurezza',
-    description:
-      'Conferma che sei tu per proteggere la sicurezza del tuo account. Seleziona il metodo per verificare la tua identità.',
     error_send_failed: 'Invio del codice di verifica non riuscito. Riprova più tardi.',
     error_invalid_code: 'Il codice di verifica non è valido o è scaduto.',
     error_verify_failed: 'Verifica non riuscita. Inserisci di nuovo il codice.',
-    verification_required: 'Verifica scaduta. Conferma di nuovo la tua identità.',
-    try_another_method: 'Prova un altro metodo di verifica',
-    no_available_methods_title: 'Nessun metodo di verifica disponibile',
-    no_available_methods_description:
-      'Non hai configurato alcun metodo di verifica. Aggiungi prima una password, un indirizzo e-mail o un numero di telefono al tuo account.',
-  },
-  password_verification: {
-    title: 'Verifica la password',
-    description:
-      'Per proteggere il tuo account, inserisci la password per confermare la tua identità.',
-    error_failed: 'Password errata. Controlla il tuo inserimento.',
-  },
-  verification_method: {
-    password: {
-      name: 'Password',
-      description: 'Verifica la tua password',
-    },
-    email: {
-      name: 'Codice di verifica e-mail',
-      description: 'Invia il codice di verifica alla tua e-mail',
-    },
-    phone: {
-      name: 'Codice di verifica telefonico',
-      description: 'Invia il codice di verifica al tuo numero di telefono',
-    },
+    step_up_not_completed:
+      "La verifica dell'identità non è stata completata. Non è stata apportata alcuna modifica al tuo account.",
   },
   email: {
     title: "Collega l'email",
@@ -58,7 +31,6 @@ const account_center = {
     verification_description:
       'Il codice di verifica è stato inviato alla tua e-mail {{email_address}}.',
     success: 'Email principale collegata correttamente.',
-    verification_required: 'Verifica scaduta. Conferma di nuovo la tua identità.',
   },
   phone: {
     title: 'Collega numero di telefono',
@@ -68,7 +40,6 @@ const account_center = {
     verification_description:
       'Il codice di verifica è stato inviato al tuo telefono {{phone_number}}.',
     success: 'Telefono principale collegato correttamente.',
-    verification_required: 'Verifica scaduta. Conferma di nuovo la tua identità.',
   },
   username: {
     title: 'Imposta nome utente',
@@ -103,12 +74,19 @@ const account_center = {
     manage: 'Gestisci',
     turn_on_2_step_verification_description:
       "Aggiungi un ulteriore livello di sicurezza. Ti verrà richiesto un secondo passaggio di verifica all'accesso.",
+    two_step_verification_incomplete_description:
+      'La verifica in due passaggi è attiva, ma non ancora effettiva.',
+    two_step_verification_off_description:
+      'La tua preferenza per la verifica in due passaggi è disattivata. Una verifica aggiuntiva potrebbe essere comunque richiesta dalle politiche di sicurezza.',
     turn_off_2_step_verification: 'Disattiva la verifica in due passaggi',
     turn_off_2_step_verification_description:
       "La disattivazione della verifica in due passaggi rimuoverà il livello di protezione aggiuntivo dal tuo account all'accesso. Sei sicuro di voler continuare?",
     disable_2_step_verification: 'Disattiva',
     no_verification_method_warning:
-      "Non hai aggiunto un secondo metodo di verifica. Aggiungine almeno uno per attivare la verifica in due passaggi all'accesso.",
+      'Configurazione incompleta. Aggiungi un metodo di verifica qui sotto per completare la configurazione della verifica in due passaggi.',
+    two_step_verification_load_failed:
+      'Impossibile caricare le impostazioni della verifica in due passaggi. Riprova.',
+    two_step_verification_retry: 'Riprova',
     passkey_sign_in_prompt: 'Richiedi la configurazione di un passkey',
     passkey_sign_in_prompt_description:
       'Quando è attivo, ti verrà chiesto di configurare un passkey per un accesso più rapido e sicuro.',
@@ -200,34 +178,10 @@ const account_center = {
     resend_countdown: "Non l'hai ricevuto? Reinvia dopo {{seconds}} s.",
   },
   email_verification: {
-    title: 'Verifica la tua e-mail',
-    prepare_description:
-      'Conferma che sei tu per proteggere la sicurezza del tuo account. Invia il codice di verifica alla tua e-mail.',
     email_label: 'Indirizzo email',
-    send: 'Invia codice di verifica',
-    description:
-      "Il codice di verifica è stato inviato all'e-mail {{email}}. Inserisci il codice per continuare.",
-    resend: "Non l'hai ricevuto? <a>Reinvia il codice di verifica</a>",
-    not_received: "Non l'hai ricevuto?",
-    resend_action: 'Reinvia il codice di verifica',
-    resend_countdown: "Non l'hai ricevuto? Reinvia dopo {{seconds}} s.",
-    error_send_failed: 'Invio del codice di verifica non riuscito. Riprova più tardi.',
-    error_verify_failed: 'Verifica non riuscita. Inserisci di nuovo il codice.',
-    error_invalid_code: 'Il codice di verifica non è valido o è scaduto.',
   },
   phone_verification: {
-    title: 'Verifica il tuo telefono',
-    prepare_description:
-      'Conferma che sei tu per proteggere la sicurezza del tuo account. Invia il codice di verifica al tuo telefono.',
     phone_label: 'Numero di telefono',
-    send: 'Invia codice di verifica',
-    description:
-      'Il codice di verifica è stato inviato al tuo telefono {{phone}}. Inserisci il codice per continuare.',
-    resend: "Non l'hai ricevuto? <a>Reinvia il codice di verifica</a>",
-    resend_countdown: "Non l'hai ricevuto? Reinvia dopo {{seconds}} s.",
-    error_send_failed: 'Invio del codice di verifica non riuscito. Riprova più tardi.',
-    error_verify_failed: 'Verifica non riuscita. Inserisci di nuovo il codice.',
-    error_invalid_code: 'Il codice di verifica non è valido o è scaduto.',
   },
   mfa: {
     totp_already_added:
@@ -344,4 +298,3 @@ const account_center = {
 };
 
 export default Object.freeze(account_center);
-/* eslint-enable max-lines */

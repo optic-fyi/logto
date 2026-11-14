@@ -16,7 +16,9 @@ import { conditional } from '@silverhand/essentials';
 
 import RequestError from '#src/errors/RequestError/index.js';
 import {
+  assertSsoIdentityMatchesConnector,
   getSsoAuthorizationUrl,
+  isEmailInSsoConnectorDomains,
   verifySsoIdentity,
 } from '#src/libraries/verification-helpers/single-sign-on.js';
 import { type WithLogContext } from '#src/middleware/koa-audit-log.js';
@@ -273,6 +275,8 @@ export class EnterpriseSsoVerification
     );
 
     if (userSsoIdentity) {
+      assertSsoIdentityMatchesConnector(await this.getConnectorData(), userSsoIdentity);
+
       const user = await usersQueries.findUserById(userSsoIdentity.userId);
       return {
         user,
@@ -282,16 +286,18 @@ export class EnterpriseSsoVerification
   }
 
   /**
-   * Find the related user by the enterprise SSO identity's verified email.
+   * Find the related user by the enterprise SSO identity's email, if the connector serves its domain.
    */
   private async findRelatedUserSsoIdentity(): Promise<User | undefined> {
     const { users: usersQueries } = this.queries;
 
-    if (!this.enterpriseSsoUserInfo?.email) {
+    const email = this.enterpriseSsoUserInfo?.email;
+
+    if (!email || !isEmailInSsoConnectorDomains(await this.getConnectorData(), email)) {
       return;
     }
 
-    const user = await usersQueries.findUserByEmail(this.enterpriseSsoUserInfo.email);
+    const user = await usersQueries.findUserByEmail(email);
 
     return user ?? undefined;
   }

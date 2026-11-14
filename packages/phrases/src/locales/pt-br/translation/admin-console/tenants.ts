@@ -17,13 +17,16 @@ const tenants = {
     purchase_description:
       'Os planos Pro e Empresa self-hosted liberam recursos pagos na sua própria instância, como ocultar a marca Logto, usar sua própria interface, colaboração no console e aplicações SAML ilimitadas. Compre um plano para receber sua chave de licença.',
     purchase_button: 'Ver planos self-hosted',
+    buy_license_button: 'Comprar uma licença',
     install_title: 'INSTALAR LICENÇA',
     install_description:
       'Cole a chave de licença que você recebeu ao comprar um plano self-hosted.',
     install_button: 'Instalar licença',
     key_field: 'Chave de licença',
     key_field_description:
-      'A chave é verificada na sua instância e nunca sai dela. Entre em contato com a Logto para obter uma chave nova se a que você tem expirou.',
+      'A chave é verificada na sua instância e enviada à Logto quando a licença é atualizada. Entre em contato com a Logto para obter uma nova chave se a sua expirou.',
+    key_field_cloud_description:
+      'A chave é verificada na sua instância e enviada à Logto quando a licença é atualizada. Obtenha uma nova chave no Logto Cloud se a sua expirou.',
     key_placeholder: 'Cole sua chave de licença aqui',
     installed_toast: 'Licença instalada com sucesso.',
     details_title: 'LICENÇA',
@@ -47,8 +50,18 @@ const tenants = {
     refusal_reason_unknown: 'indisponível',
     grace_expired_description:
       'O período de tolerância da licença terminou em {{graceEndsAt}}. Esta implantação voltou aos padrões do OSS. Entre em contato com a Logto para obter uma nova chave de licença e instale-a novamente.',
+    grace_expired_cloud_description:
+      'O período de tolerância da licença terminou em {{graceEndsAt}}. Esta implantação voltou aos padrões do OSS. Obtenha uma nova chave de licença no Logto Cloud e instale-a novamente.',
     get_fresh_key_button: 'Obter uma nova chave de licença',
     replace_button: 'Substituir licença',
+    usage_banner_description:
+      'Esta implantação ultrapassa os limites de uso do seu plano auto-hospedado:',
+    usage_banner_metric: '{{metric}}: {{value}} (limite {{limit}})',
+    usage_banner_action:
+      'Entre em contato conosco em até 30 dias para fazer upgrade do plano ou reduzir o uso.',
+    usage_metric_mau: 'Usuários ativos mensais',
+    usage_metric_access_tokens: 'Tokens de acesso mensais',
+    usage_metric_production_deployments: 'Implantações de produção',
   },
   members: {
     card_title: 'Gerencie tenants com mais segurança usando o Logto Cloud',

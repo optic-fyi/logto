@@ -1,12 +1,13 @@
-import { NameIdFormat } from '@logto/schemas';
+import { NameIdFormat, type SamlAttributeMapping } from '@logto/schemas';
 import { generateStandardId } from '@logto/shared';
-import { appendPath } from '@silverhand/essentials';
-import camelCase from 'camelcase';
+import { appendPath, type Nullable } from '@silverhand/essentials';
 import saml from 'samlify';
 
 import RequestError from '#src/errors/RequestError/index.js';
 import { type IdTokenProfileStandardClaims } from '#src/sso/types/oidc.js';
 import assertThat from '#src/utils/assert-that.js';
+
+import { fallbackAttributes } from './consts.js';
 
 /**
  * Determines the SAML NameID format and value based on the user's claims and IdP's NameID format.
@@ -55,7 +56,7 @@ export const buildSamlAssertionNameId = (
   });
 };
 
-const escapeHtmlAttributeValue = (value: string): string =>
+export const escapeHtmlAttributeValue = (value: string): string =>
   value
     .replaceAll('&', '&amp;')
     .replaceAll('"', '&quot;')
@@ -111,15 +112,78 @@ export const getSamlAppCallbackUrl = (baseUrl: URL, samlAppId: string) =>
   appendPath(baseUrl, `api/saml-applications/${samlAppId}/callback`);
 
 /**
- * @desc Tag normalization, copied from https://github.com/tngan/samlify/blob/master/src/libsaml.ts#L230-L240 to get SAML attribute tag name.
- * @param {string} prefix     prefix of the tag
- * @param {content} content   normalize it to capitalized camel case
- * @return {string}
+ * Get the template tag samlify fills with an attribute value: `prefix` followed by `content` in
+ * capitalized camel case. It must equal samlify's `tagging` output, otherwise samlify leaves the
+ * `{attr…}` placeholder in the assertion. samlify does not expose `tagging` or its `camelCase`
+ * publicly, so both are mirrored here.
+ *
+ * @see {@link https://github.com/tngan/samlify/blob/v2.13.1/src/utility.ts | samlify `camelCase`}
  */
 export const generateSamlAttributeTag = (content: string, prefix = 'attr'): string => {
-  const camelContent = camelCase(content, { locale: 'en-us' });
+  const camelContent = content
+    .replaceAll(/([\da-z])([A-Z])/g, '$1\0$2')
+    .replaceAll(/([A-Z]+)([A-Z][a-z])/g, '$1\0$2')
+    .split(/[\s\0._-]+/)
+    .filter(Boolean)
+    .map((word, index) => {
+      const lower = word.toLocaleLowerCase('en-US');
+      return index === 0 ? lower : lower.charAt(0).toLocaleUpperCase('en-US') + lower.slice(1);
+    })
+    .join('');
   return prefix + camelContent.charAt(0).toUpperCase() + camelContent.slice(1);
 };
+
+/** A value samlify substitutes for a template tag. */
+export type SamlTagValue = Nullable<string | number> | undefined;
+
+const escapeRegExp = (value: string) => value.replaceAll(/[$()*+.?[\\\]^{|}]/g, '\\$&');
+
+/**
+ * Expand the `<saml:AttributeValue>` element of every array-valued tag into one element per item,
+ * so a multi-valued claim such as `roles` is emitted as sibling values (SAML core 2.7.3.1) rather
+ * than one JSON-encoded string. The array is replaced by per-item tags (`{attrRole:0}`, …). When
+ * the template has no value element for the tag, the array is kept as a JSON string so a custom
+ * template keeps its previous output.
+ */
+export const expandMultiValuedAttributeTags = (
+  template: string,
+  tagValues: Record<string, SamlTagValue | SamlTagValue[]>
+): { template: string; tagValues: Record<string, SamlTagValue> } =>
+  Object.entries(tagValues).reduce<{ template: string; tagValues: Record<string, SamlTagValue> }>(
+    (expanded, [tag, value]) => {
+      if (!Array.isArray(value)) {
+        return { ...expanded, tagValues: { ...expanded.tagValues, [tag]: value } };
+      }
+
+      const items = value.map((item, index) => [`${tag}:${index}`, item] as const);
+      const expandedTemplate = expanded.template.replaceAll(
+        new RegExp(
+          `<saml:AttributeValue([^>]*)>\\{${escapeRegExp(tag)}\\}</saml:AttributeValue>`,
+          'g'
+        ),
+        (_, attributes: string) =>
+          items
+            .map(
+              ([itemTag]) => `<saml:AttributeValue${attributes}>{${itemTag}}</saml:AttributeValue>`
+            )
+            .join('')
+      );
+
+      if (expandedTemplate === expanded.template) {
+        return { ...expanded, tagValues: { ...expanded.tagValues, [tag]: JSON.stringify(value) } };
+      }
+
+      return {
+        template: expandedTemplate,
+        tagValues: { ...expanded.tagValues, ...Object.fromEntries(items) },
+      };
+    },
+    { template, tagValues: {} }
+  );
+
+/** Names of the user attributes in the assertion; `fallbackAttributes` apply when nothing is mapped. */
+export const getSamlUserAttributeNames = (attributeMapping: SamlAttributeMapping): string[] =>
+  Object.keys(attributeMapping).length > 0 ? Object.values(attributeMapping) : fallbackAttributes;
 
 /**
  * Whether the service provider asked to re-authenticate the user, i.e. its `AuthnRequest` carries

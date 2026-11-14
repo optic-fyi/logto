@@ -7,11 +7,16 @@ import {
   userMfaDataKey,
   userMfaSettingsResponseGuard,
   jsonObjectGuard,
+  type User,
 } from '@logto/schemas';
 import { conditional } from '@silverhand/essentials';
 import { z } from 'zod';
 
 import RequestError from '#src/errors/RequestError/index.js';
+import {
+  isMfaRequiredByUser,
+  isNoSkipMfaPolicy,
+} from '#src/libraries/sign-in-experience/mfa-policy.js';
 import { buildUserPasswordPayloadFromPassword } from '#src/libraries/user.utils.js';
 import koaGuard from '#src/middleware/koa-guard.js';
 import { assertFirstPartyClient } from '#src/utils/assert-first-party-client.js';
@@ -34,7 +39,10 @@ import thirdPartyTokensRoutes from './third-party-tokens.js';
 import accountTrustedDeviceRoutes from './trusted-device.js';
 import accountUserAssetsRoutes from './user-assets.js';
 import { getAccountCenterFilteredProfile, getScopedProfile } from './utils/get-scoped-profile.js';
-import { hasSecurityVerificationMethod } from './utils/has-security-verification-method.js';
+import {
+  assertIdentityVerified,
+  assertIdentityVerifiedIfRequired,
+} from './utils/identity-verification.js';
 
 export default function accountRoutes<T extends UserRouter>(...args: RouterInitArgs<T>) {
   const [router, { queries, libraries }] = args;
@@ -48,6 +56,12 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
     users: { checkIdentifierCollision },
   } = libraries;
 
+  /** Whether the user cannot opt out of MFA verification on sign-in. */
+  const isMfaRequiredOnSignIn = async (user: Pick<User, 'id' | 'logtoConfig'>) => {
+    const { mfa } = await findDefaultSignInExperience();
+    return isNoSkipMfaPolicy(mfa.policy) || isMfaRequiredByUser(queries, mfa, user);
+  };
+
   router.use(koaAccountCenter(queries));
 
   router.get(
@@ -59,7 +73,7 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
     async (ctx, next) => {
       const { id: userId, scopes } = ctx.auth;
       const { profile, user } = await getScopedProfile(queries, libraries, scopes, userId);
-      ctx.body = getAccountCenterFilteredProfile(profile, ctx.accountCenter, user);
+      ctx.body = getAccountCenterFilteredProfile(profile, ctx.accountCenter, scopes, user);
       return next();
     }
   );
@@ -77,7 +91,7 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
       status: [200, 400, 401, 403, 422],
     }),
     async (ctx, next) => {
-      const { id: userId, scopes, identityVerified, clientId } = ctx.auth;
+      const { id: userId, scopes, clientId } = ctx.auth;
       const { body } = ctx.guard;
       const { name, avatar, username, customData } = body;
       const { fields } = ctx.accountCenter;
@@ -105,10 +119,7 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
       await assertFirstPartyClient(queries, clientId);
 
       if (username !== undefined) {
-        assertThat(
-          identityVerified,
-          new RequestError({ code: 'verification_record.permission_denied', status: 401 })
-        );
+        assertIdentityVerified(ctx);
 
         if (username === null) {
           const [user, ssoIdentities] = await Promise.all([
@@ -137,7 +148,7 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
       ctx.appendDataHookContext('User.Data.Updated', { user: updatedUser });
 
       const { profile } = await getScopedProfile(queries, libraries, scopes, userId);
-      ctx.body = getAccountCenterFilteredProfile(profile, ctx.accountCenter, updatedUser);
+      ctx.body = getAccountCenterFilteredProfile(profile, ctx.accountCenter, scopes, updatedUser);
 
       return next();
     }
@@ -187,18 +198,13 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
       status: [204, 400, 401, 403, 422],
     }),
     async (ctx, next) => {
-      const { id: userId, identityVerified, clientId } = ctx.auth;
+      const { id: userId, clientId } = ctx.auth;
       const { password } = ctx.guard.body;
 
       await assertFirstPartyClient(queries, clientId);
 
       const user = await findUserById(userId);
-      if (hasSecurityVerificationMethod(user)) {
-        assertThat(
-          identityVerified,
-          new RequestError({ code: 'verification_record.permission_denied', status: 401 })
-        );
-      }
+      assertIdentityVerifiedIfRequired(ctx, user);
 
       const { fields } = ctx.accountCenter;
       assertThat(
@@ -246,8 +252,9 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
       const user = await findUserById(userId);
       const mfaData = userMfaDataGuard.safeParse(user.logtoConfig[userMfaDataKey]);
       const skipMfaOnSignIn = mfaData.success ? (mfaData.data.skipMfaOnSignIn ?? false) : false;
+      const enabled = mfaData.success ? mfaData.data.enabled : undefined;
 
-      ctx.body = { skipMfaOnSignIn };
+      ctx.body = { skipMfaOnSignIn, enabled, required: await isMfaRequiredOnSignIn(user) };
 
       return next();
     }
@@ -258,24 +265,22 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
     koaGuard({
       body: z.object({
         skipMfaOnSignIn: z.boolean(),
+        enabled: z.boolean().optional(),
       }),
       response: userMfaSettingsResponseGuard,
       status: [200, 400, 401, 403],
     }),
     async (ctx, next) => {
-      const { id: userId, identityVerified, scopes, clientId } = ctx.auth;
+      const { id: userId, scopes, clientId } = ctx.auth;
 
-      assertThat(
-        identityVerified,
-        new RequestError({ code: 'verification_record.permission_denied', status: 401 })
-      );
+      assertIdentityVerified(ctx);
       assertThat(
         scopes.has(UserScope.Identities),
         new RequestError({ code: 'auth.unauthorized', status: 401 })
       );
       await assertFirstPartyClient(queries, clientId);
 
-      const { skipMfaOnSignIn } = ctx.guard.body;
+      const { skipMfaOnSignIn, enabled } = ctx.guard.body;
       const { fields } = ctx.accountCenter;
       assertThat(
         fields.mfa === AccountCenterControlValue.Edit,
@@ -291,13 +296,20 @@ export default function accountRoutes<T extends UserRouter>(...args: RouterInitA
           [userMfaDataKey]: {
             ...(existingMfaData.success ? existingMfaData.data : {}),
             skipMfaOnSignIn,
+            ...(enabled === undefined ? {} : { enabled }),
           },
         },
       });
 
       ctx.appendDataHookContext('User.Data.Updated', { user: updatedUser });
 
-      ctx.body = { skipMfaOnSignIn };
+      const updatedMfaData = userMfaDataGuard.safeParse(updatedUser.logtoConfig[userMfaDataKey]);
+
+      ctx.body = {
+        skipMfaOnSignIn,
+        enabled: updatedMfaData.success ? updatedMfaData.data.enabled : undefined,
+        required: await isMfaRequiredOnSignIn(updatedUser),
+      };
 
       return next();
     }

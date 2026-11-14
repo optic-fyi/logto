@@ -17,13 +17,16 @@ const tenants = {
     purchase_description:
       'پلن‌های حرفه‌ای و سازمانی self-hosted قابلیت‌های پولی را روی نمونه خودتان باز می‌کنند؛ مانند پنهان کردن برند Logto، استفاده از رابط کاربری خودتان، همکاری در کنسول و برنامه‌های SAML نامحدود. برای دریافت کلید مجوز، یک پلن بخرید.',
     purchase_button: 'مشاهده پلن‌های self-hosted',
+    buy_license_button: 'خرید مجوز',
     install_title: 'نصب مجوز',
     install_description:
       'کلید مجوزی را که پس از خرید پلن self-hosted دریافت کرده‌اید جای‌گذاری کنید.',
     install_button: 'نصب مجوز',
     key_field: 'کلید مجوز',
     key_field_description:
-      'کلید روی نمونه شما بررسی می‌شود و هرگز از آن خارج نمی‌شود. اگر کلید فعلی منقضی شده است، برای دریافت کلید تازه با Logto تماس بگیرید.',
+      'کلید روی نمونه شما بررسی می‌شود و هنگام به‌روزرسانی مجوز به Logto ارسال می‌شود. اگر کلید فعلی منقضی شده است، برای دریافت کلید تازه با Logto تماس بگیرید.',
+    key_field_cloud_description:
+      'کلید روی نمونه شما بررسی می‌شود و هنگام به‌روزرسانی مجوز به Logto ارسال می‌شود. اگر کلید فعلی منقضی شده است، کلید تازه را از Logto Cloud دریافت کنید.',
     key_placeholder: 'کلید مجوز خود را اینجا جای‌گذاری کنید',
     installed_toast: 'مجوز با موفقیت نصب شد.',
     details_title: 'مجوز',
@@ -47,8 +50,18 @@ const tenants = {
     refusal_reason_unknown: 'در دسترس نیست',
     grace_expired_description:
       'مهلت ارفاقی مجوز در {{graceEndsAt}} پایان یافت. این استقرار به پیش‌فرض‌های OSS بازگشته است. برای دریافت کلید مجوز تازه با Logto تماس بگیرید و دوباره آن را نصب کنید.',
+    grace_expired_cloud_description:
+      'مهلت ارفاقی مجوز در {{graceEndsAt}} پایان یافت. این استقرار به پیش‌فرض‌های OSS بازگشته است. کلید مجوز تازه را از Logto Cloud دریافت کنید و دوباره آن را نصب کنید.',
     get_fresh_key_button: 'دریافت کلید مجوز تازه',
     replace_button: 'جایگزینی مجوز',
+    usage_banner_description:
+      'استفاده این استقرار از محدودیت‌های استفاده پلن میزبانی‌شده شخصی فراتر رفته است:',
+    usage_banner_metric: '{{metric}}: {{value}} (محدودیت {{limit}})',
+    usage_banner_action:
+      'ظرف ۳۰ روز با ما تماس بگیرید تا پلن خود را ارتقا دهید یا استفاده خود را کاهش دهید.',
+    usage_metric_mau: 'کاربران فعال ماهانه',
+    usage_metric_access_tokens: 'توکن‌های دسترسی ماهانه',
+    usage_metric_production_deployments: 'استقرارهای تولیدی',
   },
   members: {
     card_title: 'مدیریت امن‌تر مستأجرها با Logto Cloud',

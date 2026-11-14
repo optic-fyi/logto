@@ -92,4 +92,31 @@ describe('CIMD config routes', () => {
       expect(logtoConfigQueries.upsertCimdConfig).toHaveBeenCalledWith({ enabled: false });
     });
   });
+
+  describe('PATCH /configs/cimd refreshTokenTtlInDays', () => {
+    it('merges the TTL onto the current config', async () => {
+      logtoConfigQueries.getCimdConfig.mockResolvedValueOnce({
+        enabled: true,
+        addConsentPromptForOfflineAccess: true,
+      });
+
+      const response = await routeRequester
+        .patch('/configs/cimd')
+        .send({ refreshTokenTtlInDays: 180 });
+
+      expect(response.status).toEqual(200);
+      expect(logtoConfigQueries.upsertCimdConfig).toHaveBeenCalledWith({
+        enabled: true,
+        addConsentPromptForOfflineAccess: true,
+        refreshTokenTtlInDays: 180,
+      });
+    });
+
+    it.each([0, 181, 1.5])('rejects %s days with 400', async (refreshTokenTtlInDays) => {
+      const response = await routeRequester.patch('/configs/cimd').send({ refreshTokenTtlInDays });
+
+      expect(response.status).toEqual(400);
+      expect(logtoConfigQueries.upsertCimdConfig).not.toHaveBeenCalled();
+    });
+  });
 });

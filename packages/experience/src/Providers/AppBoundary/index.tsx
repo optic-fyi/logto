@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import ConfirmModalProvider from '../ConfirmModalProvider';
 import IframeModalProvider from '../IframeModalProvider';
 import ToastProvider from '../ToastProvider';
+import WalletModalProvider from '../WalletModalProvider';
 
 import AppMeta from './AppMeta';
 import useColorTheme from './use-color-theme';
@@ -19,7 +20,9 @@ const AppBoundary = ({ children }: Props) => {
       <AppMeta />
       <IframeModalProvider>
         <ConfirmModalProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <WalletModalProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </WalletModalProvider>
         </ConfirmModalProvider>
       </IframeModalProvider>
     </>

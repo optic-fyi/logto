@@ -26,6 +26,7 @@ import {
   authorizationEndpoint,
   scope as defaultScope,
   userInfoEndpoint,
+  userInfoFields,
   defaultMetadata,
   defaultTimeout,
   tokenEndpoint,
@@ -115,6 +116,9 @@ const getUserInfo =
 
     try {
       const userInfoResponse = await ky.get(userInfoEndpoint, {
+        searchParams: {
+          'fields[user]': userInfoFields.join(','),
+        },
         headers: {
           authorization: `${tokenType} ${accessToken}`,
         },
@@ -135,7 +139,7 @@ const getUserInfo =
       return {
         id: data.id,
         avatar: conditional(attributes.image_url),
-        email: conditional(attributes.email),
+        email: conditional(attributes.is_email_verified && attributes.email),
         name: conditional(attributes.full_name),
         rawData,
         email_verified: conditional(attributes.is_email_verified), // Direct email verification info

@@ -128,6 +128,8 @@ const description = {
   switch_account_title: 'Şu anda {{account}} olarak oturum açtınız',
   switch_account_description:
     'Devam etmek için, mevcut hesaptan çıkış yapacak ve otomatik olarak yeni hesaba geçeceksiniz.',
+  continue_to_app_title: 'Uygulamaya dön',
+  continue_to_app_description: 'Uygulamaya dönmek için devam edin.',
   about_yourself: 'Kendinizden bahsedin',
   verify_identity: 'Kimliğinizi doğrulayın',
   choose_verification_method: 'Nasıl giriş yapmak istediğinizi seçin',
@@ -140,6 +142,7 @@ const description = {
     phone_verification_code: 'Telefon doğrulama kodu',
     verification_code_description: '{{target}} adresine gönder',
   },
+  select_wallet: 'Bir cüzdan seçin',
 };
 
 export default Object.freeze(description);

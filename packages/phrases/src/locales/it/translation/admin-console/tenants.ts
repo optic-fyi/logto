@@ -18,13 +18,16 @@ const tenants = {
     purchase_description:
       'I piani Pro e Azienda self-hosted sbloccano funzionalità a pagamento sulla tua istanza, come nascondere il branding Logto, usare la tua UI, la collaborazione nella console e applicazioni SAML illimitate. Acquista un piano per ottenere la tua chiave di licenza.',
     purchase_button: 'Vedi i piani self-hosted',
+    buy_license_button: 'Acquista una licenza',
     install_title: 'INSTALLA LICENZA',
     install_description:
       'Incolla la chiave di licenza che hai ricevuto dopo aver acquistato un piano self-hosted.',
     install_button: 'Installa licenza',
     key_field: 'Chiave di licenza',
     key_field_description:
-      'La chiave viene verificata sulla tua istanza e non la lascia mai. Contatta Logto per ottenere una chiave nuova se quella che hai è scaduta.',
+      'La chiave viene verificata sulla tua istanza e inviata a Logto quando la licenza si aggiorna. Contatta Logto per ottenere una chiave nuova se quella che hai è scaduta.',
+    key_field_cloud_description:
+      'La chiave viene verificata sulla tua istanza e inviata a Logto quando la licenza si aggiorna. Ottieni una chiave nuova da Logto Cloud se quella che hai è scaduta.',
     key_placeholder: 'Incolla qui la tua chiave di licenza',
     installed_toast: 'Licenza installata con successo.',
     details_title: 'LICENZA',
@@ -48,8 +51,18 @@ const tenants = {
     refusal_reason_unknown: 'non disponibile',
     grace_expired_description:
       'Il periodo di tolleranza della licenza è terminato il {{graceEndsAt}}. Questa distribuzione è tornata ai valori predefiniti OSS. Contatta Logto per ottenere una nuova chiave di licenza e installala di nuovo.',
+    grace_expired_cloud_description:
+      'Il periodo di tolleranza della licenza è terminato il {{graceEndsAt}}. Questa distribuzione è tornata ai valori predefiniti OSS. Ottieni una nuova chiave di licenza da Logto Cloud e installala di nuovo.',
     get_fresh_key_button: 'Ottieni una nuova chiave',
     replace_button: 'Sostituisci licenza',
+    usage_banner_description:
+      'Questa distribuzione supera i limiti di utilizzo del suo piano self-hosted:',
+    usage_banner_metric: '{{metric}}: {{value}} (limite {{limit}})',
+    usage_banner_action:
+      'Contattaci entro 30 giorni per aggiornare il piano o ridurre il tuo utilizzo.',
+    usage_metric_mau: 'Utenti attivi mensili',
+    usage_metric_access_tokens: 'Token di accesso mensili',
+    usage_metric_production_deployments: 'Distribuzioni di produzione',
   },
   members: {
     card_title: 'Gestisci i tenant in modo più sicuro con Logto Cloud',

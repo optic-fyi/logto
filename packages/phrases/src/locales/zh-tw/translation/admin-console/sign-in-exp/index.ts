@@ -107,8 +107,20 @@ const sign_in_exp = {
     csp_source_invalid_error:
       '請輸入有效的來源表達式。請使用 https:// URL；connect-src 也支援 wss://。不支援 CSP 關鍵字和分號。',
     csp_source_duplicate_error: '此來源表達式已在清單中。',
+    coop_tip: '將你的自訂登入介面與跨來源視窗隔離。只會在提供自訂 UI 資源時套用。',
+    coop_unsafe_none: '未設定（無標頭）',
+    coop_warning:
+      '在彈出視窗中開啟登入頁並依賴 window.opener 的應用程式將無法正常運作。自訂介面開啟的彈出視窗在返回自訂介面時（例如社群登入回呼）也會失去 window.opener；使用 same-origin 時，彈出視窗一開啟就會失去它。',
   },
   account_center: {
+    recent_authentication: {
+      title: '最近一次身分驗證',
+      description:
+        '敏感帳號操作（例如變更密碼或關閉雙步驗證）要求使用者最近登入過，無論是在 Account Center 中操作，還是在呼叫 Account API 的應用程式中操作。此時間視窗定義了多久以內的登入仍視為最近登入。',
+      maximum_authentication_age_in_minutes: '最大身分驗證時長（分鐘）',
+      maximum_authentication_age_in_minutes_tip:
+        '登入在多長時間內仍視為對敏感操作足夠新。用戶端仍可透過 `max_age` 參數要求更短的時間視窗。',
+    },
     title: '帳號中心',
     description: '使用 Logto API 自訂你的帳號中心流程。',
     enable_account_api: '啟用帳號中心和 Account API',
@@ -130,6 +142,8 @@ const sign_in_exp = {
           title: '安全驗證',
           description:
             '在變更安全設定之前，使用者必須驗證身分以取得有效期 10 分鐘的驗證紀錄 ID。要啟用驗證方式（電子郵件、手機、密碼），請將下方的 Account API 權限設定為<strong>唯讀</strong>（最低要求）或<strong>可編輯</strong>，以便系統偵測使用者是否已設定。<a>了解更多</a>',
+          description_step_up:
+            '變更安全設定前，內建 Account Center 要求使用者最近登入過。如果目前登入時間早於設定的最近一次身分驗證時間視窗，Account Center 會發起 OIDC step-up，並要求使用者驗證身分。要允許使用者在 Account Center 中檢視或管理驗證方式（電子郵件、手機或密碼），請將下方對應的 Account API 權限設定為<strong>唯讀</strong>或<strong>可編輯</strong>。對於這些敏感操作，直接呼叫 Account API 的應用程式仍可使用驗證紀錄 ID。<a>了解更多</a>',
         },
         groups: {
           identifiers: {
@@ -222,9 +236,9 @@ const sign_in_exp = {
       flows_title: '整合預構建安全設置流程',
       single_task_flows_title: '整合現成的單一資料更新流程',
       flows_description:
-        '結合你的域名與路徑形成你的帳戶設置 URL（例如：https://auth.foo.com/account/email）。你可以選擇添加 `redirect=` 在成功更新後將用戶返回到你的應用，添加 `show_success=true` 以保持成功頁面可見，添加 `ui_locales=` 以覆蓋預設語言，或添加 `identifier=` 以預填識別碼輸入欄位。',
+        '結合你的域名與路徑形成你的帳戶設置 URL（例如：https://auth.foo.com/account/email）。你可以選擇添加 `redirect=` 在成功更新後將用戶返回到你的應用，添加 `show_success=true` 以保持成功頁面可見，添加 `ui_locales=` 以覆蓋預設語言，添加 `login_hint=` 以在登入頁面預填識別碼，或添加 `identifier=` 以在電子郵件、電話或使用者名稱路徑中預填新的值。',
       single_task_flows_description:
-        '結合你的域名與路徑形成你的個人資料更新 URL（例如：https://auth.foo.com/account/profile）。你可以選擇添加 `redirect=` 在成功更新後將用戶返回到你的應用，或添加 `ui_locales=` 以覆蓋預設語言。',
+        '直接將使用者導向特定流程（例如：電子郵件綁定）。你可以選擇添加 `redirect=` 在成功更新後將用戶返回到你的應用，添加 `show_success=true` 以保持成功頁面可見，添加 `ui_locales=` 以覆蓋預設語言，添加 `login_hint=` 以在登入頁面預填識別碼，或添加 `identifier=` 以在電子郵件、電話或使用者名稱路徑中預填新的值。',
       tooltips: {
         email: '更新你的主要電子郵件地址',
         phone: '更新你的主要電話號碼',

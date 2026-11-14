@@ -5,6 +5,7 @@ import { validateRedirectUrl } from '@logto/core-kit';
 import {
   type EncryptedTokenSet,
   InteractionEvent,
+  SsoProviderType,
   type SupportedSsoConnector,
   type User,
   type UserSsoIdentity,
@@ -264,6 +265,44 @@ export const verifySsoIdentity = async (
   }
 };
 
+/**
+ * Whether the email's domain exactly matches one of the SSO connector's `domains`, ignoring case.
+ * An existing account is linked to an SSO identity by email only when this holds.
+ */
+export const isEmailInSsoConnectorDomains = (
+  { domains }: Pick<SupportedSsoConnector, 'domains'>,
+  email: string
+): boolean => {
+  const atIndex = email.lastIndexOf('@');
+
+  if (atIndex === -1) {
+    return false;
+  }
+
+  const domain = email.slice(atIndex + 1).toLowerCase();
+
+  return domains.some((item) => item.toLowerCase() === domain);
+};
+
+/**
+ * A SAML connector's issuer is the entity ID its owner configured, so a SAML sign-in may only
+ * resolve an SSO identity that was linked through the same connector.
+ */
+export const assertSsoIdentityMatchesConnector = (
+  { id, providerName }: Pick<SupportedSsoConnector, 'id' | 'providerName'>,
+  { ssoConnectorId }: Pick<UserSsoIdentity, 'ssoConnectorId'>
+) => {
+  assertThat(
+    ssoConnectorFactories[providerName].providerType !== SsoProviderType.SAML ||
+      ssoConnectorId === id,
+    new RequestError({
+      code: 'user.enterprise_sso_identity_not_exists',
+      status: 404,
+      ssoConnectorId: id,
+    })
+  );
+};
+
 // Remark:
 // The following functions are used in the legacy interaction single sign on routes only.
 // The SSO interaction flow will be handled in the latest experience APIs using the SSO verification record.
@@ -308,6 +347,8 @@ export const handleSsoAuthentication = async (
 
   // SignIn
   if (userSsoIdentity) {
+    assertSsoIdentityMatchesConnector(connectorData, userSsoIdentity);
+
     return signInWithSsoAuthentication(ctx, tenant, {
       connectorData,
       userSsoIdentity,
@@ -315,7 +356,10 @@ export const handleSsoAuthentication = async (
     });
   }
 
-  const user = userInfo.email && (await usersQueries.findUserByEmail(userInfo.email));
+  const user =
+    userInfo.email &&
+    isEmailInSsoConnectorDomains(connectorData, userInfo.email) &&
+    (await usersQueries.findUserByEmail(userInfo.email));
 
   // SignIn and link with existing user account with a same email
   if (user) {
@@ -473,6 +517,8 @@ export const registerWithSsoAuthentication = async (
   const { createLog } = ctx;
   const log = createLog(`Interaction.Register.Submit`);
   const { issuer, userInfo, connectorId } = ssoAuthentication;
+
+  await usersLibrary.checkIdentifierCollision({ primaryEmail: userInfo.email });
 
   // Only sync the name, avatar and email (conflict email account will be guarded ahead)
   const syncingProfile = {

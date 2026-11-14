@@ -19,37 +19,11 @@ const account_center = {
     sign_out: 'Se déconnecter',
   },
   verification: {
-    title: 'Vérification de sécurité',
-    description:
-      "Confirmez que c'est bien vous pour protéger la sécurité de votre compte. Veuillez sélectionner la méthode pour vérifier votre identité.",
     error_send_failed: "Échec de l'envoi du code de vérification. Veuillez réessayer plus tard.",
     error_invalid_code: 'Le code de vérification est invalide ou a expiré.',
     error_verify_failed: 'Échec de la vérification. Veuillez saisir le code à nouveau.',
-    verification_required: 'La vérification a expiré. Veuillez confirmer à nouveau votre identité.',
-    try_another_method: 'Essayez une autre méthode de vérification',
-    no_available_methods_title: 'Aucune méthode de vérification disponible',
-    no_available_methods_description:
-      "Vous n'avez configuré aucune méthode de vérification. Veuillez d'abord ajouter un mot de passe, une adresse e-mail ou un numéro de téléphone à votre compte.",
-  },
-  password_verification: {
-    title: 'Vérifier le mot de passe',
-    description:
-      'Pour protéger votre compte, saisissez votre mot de passe afin de confirmer votre identité.',
-    error_failed: 'Mot de passe incorrect. Veuillez vérifier votre saisie.',
-  },
-  verification_method: {
-    password: {
-      name: 'Mot de passe',
-      description: 'Vérifiez votre mot de passe',
-    },
-    email: {
-      name: 'Code de vérification par e-mail',
-      description: 'Envoyer le code de vérification sur votre e-mail',
-    },
-    phone: {
-      name: 'Code de vérification par téléphone',
-      description: 'Envoyer le code de vérification sur votre numéro de téléphone',
-    },
+    step_up_not_completed:
+      "La vérification d'identité n'a pas été effectuée. Aucune modification n'a été apportée à votre compte.",
   },
   email: {
     title: "Lier l'e-mail",
@@ -58,7 +32,6 @@ const account_center = {
     verification_description:
       'Le code de vérification a été envoyé à votre e-mail {{email_address}}.',
     success: 'E-mail principal lié avec succès.',
-    verification_required: 'La vérification a expiré. Veuillez confirmer à nouveau votre identité.',
   },
   phone: {
     title: 'Lier le numéro de téléphone',
@@ -68,7 +41,6 @@ const account_center = {
     verification_description:
       'Le code de vérification a été envoyé sur votre téléphone {{phone_number}}.',
     success: 'Téléphone principal lié avec succès.',
-    verification_required: 'La vérification a expiré. Veuillez confirmer à nouveau votre identité.',
   },
   username: {
     title: "Définir le nom d'utilisateur",
@@ -104,12 +76,19 @@ const account_center = {
     manage: 'Gérer',
     turn_on_2_step_verification_description:
       'Ajoutez une couche de sécurité supplémentaire. Vous serez invité à effectuer une deuxième étape de vérification lors de la connexion.',
+    two_step_verification_incomplete_description:
+      'La vérification en deux étapes est activée, mais pas encore effective.',
+    two_step_verification_off_description:
+      'Votre préférence pour la vérification en deux étapes est désactivée. Une vérification supplémentaire peut toujours être exigée par les politiques de sécurité.',
     turn_off_2_step_verification: 'Désactiver la vérification en deux étapes',
     turn_off_2_step_verification_description:
       'La désactivation de la vérification en deux étapes supprimera la couche de protection supplémentaire de votre compte lors de la connexion. Êtes-vous sûr de vouloir continuer ?',
     disable_2_step_verification: 'Désactiver',
     no_verification_method_warning:
-      "Vous n'avez pas ajouté de deuxième méthode de vérification. Ajoutez-en au moins une pour activer la vérification en deux étapes lors de la connexion.",
+      'Configuration incomplète. Ajoutez une méthode de vérification ci-dessous pour terminer la configuration de la vérification en deux étapes.',
+    two_step_verification_load_failed:
+      'Impossible de charger les paramètres de vérification en deux étapes. Veuillez réessayer.',
+    two_step_verification_retry: 'Réessayer',
     passkey_sign_in_prompt: 'Inviter à configurer un passkey',
     passkey_sign_in_prompt_description:
       'Lorsque cette option est activée, il vous sera demandé de configurer un passkey pour une connexion plus rapide et plus sécurisée.',
@@ -201,34 +180,10 @@ const account_center = {
     resend_countdown: 'Pas encore reçu ? Renvoyez après {{seconds}} s.',
   },
   email_verification: {
-    title: 'Vérifiez votre e-mail',
-    prepare_description:
-      'Confirmez votre identité pour protéger la sécurité de votre compte. Envoyez le code de vérification à votre e-mail.',
     email_label: 'Adresse e-mail',
-    send: 'Envoyer le code de vérification',
-    description:
-      'Le code de vérification a été envoyé à votre e-mail {{email}}. Saisissez le code pour continuer.',
-    resend: 'Pas encore reçu ? <a>Renvoyer le code de vérification</a>',
-    not_received: 'Pas encore reçu ?',
-    resend_action: 'Renvoyer le code de vérification',
-    resend_countdown: 'Pas encore reçu ? Renvoyez après {{seconds}} s.',
-    error_send_failed: "Échec de l'envoi du code de vérification. Veuillez réessayer plus tard.",
-    error_verify_failed: 'Échec de la vérification. Veuillez saisir le code à nouveau.',
-    error_invalid_code: 'Le code de vérification est invalide ou a expiré.',
   },
   phone_verification: {
-    title: 'Vérifiez votre téléphone',
-    prepare_description:
-      'Confirmez votre identité pour protéger la sécurité de votre compte. Envoyez le code de vérification sur votre téléphone.',
     phone_label: 'Numéro de téléphone',
-    send: 'Envoyer le code de vérification',
-    description:
-      'Le code de vérification a été envoyé à votre téléphone {{phone}}. Saisissez le code pour continuer.',
-    resend: 'Pas encore reçu ? <a>Renvoyer le code de vérification</a>',
-    resend_countdown: 'Pas encore reçu ? Renvoyez après {{seconds}} s.',
-    error_send_failed: "Échec de l'envoi du code de vérification. Veuillez réessayer plus tard.",
-    error_verify_failed: 'Échec de la vérification. Veuillez saisir le code à nouveau.',
-    error_invalid_code: 'Le code de vérification est invalide ou a expiré.',
   },
   mfa: {
     totp_already_added:

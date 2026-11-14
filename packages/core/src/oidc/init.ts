@@ -41,6 +41,7 @@ import {
   buildConsentPromptUrl,
   buildLoginPromptUrl,
   isOriginAllowed,
+  isStepUpPrompt,
   readOptionalQueryString,
   readOptionalTheme,
   validateCustomClientMetadata,
@@ -172,13 +173,12 @@ export default function initOidc(
   // and keeping the reference of the `envSet` object helps dynamically update oidc provider configs.
   const oidc = new Provider(envSet.oidc.issuer, {
     adapter: postgresAdapter.bind(null, envSet, queries),
-    // Align the error response regardless of the request format. It will be `application/json` by default.
-    // Rendering different error response based on the request format is okay, but it brought more trouble
-    // since `renderError` will be only called when the request prefers `text/html` format.
+    // The provider's `error_handler.js` only calls `renderError` when the request prefers HTML, and
+    // sets the same body otherwise. Its `authorization_error_handler.js` calls it for any `Accept`.
+    // Either way the object reaches `koaOidcErrorHandler`, the one place that decides the format,
+    // unless `koaCompress` has already compressed a large one (see the handler's known limit).
     //
     // See https://github.com/panva/node-oidc-provider/blob/37d0a6cfb3c618141a44cbb904ce45659438f821/lib/shared/error_handler.js#L48-L55
-    //
-    // Since we prefer a more consistent error response, we will handle it in `koaOidcErrorHandler` middleware.
     renderError: (ctx, out, _error) => {
       ctx.body = out;
     },
@@ -223,7 +223,7 @@ export default function initOidc(
       dPoP: { enabled: false },
       backchannelLogout: { enabled: true },
       deviceFlow: deviceFlowConfig,
-      ...buildClientIdMetadataDocumentFeature(envSet, queries.cimd),
+      ...buildClientIdMetadataDocumentFeature(envSet, queries),
       rpInitiatedLogout: {
         logoutSource: (ctx, form) => {
           // eslint-disable-next-line no-template-curly-in-string
@@ -274,8 +274,8 @@ export default function initOidc(
     interactions: {
       // Evaluate `acr_values` and `max_age` strictly and route step-up prompts; without the policy
       // the provider ignores `acr_values`, which OIDC treats as voluntary.
-      ...conditional(EnvSet.values.isDevFeaturesEnabled && { policy: buildInteractionPolicy() }),
-      url: (ctx, { params: { client_id: appId }, prompt }) => {
+      policy: buildInteractionPolicy(),
+      url: async (ctx, { params: { client_id: appId }, prompt }) => {
         const params = trySafe(() => extraParamsObjectGuard.parse(ctx.oidc.params ?? {})) ?? {};
         const resolvedAppId = readOptionalQueryString(appId);
         const sharedParams = {
@@ -295,12 +295,23 @@ export default function initOidc(
           ? { ...sharedParams, appId: undefined }
           : sharedParams;
 
-        // Cookies are required to apply the correct server-side rendering
-        ctx.cookies.set(logtoCookieKey, JSON.stringify(buildSharedExperienceCookie(cookieParams)), {
-          sameSite: 'lax',
-          overwrite: true,
-          httpOnly: false,
-        });
+        const isLoginPrompt = prompt.name === 'login';
+
+        // Cookies are required to apply the correct server-side rendering. The login prompt also
+        // writes the entry guard's step-up hint here, before the SPA loads, so a normal entry page
+        // does not need a second interaction read. Core still enforces the route allow-list.
+        ctx.cookies.set(
+          logtoCookieKey,
+          JSON.stringify({
+            ...buildSharedExperienceCookie(cookieParams),
+            ...(isLoginPrompt && { isStepUp: isStepUpPrompt(prompt.details) }),
+          }),
+          {
+            sameSite: 'lax',
+            overwrite: true,
+            httpOnly: false,
+          }
+        );
 
         if (params[ExtraParamsKey.GoogleOneTapCredential]) {
           ctx.cookies.set(
@@ -317,7 +328,24 @@ export default function initOidc(
 
         switch (prompt.name) {
           case 'login': {
-            return '/' + buildLoginPromptUrl(params, sharedParams, prompt.details);
+            // Third-party and CIMD clients usually show the consent screen after sign-in, which
+            // already holds the session open. Re-authentication with an existing grant can skip
+            // consent and redirect right away; that falls back to the default behavior.
+            const { [ExtraParamsKey.ConfirmRedirectPolicy]: confirmRedirectPolicy, ...rest } =
+              params;
+            const shouldDropConfirmRedirect =
+              confirmRedirectPolicy !== undefined &&
+              resolvedAppId !== undefined &&
+              (await isThirdPartyApplication(queries, resolvedAppId));
+
+            return (
+              '/' +
+              buildLoginPromptUrl(
+                shouldDropConfirmRedirect ? rest : params,
+                sharedParams,
+                prompt.details
+              )
+            );
           }
 
           case 'consent': {
@@ -455,16 +483,15 @@ export default function initOidc(
       ctx.URL.origin === origin || isOriginAllowed(origin, client.metadata(), client.redirectUris),
     // https://github.com/panva/node-oidc-provider/blob/main/recipes/claim_configuration.md
     // Note node-provider will append `claims` here to the default claims instead of overriding
-    claims: EnvSet.values.isDevFeaturesEnabled
-      ? // The provider only puts a claim into the ID token when some granted scope lists it (or the
-        // request asks for it through `claims` / `acr_values` / `max_age`). Listing the
-        // authentication context under `openid` makes every ID token carry `acr`, `amr`, and
-        // `auth_time` from the session, and advertises them in `claims_supported`.
-        { ...userClaims, openid: ['sub', 'acr', 'amr', 'auth_time'] }
-      : userClaims,
+    claims:
+      // The provider only puts a claim into the ID token when some granted scope lists it (or the
+      // request asks for it through `claims` / `acr_values` / `max_age`). Listing the
+      // authentication context under `openid` makes every ID token carry `acr`, `amr`, and
+      // `auth_time` from the session, and advertises them in `claims_supported`.
+      { ...userClaims, openid: ['sub', 'acr', 'amr', 'auth_time'] },
     // Advertise the Logto ACR classes as `acr_values_supported`; the provider also re-adds the
     // built-in `acr` claim to `claims_supported` once at least one value is configured.
-    ...conditional(EnvSet.values.isDevFeaturesEnabled && { acrValues: [...logtoAcrValues] }),
+    acrValues: [...logtoAcrValues],
     // https://github.com/panva/node-oidc-provider/tree/main/docs#findaccount
     findAccount: async (_ctx, sub) => {
       // The user may be deleted after the token is issued
@@ -535,6 +562,16 @@ export default function initOidc(
 
         if (defaultTtl !== undefined) {
           return defaultTtl;
+        }
+
+        /**
+         * A CIMD document declares its own `application_type` and auth method, so the default
+         * branch above can't be trusted to apply. Keep the expiration from the first issuance on
+         * every CIMD rotation, so the configured lifetime stays fixed.
+         */
+        const { RotatedRefreshToken: rotatedRefreshToken } = ctx.oidc.entities;
+        if (rotatedRefreshToken && shouldTreatAsCimdClient(envSet, client.clientId)) {
+          return rotatedRefreshToken.remainingTTL;
         }
 
         /** Customized logic for Refresh Token TTL */

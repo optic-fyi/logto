@@ -3,6 +3,7 @@ import {
   AdditionalIdentifier,
   InteractionEvent,
   LogtoActionKey,
+  MfaFactor,
   SentinelActivityAction,
   SignInIdentifier,
   UsersPasswordEncryptionMethod,
@@ -11,8 +12,11 @@ import {
 import { createMockUtils } from '@logto/shared/esm';
 
 import { mockUser } from '#src/__mocks__/user.js';
-import { EnvSet } from '#src/env-set/index.js';
 import RequestError from '#src/errors/RequestError/index.js';
+import {
+  type ActionResultValidation,
+  resolveActionResultValidation,
+} from '#src/libraries/action.js';
 
 const { jest } = import.meta;
 const { mockEsm } = createMockUtils(jest);
@@ -191,7 +195,10 @@ const registerRoute = () => {
     {
       libraries: {
         actions: {
-          runAction,
+          // `runAction` mocks the raw script result; validation runs as it does in `ActionLibrary`.
+          runAction: async <Result>(input: {
+            validateResult: (result: unknown) => ActionResultValidation<Result>;
+          }) => resolveActionResultValidation(input.validateResult(await runAction(input))),
         },
       },
       queries: {
@@ -305,6 +312,8 @@ describe('password verification route PostFirstFactorVerification fallback', () 
     await expect(getSentinelPromise()).rejects.toBe(invalidCredentialsError);
     expect(runAction).toHaveBeenCalledWith({
       key: LogtoActionKey.PostFirstFactorVerification,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- Jest asymmetric matcher is typed as `any`.
+      validateResult: expect.any(Function),
       auditContext: {
         createLog,
         sessionId,
@@ -427,6 +436,8 @@ describe('password verification route PostFirstFactorVerification fallback', () 
 
     expect(runAction).toHaveBeenCalledWith({
       key: LogtoActionKey.PostFirstFactorVerification,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- Jest asymmetric matcher is typed as `any`.
+      validateResult: expect.any(Function),
       auditContext: {
         createLog,
         sessionId,
@@ -467,6 +478,43 @@ describe('password verification route PostFirstFactorVerification fallback', () 
       { mergeCustomData: true }
     );
     expect(passwordVerificationRecord.markAsVerified).toHaveBeenCalled();
+  });
+
+  it('passes migrated MFA factors to user provisioning', async () => {
+    const handler = registerRoute();
+    const ctx = createContext();
+
+    passwordVerificationRecord.verify.mockRejectedValueOnce(invalidCredentialsError);
+    findUserByEmail.mockResolvedValueOnce(mockUser);
+    runAction.mockResolvedValueOnce({
+      action: 'updateUser',
+      passwordVerified: true,
+      user: {},
+      mfaVerifications: [
+        {
+          type: MfaFactor.TOTP,
+          secret: 'JBSWY3DPEHPK3PXP',
+        },
+      ],
+    });
+
+    await handler(ctx, jest.fn().mockImplementation(resolveVoid));
+
+    expect(updateUser).toHaveBeenCalledWith(
+      mockUser.id,
+      {
+        ...passwordHashPayload,
+      },
+      {
+        mergeCustomData: true,
+        mfaVerifications: [
+          expect.objectContaining({
+            type: MfaFactor.TOTP,
+            key: 'JBSWY3DPEHPK3PXP',
+          }),
+        ],
+      }
+    );
   });
 
   it('surfaces identity conflict when the action create result targets an existing user', async () => {
@@ -706,34 +754,4 @@ describe('password verification route subject-bound variant', () => {
   });
 });
 
-describe('password verification route dev feature gate', () => {
-  const originalIsDevFeaturesEnabled = EnvSet.values.isDevFeaturesEnabled;
-
-  afterEach(() => {
-    // eslint-disable-next-line @silverhand/fp/no-mutation -- Restore the process-wide flag.
-    (EnvSet.values as { isDevFeaturesEnabled: boolean }).isDevFeaturesEnabled =
-      originalIsDevFeaturesEnabled;
-  });
-
-  it('rejects the identifier-less payload and omits the 404 status when dev features are disabled', () => {
-    // eslint-disable-next-line @silverhand/fp/no-mutation -- Exercise the released contract.
-    (EnvSet.values as { isDevFeaturesEnabled: boolean }).isDevFeaturesEnabled = false;
-    registerRoute();
-
-    const config = getLastGuardConfig();
-    expect(config?.body.safeParse({ password }).success).toBe(false);
-    expect(config?.body.safeParse({ identifier, password }).success).toBe(true);
-    expect(config?.status).not.toContain(404);
-  });
-
-  it('accepts the identifier-less payload and declares the 404 status when dev features are enabled', () => {
-    // eslint-disable-next-line @silverhand/fp/no-mutation -- Exercise the dev-only contract.
-    (EnvSet.values as { isDevFeaturesEnabled: boolean }).isDevFeaturesEnabled = true;
-    registerRoute();
-
-    const config = getLastGuardConfig();
-    expect(config?.body.safeParse({ password }).success).toBe(true);
-    expect(config?.status).toContain(404);
-  });
-});
 /* eslint-enable max-lines */

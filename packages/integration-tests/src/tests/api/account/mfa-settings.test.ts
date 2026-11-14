@@ -14,6 +14,7 @@ import {
   createDefaultTenantUserWithPassword,
   deleteDefaultTenantUser,
   signInAndGetUserApi,
+  signInWithSocialAndGetUserApi,
 } from '#src/helpers/profile.js';
 import { enableAllPasswordSignInMethods } from '#src/helpers/sign-in-experience.js';
 
@@ -34,6 +35,7 @@ describe('my-account (mfa-settings)', () => {
 
       expect(mfaSettings).toEqual({
         skipMfaOnSignIn: false, // Default value (MFA required)
+        required: false,
       });
 
       await deleteDefaultTenantUser(user.id);
@@ -88,6 +90,7 @@ describe('my-account (mfa-settings)', () => {
 
       expect(mfaSettings).toEqual({
         skipMfaOnSignIn: false,
+        required: false,
       });
 
       await deleteDefaultTenantUser(user.id);
@@ -107,12 +110,28 @@ describe('my-account (mfa-settings)', () => {
 
       // Update MFA settings to skip MFA
       const updateResponse = await updateMfaSettings(api, verificationRecordId, true);
-      expect(updateResponse).toEqual({ skipMfaOnSignIn: true });
+      expect(updateResponse).toEqual({ skipMfaOnSignIn: true, required: false });
 
       // Update back to require MFA
       const verificationRecordId2 = await createVerificationRecordByPassword(api, password);
       const updateResponse2 = await updateMfaSettings(api, verificationRecordId2, false);
-      expect(updateResponse2).toEqual({ skipMfaOnSignIn: false });
+      expect(updateResponse2).toEqual({ skipMfaOnSignIn: false, required: false });
+
+      await deleteDefaultTenantUser(user.id);
+    });
+
+    it('should update MFA enablement successfully', async () => {
+      const { user, username, password } = await createDefaultTenantUserWithPassword();
+      const api = await signInAndGetUserApi(username, password, {
+        scopes: [UserScope.Profile, UserScope.Identities],
+      });
+
+      const verificationRecordId = await createVerificationRecordByPassword(api, password);
+      const updateResponse = await updateMfaSettings(api, verificationRecordId, false, true);
+      expect(updateResponse).toEqual({ skipMfaOnSignIn: false, enabled: true, required: false });
+
+      const mfaSettings = await getMfaSettings(api);
+      expect(mfaSettings).toEqual({ skipMfaOnSignIn: false, enabled: true, required: false });
 
       await deleteDefaultTenantUser(user.id);
     });
@@ -134,8 +153,9 @@ describe('my-account (mfa-settings)', () => {
     });
 
     it('should throw error if identity is not verified', async () => {
-      const { user, username, password } = await createDefaultTenantUserWithPassword();
-      const api = await signInAndGetUserApi(username, password, {
+      const { user } = await createDefaultTenantUserWithPassword();
+      // A social sign-in carries no `acr`, so the token alone does not verify the identity.
+      const api = await signInWithSocialAndGetUserApi(user.id, {
         scopes: [UserScope.Profile, UserScope.Identities],
       });
 
@@ -257,8 +277,9 @@ describe('my-account (mfa-settings)', () => {
     });
 
     it('should throw error if identity is not verified', async () => {
-      const { user, username, password } = await createDefaultTenantUserWithPassword();
-      const api = await signInAndGetUserApi(username, password, {
+      const { user } = await createDefaultTenantUserWithPassword();
+      // A social sign-in carries no `acr`, so the token alone does not verify the identity.
+      const api = await signInWithSocialAndGetUserApi(user.id, {
         scopes: [UserScope.Profile, UserScope.Identities],
       });
 

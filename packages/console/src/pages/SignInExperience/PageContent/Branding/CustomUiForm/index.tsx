@@ -20,6 +20,7 @@ import useBrandingEntitlements from '../../../hooks/use-branding-entitlements';
 import type { SignInExperienceForm } from '../../../types';
 import FormSectionTitle from '../../components/FormSectionTitle';
 
+import CrossOriginOpenerPolicyField from './CrossOriginOpenerPolicyField';
 import CustomUiCspForm from './CustomUiCspForm';
 import styles from './index.module.scss';
 import { getOssBringYourUiCardContent } from './utils';
@@ -128,7 +129,12 @@ function CustomUiForm() {
             />
           </FormField>
         )}
-        {shouldShowCustomUiCspForm && <CustomUiCspForm isDisabled={!isCustomUiCspEnabled} />}
+        {shouldShowCustomUiCspForm && (
+          <>
+            <CustomUiCspForm isDisabled={!isCustomUiCspEnabled} />
+            <CrossOriginOpenerPolicyField isDisabled={!isCustomUiCspEnabled} />
+          </>
+        )}
         {shouldShowOssBringYourUi && <OssBringYourUiCard />}
       </Card>
     </>

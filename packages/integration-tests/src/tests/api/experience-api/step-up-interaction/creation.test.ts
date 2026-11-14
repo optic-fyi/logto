@@ -19,7 +19,6 @@ import {
   resetMfaSettings,
 } from '#src/helpers/sign-in-experience.js';
 import { generateNewUserProfile, UserApiTest } from '#src/helpers/user.js';
-import { devFeatureTest } from '#src/utils.js';
 
 const firstFactorAcr = 'urn:logto:acr:1fa';
 const mfaAcr = 'urn:logto:acr:mfa';
@@ -46,7 +45,7 @@ const startStepUp = async (client: ExperienceClient, acrValues: string, prompt?:
   expect(location.startsWith('/step-up')).toBe(true);
 };
 
-devFeatureTest.describe('step-up interaction creation', () => {
+describe('step-up interaction creation', () => {
   const userApi = new UserApiTest();
   /** A password user with a primary email and an enrolled TOTP factor. */
   const totpUser = generateNewUserProfile({ username: true, password: true, primaryEmail: true });
@@ -105,6 +104,7 @@ devFeatureTest.describe('step-up interaction creation', () => {
       mode: 'stepUp',
       requestedAcrValues: [mfaAcr],
       selectedAcr: mfaAcr,
+      reauthenticationRequired: false,
       // The session's `1fa` skips the first-factor prompt for a user with an MFA factor.
       availableMethods: [VerificationType.TOTP],
       establishableMethods: [],
@@ -125,6 +125,26 @@ devFeatureTest.describe('step-up interaction creation', () => {
     const refetched = await client.getInteractionData();
 
     expect(refetched.authenticationContext).toEqual(expectedContext);
+
+    await logoutClient(client);
+  });
+
+  it('pursues the first listed mfa for [mfa, 1fa] on a 1fa session', async () => {
+    const client = await signInWithPassword(totpUser);
+    await startStepUp(client, `${mfaAcr} ${firstFactorAcr}`);
+
+    await client.initInteraction({ interactionEvent: InteractionEvent.SignIn });
+
+    const { authenticationContext } = await client.getInteractionData();
+
+    // The session's `1fa` satisfies the weaker listed class, but `mfa` is listed first and is
+    // reachable through the enrolled factor, so the step-up still asks for it.
+    expect(authenticationContext).toMatchObject({
+      mode: 'stepUp',
+      requestedAcrValues: [mfaAcr, firstFactorAcr],
+      selectedAcr: mfaAcr,
+      availableMethods: [VerificationType.TOTP],
+    });
 
     await logoutClient(client);
   });

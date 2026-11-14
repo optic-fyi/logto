@@ -1,4 +1,8 @@
-import { type CimdConfig, type SnakeCaseOidcConfig } from '@logto/schemas';
+import {
+  type CimdConfig,
+  customClientMetadataDefault,
+  type SnakeCaseOidcConfig,
+} from '@logto/schemas';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +16,7 @@ import { trySubmitSafe } from '@/utils/form';
 
 import ClientCompatibility from './ClientCompatibility';
 import EndpointsAndCredentials from './EndpointsAndCredentials';
+import RefreshTokenSettings from './RefreshTokenSettings';
 import Settings from './Settings';
 import { type SettingsFormData } from './types';
 
@@ -20,8 +25,12 @@ type Props = {
   readonly oidcConfig: SnakeCaseOidcConfig;
 };
 
-const toFormData = ({ addConsentPromptForOfflineAccess }: CimdConfig): SettingsFormData => ({
+const toFormData = ({
+  addConsentPromptForOfflineAccess,
+  refreshTokenTtlInDays,
+}: CimdConfig): SettingsFormData => ({
   addConsentPromptForOfflineAccess: addConsentPromptForOfflineAccess ?? false,
+  refreshTokenTtlInDays: refreshTokenTtlInDays ?? customClientMetadataDefault.refreshTokenTtlInDays,
 });
 
 function SettingsForm({ data, oidcConfig }: Props) {
@@ -57,6 +66,7 @@ function SettingsForm({ data, oidcConfig }: Props) {
         >
           <Settings />
           <EndpointsAndCredentials oidcConfig={oidcConfig} />
+          <RefreshTokenSettings />
           <ClientCompatibility />
         </DetailsForm>
       </FormProvider>

@@ -13,6 +13,10 @@ const cloud = {
     production_key: 'Üretim anahtarı',
     non_production_key: 'Üretim dışı anahtar',
     keys_unavailable: 'Bu lisansın anahtarları kullanılamıyor. Yardım için destek ekibine ulaş.',
+    keys_pending: 'Anahtarlar, lisans etkinleştiğinde kullanılabilir olacak.',
+    keys_payment_required:
+      'Ödenmemiş fatura ödenene kadar anahtarlar kullanılamaz. Faturayı "Ödemeyi yönet" üzerinden ödediğinizde anahtarlar yeniden kullanılabilir olur.',
+    manage_payment: 'Ödemeyi yönet',
     issue_keys: 'Lisans anahtarlarını al',
     issue_error: 'Lisans anahtarları oluşturulamadı. Lütfen tekrar dene.',
     install_title: 'Lisansını yükle',
@@ -22,7 +26,18 @@ const cloud = {
       'Üretim dağıtımı için üretim anahtarını, geliştirme ve test için üretim dışı anahtarı kopyala.',
     install_paste:
       'Kendi sunucundaki konsolda Ayarlar → Lisans bölümünü aç, anahtarı yapıştır ve yükle.',
+    usage_warning_description: 'Bu lisans, planının kullanım sınırlarının üzerinde:',
+    usage_warning_metric: '{{metric}} ({{env}}): {{value}} (sınır {{limit}})',
+    deployments_title: 'Dağıtımlar',
+    deployments_description:
+      'Bu lisansı yenileyen dağıtımlar ve her birinin bildirdiği son kullanım. Aylık değerler, geçen ay ile bu ayın şu ana kadarki değerinden yüksek olanıdır. Etkin olmayan dağıtımlar son 15 gündür yenilenmemiştir ve limitlere dahil edilmez.',
+    deployments_empty: 'Henüz hiçbir dağıtım bu lisansı yenilemedi.',
+    deployment_id: 'Dağıtım kimliği',
+    logto_version: 'Logto sürümü',
+    last_seen: 'Son görülme',
+    inactive: 'Etkin değil',
     status: {
+      pending: 'Etkinleştiriliyor',
       active: 'Etkin',
       past_due: 'Ödeme gecikmiş',
       canceling: 'Dönem sonunda iptal edilir',
@@ -30,6 +45,32 @@ const cloud = {
       unpaid: 'Ödenmemiş',
       expired: 'Süresi dolmuş',
       revoked: 'Geri alınmış',
+    },
+    purchase: {
+      description: 'Yıllık abonelikle kendi Logto örneğinizde ücretli özelliklerin kilidini açın.',
+      price_per_month: '{{price}}/ay',
+      billed_annually: 'Yıllık faturalandırılır',
+      price_unavailable: 'Fiyat kullanılamıyor',
+      feature_branding: 'Logto markasını gizleme',
+      feature_custom_ui: 'Kendi oturum açma arayüzünüzü kullanma',
+      feature_collaboration: 'Konsolda iş birliği',
+      feature_saml: 'Sınırsız SAML uygulaması',
+      feature_deployment: 'Bir üretim dağıtımı',
+      subscribe: 'Abone ol',
+      enterprise: 'Enterprise mı gerekiyor? <a>Bize ulaşın</a>',
+      activating: 'Ödeme alındı. Lisansınız etkinleştiriliyor...',
+      processing: 'Ödemeniz hâlâ işleniyor. Lisans etkinleştiğinde burada görünecek.',
+      checkout_expired: 'Ödeme oturumunun süresi doldu. Lütfen yeniden abone olun.',
+    },
+    cancel: {
+      action: 'Aboneliği iptal et',
+      keep: 'Aboneliği koru',
+      confirm_title: 'Abonelik iptal edilsin mi?',
+      confirm_content:
+        'Lisans mevcut dönemin sonuna kadar etkin kalır ve yenilenmez. Bundan sonra anahtarları artık yenilenemez.',
+      success: 'Abonelik mevcut dönemin sonunda iptal edilecek.',
+      payment_required: 'İptal etmeden önce ödenmemiş faturayı "Ödemeyi yönet" üzerinden ödeyin.',
+      failed: 'Abonelik iptal edilemedi. Lütfen tekrar deneyin.',
     },
   },
   console_sso: {
@@ -62,6 +103,8 @@ const cloud = {
       'Baştan başlamak, tamamlanmamış SSO yapılandırmanızı silebilir. Devam etmek istiyor musunuz?',
     resume_creation:
       'Tamamlanmamış bir oluşturma işlemi bulundu. Bu bağlayıcıyı kurtarmak için aynı sağlayıcıyla devam edin.',
+    creation_charge_notice:
+      'Standart fiyat: <span>Konsol SSO bağlayıcısı başına aylık ${{price, number}}</span>. Herhangi bir yardım için bizimle <a>iletişime geçebilirsiniz</a>.',
   },
   general: {
     onboarding: 'Başlatma',

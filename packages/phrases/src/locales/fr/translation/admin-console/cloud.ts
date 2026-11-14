@@ -15,6 +15,10 @@ const cloud = {
     non_production_key: 'Clé hors production',
     keys_unavailable:
       'Les clés de cette licence sont indisponibles. Contactez le support si nécessaire.',
+    keys_pending: 'Les clés seront disponibles une fois la licence active.',
+    keys_payment_required:
+      "Les clés sont indisponibles tant que la facture impayée n'est pas réglée. Utilisez « Gérer le paiement » pour la régler et les clés seront de nouveau disponibles.",
+    manage_payment: 'Gérer le paiement',
     issue_keys: 'Obtenir les clés de licence',
     issue_error: 'Impossible d’émettre les clés de licence. Veuillez réessayer.',
     install_title: 'Installer votre licence',
@@ -24,7 +28,18 @@ const cloud = {
       'Copiez la clé de production pour la production, ou la clé hors production pour le développement et les tests.',
     install_paste:
       'Dans votre console auto-hébergée, ouvrez Paramètres → Licence, collez la clé et installez-la.',
+    usage_warning_description: "Cette licence dépasse les limites d'utilisation de son forfait :",
+    usage_warning_metric: '{{metric}} ({{env}}) : {{value}} (limite {{limit}})',
+    deployments_title: 'Déploiements',
+    deployments_description:
+      "Déploiements ayant actualisé cette licence, avec la dernière utilisation signalée par chacun. Les chiffres mensuels correspondent au plus élevé entre le mois dernier et le mois en cours. Les déploiements inactifs n'ont pas actualisé la licence au cours des 15 derniers jours et ne comptent pas dans les limites.",
+    deployments_empty: "Aucun déploiement n'a encore actualisé cette licence.",
+    deployment_id: 'ID du déploiement',
+    logto_version: 'Version de Logto',
+    last_seen: 'Vu pour la dernière fois',
+    inactive: 'Inactif',
     status: {
+      pending: 'Activation en cours',
       active: 'Active',
       past_due: 'Paiement en retard',
       canceling: 'Annulation en fin de période',
@@ -32,6 +47,35 @@ const cloud = {
       unpaid: 'Impayée',
       expired: 'Expirée',
       revoked: 'Révoquée',
+    },
+    purchase: {
+      description:
+        'Débloquez les fonctionnalités payantes sur votre propre instance Logto avec un abonnement annuel.',
+      price_per_month: '{{price}}/mois',
+      billed_annually: 'Facturé annuellement',
+      price_unavailable: 'Prix indisponible',
+      feature_branding: 'Masquer la marque Logto',
+      feature_custom_ui: 'Utiliser votre propre interface de connexion',
+      feature_collaboration: 'Collaboration dans la console',
+      feature_saml: 'Applications SAML illimitées',
+      feature_deployment: 'Un déploiement de production',
+      subscribe: "S'abonner",
+      enterprise: 'Besoin d’Enterprise ? <a>Contactez-nous</a>',
+      activating: 'Paiement reçu. Activation de votre licence...',
+      processing:
+        'Votre paiement est toujours en cours de traitement. La licence apparaîtra ici une fois active.',
+      checkout_expired: 'La session de paiement a expiré. Veuillez vous abonner à nouveau.',
+    },
+    cancel: {
+      action: "Annuler l'abonnement",
+      keep: "Conserver l'abonnement",
+      confirm_title: "Annuler l'abonnement ?",
+      confirm_content:
+        'La licence reste active jusqu’à la fin de la période en cours et ne sera pas renouvelée. Ensuite, ses clés ne pourront plus être actualisées.',
+      success: 'L’abonnement sera annulé à la fin de la période en cours.',
+      payment_required:
+        'Réglez la facture impayée avant d’annuler. Utilisez « Gérer le paiement » pour la régler.',
+      failed: "Impossible d'annuler l'abonnement. Veuillez réessayer.",
     },
   },
   console_sso: {
@@ -67,6 +111,8 @@ const cloud = {
       'Recommencer peut supprimer votre configuration SSO inachevée. Voulez-vous continuer ?',
     resume_creation:
       'Une création inachevée a été trouvée. Continuez avec le même fournisseur pour récupérer ce connecteur.',
+    creation_charge_notice:
+      "Tarif standard : <span>{{price, number}} $ par mois et par connecteur SSO de la console</span>. Pour toute assistance, n'hésitez pas à <a>nous contacter</a>.",
   },
   general: {
     onboarding: 'Intégration',

@@ -1,5 +1,6 @@
-import { MfaFactor, userMfaVerificationResponseGuard } from '@logto/schemas';
+import { MfaFactor } from '@logto/schemas';
 import { getUserDisplayName } from '@logto/shared';
+import { yes } from '@silverhand/essentials';
 import { authenticator } from 'otplib';
 import qrcode from 'qrcode';
 import { object, string, z } from 'zod';
@@ -15,7 +16,10 @@ import {
 } from '#src/libraries/verification-helpers/totp-validation.js';
 import koaGuard from '#src/middleware/koa-guard.js';
 import assertThat from '#src/utils/assert-that.js';
-import { transpileUserMfaVerifications } from '#src/utils/user.js';
+import {
+  adminUserMfaVerificationResponseGuard,
+  transpileUserMfaVerifications,
+} from '#src/utils/user.js';
 
 import type { ManagementApiRouter, RouterInitArgs } from '../types.js';
 
@@ -39,12 +43,19 @@ export default function adminUserMfaVerificationsRoutes<T extends ManagementApiR
     '/users/:userId/mfa-verifications',
     koaGuard({
       params: object({ userId: string() }),
-      response: userMfaVerificationResponseGuard,
+      query: object({ includeWebAuthnCredentials: string().optional() }),
+      response: adminUserMfaVerificationResponseGuard,
       status: [200, 404],
     }),
     async (ctx, next) => {
-      const user = await findUserById(ctx.guard.params.userId);
-      ctx.body = transpileUserMfaVerifications(user.mfaVerifications);
+      const {
+        params: { userId },
+        query: { includeWebAuthnCredentials },
+      } = ctx.guard;
+      const user = await findUserById(userId);
+      ctx.body = transpileUserMfaVerifications(user.mfaVerifications, {
+        includeWebAuthnCredentials: yes(includeWebAuthnCredentials),
+      });
       return next();
     }
   );

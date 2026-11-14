@@ -5,6 +5,7 @@ import {
   type selfHostedLicensesRouter,
   type tenantAuthRouter,
   type userStripeCustomersRouter,
+  type userSubscriptionsRouter,
 } from '@logto/cloud/routes';
 import { type GuardedPayload, type GuardedResponse, type RouterRoutes } from '@withtyped/client';
 
@@ -13,6 +14,18 @@ type PostRoutes = RouterRoutes<typeof router>['post'];
 type GetTenantAuthRoutes = RouterRoutes<typeof tenantAuthRouter>['get'];
 type GetEmailLogsRoutes = RouterRoutes<typeof emailLogsRouter>['get'];
 type GetUserStripeCustomersRoutes = RouterRoutes<typeof userStripeCustomersRouter>['get'];
+
+/** Billing facts for a user-owned subscription, independent of its service resources. */
+export type UserSubscription = GuardedResponse<
+  RouterRoutes<typeof userSubscriptionsRouter>['get']['/api/me/user-subscriptions']
+>['subscriptions'][number];
+
+/** A page of authorized invoices for the user's own subscriptions, newest first, without drafts. */
+export type UserSubscriptionInvoicesResponse = GuardedResponse<
+  RouterRoutes<typeof userSubscriptionsRouter>['get']['/api/me/user-subscriptions/invoices']
+>;
+
+export type UserSubscriptionInvoice = UserSubscriptionInvoicesResponse['invoices'][number];
 
 /** The paginated hosted-email log page returned by the cloud email-logs endpoint. */
 export type TenantEmailLogsResponse = GuardedResponse<
@@ -140,7 +153,17 @@ export type ConsoleSsoDomain = GuardedResponse<
 
 /** Account-level license metadata, without signed keys. */
 export type SelfHostedLicenseSummary = GuardedResponse<
+  RouterRoutes<typeof selfHostedLicensesRouter>['get']['/api/me/self-hosted-licenses']
+>[number];
+
+/** License metadata with its deployments, their latest usage, and the current usage warnings. */
+export type SelfHostedLicenseDetails = GuardedResponse<
   RouterRoutes<typeof selfHostedLicensesRouter>['get']['/api/me/self-hosted-licenses/:id']
+>;
+
+/** The yearly Self-hosted Pro price, validated by Cloud, in the smallest currency unit. */
+export type SelfHostedLicensePrice = GuardedResponse<
+  RouterRoutes<typeof selfHostedLicensesRouter>['get']['/api/me/self-hosted-licenses/price']
 >;
 
 /** The production and non-production keys returned by explicit issuance. */

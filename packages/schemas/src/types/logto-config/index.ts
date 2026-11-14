@@ -7,6 +7,7 @@ import {
   type MessageRateLimitOverride,
   messageRateLimitOverrideGuard,
 } from '../../consts/message-rate-limit.js';
+import { customClientMetadataGuard } from '../../foundations/index.js';
 
 import { type LogtoAction, LogtoActionKey, logtoActionGuard } from './action.js';
 import {
@@ -189,6 +190,8 @@ export type SigningKeyRotationState = z.infer<typeof signingKeyRotationStateGuar
 export const cimdConfigGuard = z.object({
   enabled: z.boolean(),
   addConsentPromptForOfflineAccess: z.boolean().optional(),
+  /** Fixed refresh token lifetime for CIMD clients, with the same bounds as registered apps. */
+  refreshTokenTtlInDays: customClientMetadataGuard.shape.refreshTokenTtlInDays,
 });
 export type CimdConfig = z.infer<typeof cimdConfigGuard>;
 

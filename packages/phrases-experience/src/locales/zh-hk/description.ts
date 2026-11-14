@@ -115,6 +115,8 @@ const description = {
   support_website: '支持網站：<link></link>',
   switch_account_title: '你當前以 {{account}} 登錄',
   switch_account_description: '要繼續，你將退出當前帳號，並自動切換到新帳號。',
+  continue_to_app_title: '返回應用程式',
+  continue_to_app_description: '繼續即可返回應用程式。',
   about_yourself: '講講你自己',
   verify_identity: '驗證你的身份',
   choose_verification_method: '選擇你要登入的方式',
@@ -127,6 +129,7 @@ const description = {
     phone_verification_code: '短訊驗證碼',
     verification_code_description: '發送至 {{target}}',
   },
+  select_wallet: '選擇錢包',
 };
 
 export default Object.freeze(description);

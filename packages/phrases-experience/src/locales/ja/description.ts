@@ -128,6 +128,8 @@ const description = {
   switch_account_title: '現在 {{account}} としてサインインしています',
   switch_account_description:
     '続行するには、現在のアカウントからサインアウトし、新しいアカウントに自動的に切り替わります。',
+  continue_to_app_title: 'アプリに戻る',
+  continue_to_app_description: '続行してアプリに戻ります。',
   about_yourself: 'あなたについて教えてください',
   verify_identity: '本人確認を行う',
   choose_verification_method: 'サインイン方法を選択してください',
@@ -140,6 +142,7 @@ const description = {
     phone_verification_code: '電話認証コード',
     verification_code_description: '{{target}}に送信',
   },
+  select_wallet: 'ウォレットを選択',
 };
 
 export default Object.freeze(description);

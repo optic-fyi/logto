@@ -14,6 +14,10 @@ const cloud = {
     non_production_key: 'Chave de não produção',
     keys_unavailable:
       'As chaves desta licença estão indisponíveis. Entre em contato com o suporte se precisar de ajuda.',
+    keys_pending: 'As chaves estarão disponíveis quando a licença estiver ativa.',
+    keys_payment_required:
+      'As chaves ficam indisponíveis até que a fatura em aberto seja paga. Use "Gerenciar pagamento" para pagá-la e as chaves voltarão a ficar disponíveis.',
+    manage_payment: 'Gerenciar pagamento',
     issue_keys: 'Obter chaves de licença',
     issue_error: 'Não foi possível emitir as chaves de licença. Tente novamente.',
     install_title: 'Instale sua licença',
@@ -23,7 +27,18 @@ const cloud = {
       'Copie a chave de produção para produção ou a chave de não produção para desenvolvimento e testes.',
     install_paste:
       'No console auto-hospedado, abra Configurações → Licença, cole a chave e instale-a.',
+    usage_warning_description: 'Esta licença está acima dos limites de uso do plano:',
+    usage_warning_metric: '{{metric}} ({{env}}): {{value}} (limite {{limit}})',
+    deployments_title: 'Implantações',
+    deployments_description:
+      'Implantações que atualizaram esta licença, com o último uso informado por cada uma. Os valores mensais são o maior entre o mês passado e o mês atual até agora. Implantações inativas não atualizaram a licença nos últimos 15 dias e não contam para os limites.',
+    deployments_empty: 'Nenhuma implantação atualizou esta licença ainda.',
+    deployment_id: 'ID da implantação',
+    logto_version: 'Versão do Logto',
+    last_seen: 'Visto por último',
+    inactive: 'Inativa',
     status: {
+      pending: 'Ativando',
       active: 'Ativa',
       past_due: 'Pagamento atrasado',
       canceling: 'Cancela ao final do período',
@@ -31,6 +46,35 @@ const cloud = {
       unpaid: 'Não paga',
       expired: 'Expirada',
       revoked: 'Revogada',
+    },
+    purchase: {
+      description:
+        'Desbloqueie recursos pagos na sua própria instância do Logto com uma assinatura anual.',
+      price_per_month: '{{price}}/mês',
+      billed_annually: 'Cobrança anual',
+      price_unavailable: 'Preço indisponível',
+      feature_branding: 'Ocultar a marca Logto',
+      feature_custom_ui: 'Usar sua própria interface de login',
+      feature_collaboration: 'Colaboração no Console',
+      feature_saml: 'Aplicativos SAML ilimitados',
+      feature_deployment: 'Uma implantação de produção',
+      subscribe: 'Assinar',
+      enterprise: 'Precisa do Enterprise? <a>Fale conosco</a>',
+      activating: 'Pagamento recebido. Ativando sua licença...',
+      processing:
+        'Seu pagamento ainda está sendo processado. A licença aparecerá aqui quando estiver ativa.',
+      checkout_expired: 'A sessão de pagamento expirou. Assine novamente.',
+    },
+    cancel: {
+      action: 'Cancelar assinatura',
+      keep: 'Manter assinatura',
+      confirm_title: 'Cancelar assinatura?',
+      confirm_content:
+        'A licença continua ativa até o fim do período atual e não será renovada. Depois disso, suas chaves não poderão mais ser atualizadas.',
+      success: 'A assinatura será cancelada no fim do período atual.',
+      payment_required:
+        'Pague a fatura em aberto antes de cancelar. Use "Gerenciar pagamento" para pagá-la.',
+      failed: 'Não foi possível cancelar a assinatura. Tente novamente.',
     },
   },
   console_sso: {
@@ -66,6 +110,8 @@ const cloud = {
       'Recomeçar pode excluir sua configuração de SSO incompleta. Deseja continuar?',
     resume_creation:
       'Uma criação incompleta foi encontrada. Continue com o mesmo provedor para recuperar este conector.',
+    creation_charge_notice:
+      'Preço padrão: <span>US${{price, number}} por mês por conector de SSO do console</span>. Para qualquer ajuda, fique à vontade para <a>entrar em contato</a>.',
   },
   general: {
     onboarding: 'Integração',

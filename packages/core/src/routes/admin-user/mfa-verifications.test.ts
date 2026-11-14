@@ -6,6 +6,7 @@ import {
   mockUser,
   mockUserBackupCodeMfaVerification,
   mockUserTotpMfaVerification,
+  mockUserWebAuthnMfaVerification,
   mockUserWithMfaVerifications,
 } from '#src/__mocks__/index.js';
 import { type InsertUserResult } from '#src/libraries/user.js';
@@ -83,8 +84,66 @@ describe('adminUserRoutes', () => {
     expect(response.body).toMatchObject([{ id, type, createdAt }]);
   });
 
+  describe('GET /users/:userId/mfa-verifications with WebAuthn', () => {
+    const webAuthnVerification = {
+      ...mockUserWebAuthnMfaVerification,
+      rpId: 'auth.example.com',
+      transports: ['internal', 'hybrid'],
+      counter: 7,
+      name: 'MacBook',
+    } satisfies User['mfaVerifications'][number];
+    const credentialFields = ['rpId', 'credentialId', 'publicKey', 'counter', 'transports'];
+
+    beforeEach(() => {
+      findUserById.mockResolvedValueOnce({
+        ...mockUser,
+        mfaVerifications: [webAuthnVerification, mockUserTotpMfaVerification],
+      });
+    });
+
+    it('should include the stored WebAuthn credential when requested', async () => {
+      const response = await userRequest.get(
+        `/users/${mockUser.id}/mfa-verifications?includeWebAuthnCredentials=true`
+      );
+
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual([
+        {
+          id: webAuthnVerification.id,
+          type: MfaFactor.WebAuthn,
+          createdAt: webAuthnVerification.createdAt,
+          agent: 'agent',
+          name: 'MacBook',
+          rpId: 'auth.example.com',
+          credentialId: 'credentialId',
+          publicKey: webAuthnVerification.publicKey,
+          counter: 7,
+          transports: ['internal', 'hybrid'],
+        },
+        {
+          id: mockUserTotpMfaVerification.id,
+          type: MfaFactor.TOTP,
+          createdAt: mockUserTotpMfaVerification.createdAt,
+        },
+      ]);
+    });
+
+    it('should omit the credential when not requested', async () => {
+      const response = await userRequest.get(`/users/${mockUser.id}/mfa-verifications`);
+
+      expect(response.status).toEqual(200);
+      expect(response.body[0]).toMatchObject({ id: webAuthnVerification.id, name: 'MacBook' });
+
+      for (const field of credentialFields) {
+        expect(response.body[0]).not.toHaveProperty(field);
+      }
+    });
+  });
+
   describe('POST /users/:userId/mfa-verifications', () => {
     describe('TOTP', () => {
+      // Rendering a real QR code costs about 200 ms of CPU under Jest, which a busy machine can
+      // stretch past the default timeout.
       it('should bind and return totp secret', async () => {
         findUserById.mockResolvedValueOnce(mockUser);
         const response = await userRequest.post(`/users/${mockUser.id}/mfa-verifications`).send({
@@ -96,7 +155,7 @@ describe('adminUserRoutes', () => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           secretQrCode: expect.stringContaining('data:image'),
         });
-      });
+      }, 20_000);
 
       it('should fail for duplicate', async () => {
         findUserById.mockResolvedValueOnce({
@@ -118,6 +177,7 @@ describe('adminUserRoutes', () => {
         expect(response.status).toEqual(422);
       });
 
+      // Renders a real QR code, which a busy machine can stretch past the default timeout.
       it('should return supplied secret', async () => {
         findUserById.mockResolvedValueOnce(mockUser);
         const response = await userRequest.post(`/users/${mockUser.id}/mfa-verifications`).send({
@@ -130,7 +190,7 @@ describe('adminUserRoutes', () => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           secretQrCode: expect.stringContaining('data:image'),
         });
-      });
+      }, 20_000);
     });
   });
 

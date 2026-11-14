@@ -137,6 +137,8 @@ const description = {
   switch_account_title: 'Actualmente has iniciado sesión como {{account}}',
   switch_account_description:
     'Para continuar, se cerrará la sesión de la cuenta actual, y se cambiará automáticamente a la nueva cuenta.',
+  continue_to_app_title: 'Regresar a la app',
+  continue_to_app_description: 'Continúa para regresar a la app.',
   about_yourself: 'Cuéntanos sobre ti',
   verify_identity: 'Verifica tu identidad',
   choose_verification_method: 'Elige cómo quieres iniciar sesión',
@@ -149,6 +151,7 @@ const description = {
     phone_verification_code: 'Código de verificación por teléfono',
     verification_code_description: 'Enviar a {{target}}',
   },
+  select_wallet: 'Selecciona una cartera',
 };
 
 export default Object.freeze(description);

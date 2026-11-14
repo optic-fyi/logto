@@ -13,7 +13,7 @@ import {
 import { generateStandardId } from '@logto/shared';
 import { cond, conditional, tryThat, type Nullable, type Optional } from '@silverhand/essentials';
 import camelcaseKeys, { type CamelCaseKeys } from 'camelcase-keys';
-import { XMLValidator } from 'fast-xml-parser';
+import { XMLValidator, type ValidationError } from 'fast-xml-parser';
 import { jwtVerify } from 'jose';
 import saml from 'samlify';
 import { ZodError, z } from 'zod';
@@ -24,6 +24,7 @@ import {
   buildSingleSignOnUrl,
   buildSamlIdentityProviderEntityId,
 } from '#src/libraries/saml-application/utils.js';
+import { type LogEntry } from '#src/middleware/koa-audit-log.js';
 import { type SamlApplicationDetails } from '#src/queries/saml-application/index.js';
 import {
   fetchOidcConfigRaw,
@@ -46,8 +47,11 @@ import {
 import {
   buildSamlAssertionNameId,
   getSamlAppCallbackUrl,
+  expandMultiValuedAttributeTags,
   generateSamlAttributeTag,
+  getSamlUserAttributeNames,
   assertSamlAuthnRequestSignatureScope,
+  type SamlTagValue,
 } from './utils.js';
 
 type SamlIdentityProviderConfig = {
@@ -66,6 +70,21 @@ type SamlServiceProviderConfig = {
 };
 
 type SamlUserInfo = IdTokenProfileStandardClaims & { auth_time: number };
+
+const toSamlAttributeTagItem = (value: unknown): string =>
+  typeof value === 'object' ? JSON.stringify(value) : String(value);
+
+/**
+ * Array claims keep their items; `expandMultiValuedAttributeTags` emits one value element each.
+ * Object items, such as those of `organization_data` and `sso_identities`, stay JSON-encoded.
+ */
+const toSamlAttributeTagValue = (value: unknown): string | string[] => {
+  if (Array.isArray(value)) {
+    return value.map((item) => toSamlAttributeTagItem(item));
+  }
+
+  return toSamlAttributeTagItem(value);
+};
 
 class SamlApplicationConfig {
   constructor(
@@ -137,6 +156,10 @@ class SamlApplicationConfig {
   public get attributeMapping() {
     return this._details.attributeMapping;
   }
+
+  public get staticAttributes() {
+    return this._details.staticAttributes;
+  }
 }
 
 export class SamlApplication {
@@ -148,6 +171,7 @@ export class SamlApplication {
 
   private _idp?: saml.IdentityProviderInstance;
   private _sp?: saml.ServiceProviderInstance;
+  private xmlFormatError?: ValidationError['err'];
 
   constructor(
     details: SamlApplicationDetails,
@@ -185,17 +209,30 @@ export class SamlApplication {
 
   public async parseLoginRequest(
     binding: 'post' | 'redirect',
-    loginRequest: Parameters<typeof saml.IdentityProviderInstance.prototype.parseLoginRequest>[2]
+    loginRequest: Parameters<typeof saml.IdentityProviderInstance.prototype.parseLoginRequest>[2],
+    log: LogEntry
   ) {
-    if (!this.config.authnRequestConfig?.requireSignedAuthnRequests) {
-      return this.idp.parseLoginRequest(this.sp, binding, loginRequest);
-    }
+    const result = await tryThat(this.idp.parseLoginRequest(this.sp, binding, loginRequest), () => {
+      if (this.xmlFormatError) {
+        const { code, line, col, msg } = this.xmlFormatError;
+        log.append({
+          samlRequestError: {
+            category: 'xml_format',
+            code,
+            line,
+            column: col,
+            // A lone surrogate, from the parser or from the cut, would make the audit log insert fail.
+            message: msg
+              .replaceAll(/\p{Cc}/gu, '')
+              .slice(0, 256)
+              .toWellFormed(),
+          },
+        });
+      }
 
-    const result = await tryThat(
-      this.idp.parseLoginRequest(this.sp, binding, loginRequest),
-      new RequestError('application.saml.invalid_saml_request')
-    );
-    if (binding === 'post') {
+      throw new RequestError('application.saml.invalid_saml_request');
+    });
+    if (this.config.authnRequestConfig?.requireSignedAuthnRequests && binding === 'post') {
       assertSamlAuthnRequestSignatureScope(result.samlContent);
     }
     return result;
@@ -506,6 +543,7 @@ export class SamlApplication {
         NameID,
         InResponseTo: samlRequestId ?? 'null',
         ...this.buildSamlAttributesTagValues(userInfo),
+        ...this.buildSamlStaticAttributesTagValues(),
         // Since we currently does not distinguish the way user used to pass authentication, we set the default AuthnContextClassRef to passwordProtectedTransport.
         AuthnContextClassRef:
           saml.Constants.namespace.authnContextClassRef.passwordProtectedTransport,
@@ -513,7 +551,9 @@ export class SamlApplication {
         SessionIndex: sessionId ?? '',
       };
 
-      const context = saml.SamlLib.replaceTagsByValue(template, tagValues);
+      const { template: expandedTemplate, tagValues: scalarTagValues } =
+        expandMultiValuedAttributeTags(template, tagValues);
+      const context = saml.SamlLib.replaceTagsByValue(expandedTemplate, scalarTagValues);
 
       return {
         id,
@@ -524,10 +564,10 @@ export class SamlApplication {
   protected readonly buildLoginResponseTemplate = () => {
     return {
       context: samlLogInResponseTemplate,
-      attributes: (Object.entries(this.config.attributeMapping).length > 0
-        ? Object.values(this.config.attributeMapping)
-        : fallbackAttributes
-      ).map((value) => ({
+      attributes: [
+        ...getSamlUserAttributeNames(this.config.attributeMapping),
+        ...Object.keys(this.config.staticAttributes),
+      ].map((value) => ({
         name: value,
         valueTag: value,
         nameFormat: samlAttributeNameFormatBasic,
@@ -538,7 +578,7 @@ export class SamlApplication {
 
   protected readonly buildSamlAttributesTagValues = (
     userInfo: IdTokenProfileStandardClaims
-  ): Record<string, Nullable<string>> => {
+  ): Record<string, SamlTagValue | SamlTagValue[]> => {
     return Object.entries(this.config.attributeMapping).length > 0
       ? Object.fromEntries(
           Object.entries(this.config.attributeMapping)
@@ -549,10 +589,7 @@ export class SamlApplication {
                 unknown,
               ];
             })
-            .map(([key, value]) => [
-              generateSamlAttributeTag(key),
-              typeof value === 'object' ? JSON.stringify(value) : String(value),
-            ])
+            .map(([key, value]) => [generateSamlAttributeTag(key), toSamlAttributeTagValue(value)])
         )
       : /**
          * User attributes for SAML response
@@ -574,18 +611,27 @@ export class SamlApplication {
         );
   };
 
+  protected readonly buildSamlStaticAttributesTagValues = (): Record<string, string> =>
+    Object.fromEntries(
+      Object.entries(this.config.staticAttributes).map(([name, value]) => [
+        generateSamlAttributeTag(name),
+        value,
+      ])
+    );
+
   // Used to check whether xml content is valid in format.
   private setSchemaValidator() {
     saml.setSchemaValidator({
+      // Samlify ignores the resolved value and fails the request only when this throws.
       validate: async (xmlContent: string) => {
-        try {
-          XMLValidator.validate(xmlContent, {
-            allowBooleanAttributes: true,
-          });
+        const result = XMLValidator.validate(xmlContent, {
+          allowBooleanAttributes: true,
+        });
 
-          return true;
-        } catch {
-          return false;
+        if (result !== true) {
+          // Samlify's redirect flow rejects with a generic `ERR_INVALID_XML`, so record the details for `parseLoginRequest` to log.
+          this.xmlFormatError = result.err;
+          throw new Error(result.err.msg);
         }
       },
     });

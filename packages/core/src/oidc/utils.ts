@@ -307,7 +307,7 @@ export const appendSharedExperienceSearchParams = (
 /**
  * The Experience SSR middleware reads `_logto` before the client bootstraps. Reusing the same
  * cookie payload for the shared app / organization / locale params keeps device pages aligned
- * with login pages without broadening the cookie to route-specific prompt parameters.
+ * with login pages; login-only hints are added by the login prompt handler in `init.ts`.
  */
 export const buildSharedExperienceCookie = ({
   appId,
@@ -325,30 +325,29 @@ export const buildSharedExperienceCookie = ({
 /**
  * Whether the login prompt details carry a step-up authentication context: an authenticated
  * session that does not satisfy the requested `acr_values` / `max_age`. The details are the
- * provider's untyped prompt payload, so anything that does not parse is a regular sign-in.
+ * provider's untyped prompt payload, so anything that does not parse is a regular sign-in. The mode
+ * and a non-empty requested list are the only markers: the class the step-up pursues is derived by
+ * Experience, never pinned in the details.
+ *
+ * Used to route the initial prompt to the step-up tree and to write the entry guard's UX hint
+ * into the flow cookie.
  */
-const isStepUpPrompt = (promptDetails: unknown): boolean => {
+export const isStepUpPrompt = (promptDetails: unknown): boolean => {
   const result = loginPromptAuthenticationContextDetailsGuard.safeParse(promptDetails ?? {});
 
-  if (!result.success || !result.data.authenticationContext) {
-    return false;
-  }
-
-  const { mode, selectedAcr, requestedAcrValues } = result.data.authenticationContext;
-
   return (
-    mode === AuthenticationContextMode.StepUp &&
-    selectedAcr !== undefined &&
-    requestedAcrValues.includes(selectedAcr)
+    result.success &&
+    result.data.authenticationContext?.mode === AuthenticationContextMode.StepUp &&
+    result.data.authenticationContext.requestedAcrValues.length > 0
   );
 };
 
 /**
  * Build the Experience URL for a login prompt. A step-up prompt lands directly on the `step-up`
  * route tree: the subject is pinned from the session, so the first screen, direct sign-in, and
- * identifier hints do not apply and only the shared app, organization, and locale params are
- * kept. A prompt whose details carry only the requested ACR values (no session) keeps the
- * regular sign-in URL.
+ * identifier hints do not apply and only the shared app, organization, and locale params, plus
+ * `confirm_redirect_policy`, are kept. A prompt whose details carry only the requested ACR values
+ * (no session) keeps the regular sign-in URL.
  */
 // eslint-disable-next-line complexity
 export const buildLoginPromptUrl = (
@@ -361,6 +360,14 @@ export const buildLoginPromptUrl = (
 
   if (sharedParams) {
     appendSharedExperienceSearchParams(searchParams, sharedParams);
+  }
+
+  // Applies to every entry, including step-up, so the experience reads it at the final redirect.
+  if (params[ExtraParamsKey.ConfirmRedirectPolicy]) {
+    searchParams.append(
+      ExtraParamsKey.ConfirmRedirectPolicy,
+      params[ExtraParamsKey.ConfirmRedirectPolicy]
+    );
   }
 
   if (isStepUpPrompt(promptDetails)) {

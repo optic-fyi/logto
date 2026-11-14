@@ -36,7 +36,17 @@ describe('self-hosted license', () => {
   });
 
   it('should return the entitlements of the installed license', async () => {
-    const { installedAt, lastRefreshedAt, graceEndsAt, ...entitlements } = await getSystemLicense();
+    const {
+      installedAt,
+      lastRefreshedAt,
+      graceEndsAt,
+      // Usage fields are covered on their own in `system-license-usage.test.ts`.
+      usageLimits,
+      usage,
+      usageWarnings,
+      usageReportingEnabled,
+      ...entitlements
+    } = await getSystemLicense();
 
     expect(entitlements).toEqual({
       plan: ReservedPlanId.SelfHostedPro,
@@ -56,15 +66,23 @@ describe('self-hosted license', () => {
   it('should never return the raw license key', async () => {
     const response = await getSystemLicense();
 
-    expect(Object.keys(response).slice().sort()).toEqual([
-      'env',
-      'expiresAt',
-      'graceEndsAt',
-      'installedAt',
-      'lastRefreshedAt',
-      'plan',
-      'quota',
-    ]);
+    expect(Object.keys(response).slice().sort()).toEqual(
+      [
+        'env',
+        'expiresAt',
+        'graceEndsAt',
+        'installedAt',
+        'lastRefreshedAt',
+        'plan',
+        'quota',
+        'usage',
+        'usageLimits',
+        'usageReportingEnabled',
+        'usageWarnings',
+      ]
+        .slice()
+        .sort()
+    );
     expect(JSON.stringify(response)).not.toContain(license);
   });
 
@@ -107,7 +125,17 @@ describe('self-hosted license', () => {
 
     expect(response.status).toEqual(204);
 
-    const { installedAt, lastRefreshedAt, graceEndsAt, ...entitlements } = await getSystemLicense();
+    const {
+      installedAt,
+      lastRefreshedAt,
+      graceEndsAt,
+      // Usage fields are covered on their own in `system-license-usage.test.ts`.
+      usageLimits,
+      usage,
+      usageWarnings,
+      usageReportingEnabled,
+      ...entitlements
+    } = await getSystemLicense();
 
     expect(entitlements).toEqual({
       plan: ReservedPlanId.SelfHostedEnterprise,
